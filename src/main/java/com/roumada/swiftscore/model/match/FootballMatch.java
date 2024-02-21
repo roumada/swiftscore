@@ -13,6 +13,14 @@ public class FootballMatch {
         this.awaySideStatistics = awaySideStatistics;
     }
 
+    public float getHomeSideVictoryChance() {
+        return homeSideStatistics.getFootballClub().getVictoryChance();
+    }
+
+    public float getAwaySideVictoryChance() {
+        return awaySideStatistics.getFootballClub().getVictoryChance();
+    }
+
     public enum Status {
         HOME_SIDE_VICTORY, AWAY_SIDE_VICTORY, DRAW, UNFINISHED
     }
