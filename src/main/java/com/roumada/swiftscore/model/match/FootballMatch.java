@@ -14,6 +14,6 @@ public class FootballMatch {
     }
 
     public enum Status {
-        HOME_SIDE_VICTORY, AWAY_SIDE_VICTORY, DRAW, ABANDONED, UNFINISHED
+        HOME_SIDE_VICTORY, AWAY_SIDE_VICTORY, DRAW, UNFINISHED
     }
 }

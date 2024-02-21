@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.roumada.swiftscore.model.match.FootballMatch.Status.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SimpleMatchSimulatorTests {
 
@@ -27,10 +28,12 @@ class SimpleMatchSimulatorTests {
 
         // assert
         assertEquals(HOME_SIDE_VICTORY, footballMatch.getMatchStatus());
+        assertTrue(footballMatch.getHomeSideStatistics().getGoalsScored() >
+                footballMatch.getAwaySideStatistics().getGoalsScored());
     }
 
     @Test
-    @DisplayName("Should end with victory for home team")
+    @DisplayName("Should end with victory for away team")
     void simulateMatch_shouldGrantVictoryToAwayTeam() {
         // arrange
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(0.2f).build();
@@ -44,6 +47,8 @@ class SimpleMatchSimulatorTests {
 
         // assert
         assertEquals(AWAY_SIDE_VICTORY, footballMatch.getMatchStatus());
+        assertTrue(footballMatch.getHomeSideStatistics().getGoalsScored() <
+                footballMatch.getAwaySideStatistics().getGoalsScored());
     }
 
     @Test
@@ -61,5 +66,7 @@ class SimpleMatchSimulatorTests {
 
         // assert
         assertEquals(DRAW, footballMatch.getMatchStatus());
+        assertEquals(footballMatch.getHomeSideStatistics().getGoalsScored(),
+                footballMatch.getAwaySideStatistics().getGoalsScored());
     }
 }
