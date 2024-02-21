@@ -14,6 +14,9 @@ public class FootballClub {
             if (victoryChance > 1) {
                 throw new IllegalArgumentException("Victory chance cannot exceed 1");
             }
+            if (victoryChance < 0) {
+                throw new IllegalArgumentException("Victory chance cannot be lower than 0");
+            }
             return new FootballClub(name, victoryChance);
         }
     }
