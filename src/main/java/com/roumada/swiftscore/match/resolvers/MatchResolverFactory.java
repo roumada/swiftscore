@@ -17,7 +17,6 @@ public class MatchResolverFactory {
                 return new DrawScoreResolver();
             }
             default -> throw new IllegalArgumentException("A MatchResolver cannot be assigned to a FootballMatch with a non-match finished status.");
-
         }
     }
 }
