@@ -5,18 +5,21 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballClubMatchStatistics;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.model.match.MatchWeek;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.roumada.swiftscore.model.match.FootballMatch.Status.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MatchWeekExecutorTests {
 
     private final MatchWeekSimulator matchWeekSimulator = MatchWeekSimulator.withMatchSimulator(new SimpleMatchSimulator());
 
     @Test
+    @DisplayName("Should simulate an entire match week and change match statuses")
     void shouldSimulateEntireMatchWeek() {
         // arrange
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(0.5f).build();
@@ -28,8 +31,14 @@ class MatchWeekExecutorTests {
 
         // assert
         assertEquals(HOME_SIDE_VICTORY, matchWeek.matches().get(0).getMatchStatus());
+        assertTrue(matchWeek.matches().get(0).getHomeSideStatistics().getGoalsScored() >
+                matchWeek.matches().get(0).getAwaySideStatistics().getGoalsScored());
         assertEquals(AWAY_SIDE_VICTORY, matchWeek.matches().get(1).getMatchStatus());
+        assertTrue(matchWeek.matches().get(1).getHomeSideStatistics().getGoalsScored() <
+                matchWeek.matches().get(1).getAwaySideStatistics().getGoalsScored());
         assertEquals(DRAW, matchWeek.matches().get(2).getMatchStatus());
+        assertEquals(matchWeek.matches().get(2).getHomeSideStatistics().getGoalsScored(),
+                matchWeek.matches().get(2).getAwaySideStatistics().getGoalsScored());
     }
 
     private static MatchWeek prepareMatchWeek(FootballClub footballClub1, FootballClub footballClub2) {
