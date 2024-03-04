@@ -13,13 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MatchWeekManagerTests {
 
-    private MatchWeekManager matchWeekManager;
-
     @Test
     @DisplayName("Should correctly simulate a match week with a simple match simulator")
     void shouldCorrectlySimulateAMatchWeekForSimpleMatchSimulator(){
         // arrange
-        matchWeekManager = new MatchWeekManager(
+        MatchWeekManager matchWeekManager = new MatchWeekManager(
                 new MatchWeekOperator(MatchWeeksGenerator.generateForRoundRobinLeague(FootballClubTestUtils.generateFootballClubs())),
                 MatchWeekSimulator.withMatchSimulator(new SimpleMatchSimulator()));
 
