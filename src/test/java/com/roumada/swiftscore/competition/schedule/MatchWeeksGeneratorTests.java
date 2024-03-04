@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.match;
+package com.roumada.swiftscore.competition.schedule;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.MatchWeek;
