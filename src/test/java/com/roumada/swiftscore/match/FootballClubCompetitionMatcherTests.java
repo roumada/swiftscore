@@ -15,17 +15,17 @@ class FootballClubCompetitionMatcherTests {
     private final FootballClubCompetitionMatcher matcher = new FootballClubCompetitionMatcher();
 
     @Test
-    @DisplayName("Should generate an adequate number of unique matchups for given clubs")
-    void shouldGenerateAllPossibleMatchesForFootballClubs() {
+    @DisplayName("Should correctly generate matchups for a league in round-robin system")
+    void shouldCorrectlyGenerateRoundRobinLeague() {
         // arrange
         List<FootballClub> clubs = generateFootballClubs();
 
         // act
-        List<MatchWeek> matchWeeks = matcher.matchFor(clubs);
+        List<MatchWeek> matchWeeks = matcher.generateScheduleForRoundRobinLeague(clubs);
 
         // assert
-        assertEquals(8 * 2 - 2, clubs.size() * 2 - 2);
-        assertThat(clubs).doesNotHaveDuplicates();
+        assertEquals(clubs.size() * 2 - 2, matchWeeks.size());
+        assertThat(matchWeeks).doesNotHaveDuplicates();
     }
 
     private List<FootballClub> generateFootballClubs() {
@@ -33,7 +33,7 @@ class FootballClubCompetitionMatcherTests {
                 FootballClub.builder()
                         .name("FC1")
                         .victoryChance(1)
-                .build(),
+                        .build(),
                 FootballClub.builder()
                         .name("FC2")
                         .victoryChance(1)
