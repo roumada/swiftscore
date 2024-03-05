@@ -3,9 +3,9 @@ package com.roumada.swiftscore.competition.manager;
 import com.roumada.swiftscore.competition.operator.CompetitionRoundOperator;
 import com.roumada.swiftscore.match.CompetitionRoundSimulator;
 import com.roumada.swiftscore.model.match.CompetitionRound;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 
-@AllArgsConstructor
+@Builder
 public class CompetitionRoundManager {
     private CompetitionRoundOperator competitionRoundOperator;
     private CompetitionRoundSimulator competitionRoundSimulator;
