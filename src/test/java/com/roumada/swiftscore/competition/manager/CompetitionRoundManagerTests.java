@@ -30,10 +30,10 @@ class CompetitionRoundManagerTests {
 
         // assert
         assertThat(competitionRoundManager.getPreviousCompetitionRound().matches())
-                .filteredOn(match -> !match.getMatchStatus().equals(FootballMatch.Status.UNFINISHED))
+                .filteredOn(match -> !match.getMatchResult().equals(FootballMatch.Result.UNFINISHED))
                 .hasSize(FootballClubTestUtils.generateFootballClubs().size() / 2);
         assertThat(competitionRoundManager.getCurrentCompetitionRound().matches())
-                .filteredOn(match -> match.getMatchStatus().equals(FootballMatch.Status.UNFINISHED))
+                .filteredOn(match -> match.getMatchResult().equals(FootballMatch.Result.UNFINISHED))
                 .hasSize(FootballClubTestUtils.generateFootballClubs().size() / 2);
         List<String> homeSideFCs = competitionRoundManager.getPreviousCompetitionRound().matches().stream()
                 .map(match -> match.getHomeSideStatistics().getFootballClub().getName())

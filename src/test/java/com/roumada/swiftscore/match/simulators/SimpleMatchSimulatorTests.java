@@ -6,7 +6,7 @@ import com.roumada.swiftscore.model.match.FootballMatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.roumada.swiftscore.model.match.FootballMatch.Status.*;
+import static com.roumada.swiftscore.model.match.FootballMatch.Result.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -27,7 +27,7 @@ class SimpleMatchSimulatorTests {
         matchSimulator.simulateMatch(footballMatch);
 
         // assert
-        assertEquals(HOME_SIDE_VICTORY, footballMatch.getMatchStatus());
+        assertEquals(HOME_SIDE_VICTORY, footballMatch.getMatchResult());
         assertTrue(footballMatch.getHomeSideStatistics().getGoalsScored() >
                 footballMatch.getAwaySideStatistics().getGoalsScored());
     }
@@ -46,7 +46,7 @@ class SimpleMatchSimulatorTests {
         matchSimulator.simulateMatch(footballMatch);
 
         // assert
-        assertEquals(AWAY_SIDE_VICTORY, footballMatch.getMatchStatus());
+        assertEquals(AWAY_SIDE_VICTORY, footballMatch.getMatchResult());
         assertTrue(footballMatch.getHomeSideStatistics().getGoalsScored() <
                 footballMatch.getAwaySideStatistics().getGoalsScored());
     }
@@ -65,7 +65,7 @@ class SimpleMatchSimulatorTests {
         matchSimulator.simulateMatch(footballMatch);
 
         // assert
-        assertEquals(DRAW, footballMatch.getMatchStatus());
+        assertEquals(DRAW, footballMatch.getMatchResult());
         assertEquals(footballMatch.getHomeSideStatistics().getGoalsScored(),
                 footballMatch.getAwaySideStatistics().getGoalsScored());
     }

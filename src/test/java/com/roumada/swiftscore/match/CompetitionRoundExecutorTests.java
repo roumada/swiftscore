@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.roumada.swiftscore.model.match.FootballMatch.Status.*;
+import static com.roumada.swiftscore.model.match.FootballMatch.Result.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,13 +30,13 @@ class CompetitionRoundExecutorTests {
         competitionRoundSimulator.simulate(competitionRound);
 
         // assert
-        assertEquals(HOME_SIDE_VICTORY, competitionRound.matches().get(0).getMatchStatus());
+        assertEquals(HOME_SIDE_VICTORY, competitionRound.matches().get(0).getMatchResult());
         assertTrue(competitionRound.matches().get(0).getHomeSideStatistics().getGoalsScored() >
                 competitionRound.matches().get(0).getAwaySideStatistics().getGoalsScored());
-        assertEquals(AWAY_SIDE_VICTORY, competitionRound.matches().get(1).getMatchStatus());
+        assertEquals(AWAY_SIDE_VICTORY, competitionRound.matches().get(1).getMatchResult());
         assertTrue(competitionRound.matches().get(1).getHomeSideStatistics().getGoalsScored() <
                 competitionRound.matches().get(1).getAwaySideStatistics().getGoalsScored());
-        assertEquals(DRAW, competitionRound.matches().get(2).getMatchStatus());
+        assertEquals(DRAW, competitionRound.matches().get(2).getMatchResult());
         assertEquals(competitionRound.matches().get(2).getHomeSideStatistics().getGoalsScored(),
                 competitionRound.matches().get(2).getAwaySideStatistics().getGoalsScored());
     }

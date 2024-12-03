@@ -6,7 +6,7 @@ public class MatchResolverFactory {
 
     private MatchResolverFactory(){}
     public static ScoreResolver getFor(FootballMatch footballMatch) {
-        switch (footballMatch.getMatchStatus()) {
+        switch (footballMatch.getMatchResult()) {
             case HOME_SIDE_VICTORY -> {
                 return new HomeSideVictorScoreResolver();
             }

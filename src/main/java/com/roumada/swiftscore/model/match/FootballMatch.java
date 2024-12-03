@@ -6,7 +6,7 @@ import lombok.Data;
 public class FootballMatch {
     private FootballClubMatchStatistics homeSideStatistics;
     private FootballClubMatchStatistics awaySideStatistics;
-    private Status matchStatus = Status.UNFINISHED;
+    private Result matchResult = Result.UNFINISHED;
 
     public FootballMatch(FootballClubMatchStatistics homeSideStatistics, FootballClubMatchStatistics awaySideStatistics) {
         this.homeSideStatistics = homeSideStatistics;
@@ -21,7 +21,7 @@ public class FootballMatch {
         return awaySideStatistics.getFootballClub().getVictoryChance();
     }
 
-    public enum Status {
+    public enum Result {
         HOME_SIDE_VICTORY, AWAY_SIDE_VICTORY, DRAW, UNFINISHED
     }
 }
