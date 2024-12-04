@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SwiftscoreApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SwiftscoreApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SwiftscoreApplication.class, args);
+    }
 
 }
