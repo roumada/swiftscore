@@ -4,7 +4,9 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -19,9 +21,12 @@ public class MongoConfiguration extends AbstractMongoClientConfiguration {
         return "test";
     }
 
+    @Autowired
+    private Environment env;
+
     @Override
-    public MongoClient mongoClient(){
-        ConnectionString cs = new ConnectionString("mongodb://localhost:27017/test");
+    public MongoClient mongoClient() {
+        ConnectionString cs = new ConnectionString(env.getProperty("spring.data.mongodb.uri"));
         MongoClientSettings mcs = MongoClientSettings.builder()
                 .applyConnectionString(cs)
                 .build();
