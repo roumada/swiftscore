@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface FootballClubRepository extends MongoRepository<FootballClub, String> {
 
-    Optional<FootballClub> findByName(String name);
+    Optional<FootballClub> findById(long id);
 }

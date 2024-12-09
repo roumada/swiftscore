@@ -17,10 +17,10 @@ class FootballClubDataLayerIntegrationTest extends AbstractBaseIntegrationTest {
 
     @Test
     void test_givenFCRepository_whenSaveAndRetrieveClub_thenOK() {
-        FootballClub fc = FootballClub.builder().name("Norf FC").victoryChance(0.33f).build();
+        FootballClub fc = FootballClub.builder().id(1).name("Norf FC").victoryChance(0.33f).build();
 
         FootballClub saved = repository.save(fc);
-        Optional<FootballClub> optionalFC = repository.findByName(saved.getName());
+        Optional<FootballClub> optionalFC = repository.findById(saved.getId());
 
         assertThat(optionalFC).isPresent();
 

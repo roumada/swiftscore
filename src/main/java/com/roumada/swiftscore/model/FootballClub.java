@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class FootballClub {
 
     @Id
+    private long id;
     private String name;
     private float victoryChance;
 
@@ -22,7 +23,7 @@ public class FootballClub {
             if (victoryChance < 0) {
                 throw new IllegalArgumentException("Victory chance cannot be lower than 0");
             }
-            return new FootballClub(name, victoryChance);
+            return new FootballClub(id, name, victoryChance);
         }
     }
 }
