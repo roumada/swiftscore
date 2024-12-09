@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.match;
+package com.roumada.swiftscore.competition;
 
 import com.roumada.swiftscore.match.simulators.MatchSimulator;
 import com.roumada.swiftscore.model.match.CompetitionRound;

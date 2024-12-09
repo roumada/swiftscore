@@ -3,7 +3,7 @@ package com.roumada.swiftscore.integration.controller;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionDTO;
-import com.roumada.swiftscore.repository.FootballClubRepository;
+import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,8 +4,8 @@ import com.roumada.swiftscore.competition.schedule.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionDTO;
 import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.repository.CompetitionRepository;
-import com.roumada.swiftscore.repository.FootballClubRepository;
+import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
+import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class CompetitionDataLayer {
 
     public Competition persistWithClubIds(CompetitionDTO dto) {
         var footballClubs = new ArrayList<FootballClub>();
-        for(Long id : dto.participantIds()){
+        for (Long id : dto.participantIds()) {
             footballClubs.add(footballClubRepository.findById(id).orElse(FootballClub.builder().build()));
         }
 
@@ -28,7 +28,7 @@ public class CompetitionDataLayer {
         return competitionRepository.save(comp);
     }
 
-    public Competition getById(Long id){
+    public Competition getById(Long id) {
         return competitionRepository.findById(id).orElse(null);
     }
 }

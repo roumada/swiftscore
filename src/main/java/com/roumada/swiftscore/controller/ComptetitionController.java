@@ -27,4 +27,5 @@ public class ComptetitionController {
                 new ResponseEntity<>(new Competition(), HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(comp, HttpStatus.OK);
     }
+
 }

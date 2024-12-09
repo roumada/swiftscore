@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.competition.manager;
 
 import com.roumada.swiftscore.competition.operator.CompetitionRoundOperator;
-import com.roumada.swiftscore.match.CompetitionRoundSimulator;
+import com.roumada.swiftscore.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import lombok.Builder;
 
