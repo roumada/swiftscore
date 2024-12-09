@@ -2,10 +2,16 @@ package com.roumada.swiftscore.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder(builderClassName = "Builder")
+@Document(collection = "FootballClub")
 public class FootballClub {
+
+    @Id
+    private long id;
     private String name;
     private float victoryChance;
 
@@ -17,7 +23,7 @@ public class FootballClub {
             if (victoryChance < 0) {
                 throw new IllegalArgumentException("Victory chance cannot be lower than 0");
             }
-            return new FootballClub(name, victoryChance);
+            return new FootballClub(id, name, victoryChance);
         }
     }
 }
