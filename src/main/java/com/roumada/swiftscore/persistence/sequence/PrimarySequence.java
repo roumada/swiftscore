@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.persistence;
+package com.roumada.swiftscore.persistence.sequence;
 
 import lombok.Getter;
 import lombok.Setter;

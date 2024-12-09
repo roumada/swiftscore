@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.persistence.listener;
 
-import com.roumada.swiftscore.persistence.PrimarySequenceService;
+import com.roumada.swiftscore.persistence.sequence.PrimarySequenceService;
 import com.roumada.swiftscore.model.FootballClub;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class FootballClubListener extends AbstractMongoEventListener<FootballClub> {
+public class FootballClubSequenceListener extends AbstractMongoEventListener<FootballClub> {
 
     private final PrimarySequenceService primarySequenceService;
 

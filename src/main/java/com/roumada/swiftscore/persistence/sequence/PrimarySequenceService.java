@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.persistence;
+package com.roumada.swiftscore.persistence.sequence;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;

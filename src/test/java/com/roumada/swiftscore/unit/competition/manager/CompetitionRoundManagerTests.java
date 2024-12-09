@@ -1,7 +1,8 @@
 package com.roumada.swiftscore.unit.competition.manager;
 
-import com.roumada.swiftscore.unit.competition.operator.CompetitionRoundOperator;
-import com.roumada.swiftscore.unit.competition.schedule.CompetitionRoundsGenerator;
+import com.roumada.swiftscore.competition.manager.CompetitionRoundManager;
+import com.roumada.swiftscore.competition.operator.CompetitionRoundOperator;
+import com.roumada.swiftscore.competition.schedule.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.match.CompetitionRoundSimulator;
 import com.roumada.swiftscore.match.simulators.SimpleMatchSimulator;
 import com.roumada.swiftscore.model.match.FootballMatch;

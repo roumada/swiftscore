@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.persistence;
 
-import com.roumada.swiftscore.unit.competition.schedule.CompetitionRoundsGenerator;
+import com.roumada.swiftscore.competition.schedule.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionDTO;
 import com.roumada.swiftscore.model.match.Competition;
