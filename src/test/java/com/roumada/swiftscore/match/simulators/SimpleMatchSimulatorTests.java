@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.match.simulators;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.match.FootballClubMatchStatistics;
+import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,8 @@ class SimpleMatchSimulatorTests {
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(0.5f).build();
         FootballClub footballClub2 = FootballClub.builder().name("Football club 2").victoryChance(0.2f).build();
 
-        FootballMatch footballMatch = new FootballMatch(new FootballClubMatchStatistics(footballClub1),
-                new FootballClubMatchStatistics(footballClub2));
+        FootballMatch footballMatch = new FootballMatch(new FootballMatchStatistics(footballClub1),
+                new FootballMatchStatistics(footballClub2));
 
         // act
         matchSimulator.simulateMatch(footballMatch);
@@ -39,8 +39,8 @@ class SimpleMatchSimulatorTests {
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(0.2f).build();
         FootballClub footballClub2 = FootballClub.builder().name("Football club 2").victoryChance(0.5f).build();
 
-        FootballMatch footballMatch = new FootballMatch(new FootballClubMatchStatistics(footballClub1),
-                new FootballClubMatchStatistics(footballClub2));
+        FootballMatch footballMatch = new FootballMatch(new FootballMatchStatistics(footballClub1),
+                new FootballMatchStatistics(footballClub2));
 
         // act
         matchSimulator.simulateMatch(footballMatch);
@@ -58,8 +58,8 @@ class SimpleMatchSimulatorTests {
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(0.5f).build();
         FootballClub footballClub2 = FootballClub.builder().name("Football club 2").victoryChance(0.5f).build();
 
-        FootballMatch footballMatch = new FootballMatch(new FootballClubMatchStatistics(footballClub1),
-                new FootballClubMatchStatistics(footballClub2));
+        FootballMatch footballMatch = new FootballMatch(new FootballMatchStatistics(footballClub1),
+                new FootballMatchStatistics(footballClub2));
 
         // act
         matchSimulator.simulateMatch(footballMatch);

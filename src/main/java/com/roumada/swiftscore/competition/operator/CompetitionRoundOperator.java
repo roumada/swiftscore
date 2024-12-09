@@ -1,28 +1,22 @@
 package com.roumada.swiftscore.competition.operator;
 
+import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
-import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
 
-import java.util.List;
-
-@Slf4j
+@AllArgsConstructor
 public class CompetitionRoundOperator {
-    private int currentCompetitionRound = 1;
-    private final List<CompetitionRound> competitionRounds;
-
-    public CompetitionRoundOperator(List<CompetitionRound> competitionRounds) {
-        this.competitionRounds = competitionRounds;
-    }
+    private Competition competition;
 
     public CompetitionRound getCurrent() {
-        return competitionRounds.get(currentCompetitionRound - 1);
+        return competition.getRounds().get(competition.getCurrentRound() - 1);
     }
 
     public CompetitionRound getPrevious() {
-        return competitionRounds.get(currentCompetitionRound - 2);
+        return competition.getRounds().get(competition.getCurrentRound() - 2);
     }
 
     public void incrementCurrentCompetitionRoundCounter() {
-        currentCompetitionRound++;
+        competition.setCurrentRound(competition.getCurrentRound() + 1);
     }
 }

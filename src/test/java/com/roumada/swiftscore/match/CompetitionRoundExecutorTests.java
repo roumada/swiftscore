@@ -2,9 +2,9 @@ package com.roumada.swiftscore.match;
 
 import com.roumada.swiftscore.match.simulators.SimpleMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.match.FootballClubMatchStatistics;
-import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatchStatistics;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -30,25 +30,25 @@ class CompetitionRoundExecutorTests {
         competitionRoundSimulator.simulate(competitionRound);
 
         // assert
-        assertEquals(HOME_SIDE_VICTORY, competitionRound.matches().get(0).getMatchResult());
-        assertTrue(competitionRound.matches().get(0).getHomeSideStatistics().getGoalsScored() >
-                competitionRound.matches().get(0).getAwaySideStatistics().getGoalsScored());
-        assertEquals(AWAY_SIDE_VICTORY, competitionRound.matches().get(1).getMatchResult());
-        assertTrue(competitionRound.matches().get(1).getHomeSideStatistics().getGoalsScored() <
-                competitionRound.matches().get(1).getAwaySideStatistics().getGoalsScored());
-        assertEquals(DRAW, competitionRound.matches().get(2).getMatchResult());
-        assertEquals(competitionRound.matches().get(2).getHomeSideStatistics().getGoalsScored(),
-                competitionRound.matches().get(2).getAwaySideStatistics().getGoalsScored());
+        assertEquals(HOME_SIDE_VICTORY, competitionRound.getMatches().get(0).getMatchResult());
+        assertTrue(competitionRound.getMatches().get(0).getHomeSideStatistics().getGoalsScored() >
+                competitionRound.getMatches().get(0).getAwaySideStatistics().getGoalsScored());
+        assertEquals(AWAY_SIDE_VICTORY, competitionRound.getMatches().get(1).getMatchResult());
+        assertTrue(competitionRound.getMatches().get(1).getHomeSideStatistics().getGoalsScored() <
+                competitionRound.getMatches().get(1).getAwaySideStatistics().getGoalsScored());
+        assertEquals(DRAW, competitionRound.getMatches().get(2).getMatchResult());
+        assertEquals(competitionRound.getMatches().get(2).getHomeSideStatistics().getGoalsScored(),
+                competitionRound.getMatches().get(2).getAwaySideStatistics().getGoalsScored());
     }
 
     private static CompetitionRound prepareMatchWeek(FootballClub footballClub1, FootballClub footballClub2) {
-        FootballMatch footballMatch1 = new FootballMatch(new FootballClubMatchStatistics(footballClub1),
-                new FootballClubMatchStatistics(footballClub2));
-        FootballMatch footballMatch2 = new FootballMatch(new FootballClubMatchStatistics(footballClub2),
-                new FootballClubMatchStatistics(footballClub1));
-        FootballMatch footballMatch3 = new FootballMatch(new FootballClubMatchStatistics(footballClub2),
-                new FootballClubMatchStatistics(footballClub2));
+        FootballMatch footballMatch1 = new FootballMatch(new FootballMatchStatistics(footballClub1),
+                new FootballMatchStatistics(footballClub2));
+        FootballMatch footballMatch2 = new FootballMatch(new FootballMatchStatistics(footballClub2),
+                new FootballMatchStatistics(footballClub1));
+        FootballMatch footballMatch3 = new FootballMatch(new FootballMatchStatistics(footballClub2),
+                new FootballMatchStatistics(footballClub2));
 
-        return new CompetitionRound(1, List.of(footballMatch1, footballMatch2, footballMatch3));
+        return new CompetitionRound(0, 1, List.of(footballMatch1, footballMatch2, footballMatch3));
     }
 }

@@ -2,13 +2,13 @@ package com.roumada.swiftscore.competition.schedule;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.MonoPair;
-import com.roumada.swiftscore.model.match.FootballClubMatchStatistics;
-import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatchStatistics;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -18,15 +18,17 @@ public class CompetitionRoundsGenerator {
     private CompetitionRoundsGenerator() {
     }
 
-    public static List<CompetitionRound> generateForLeague(List<FootballClub> clubs) {
+    public static Competition generateForLeague(List<FootballClub> clubs) {
         if (clubs.size() % 2 == 1) {
             log.warn("Unable to generate competition rounds for odd amount of clubs. Aborting...");
-            return Collections.emptyList();
+            return new Competition();
         }
 
         List<List<MonoPair<Integer>>> numericRoundRobinMatchups = generateRoundRobinNumericMatchups(clubs.size());
 
-        return createCompetitionRoundsOnNumericMatchups(clubs, numericRoundRobinMatchups);
+        var comp = new Competition();
+        comp.setRounds(createCompetitionRoundsOnNumericMatchups(clubs, numericRoundRobinMatchups));
+        return comp;
     }
 
     private static List<CompetitionRound> createCompetitionRoundsOnNumericMatchups(List<FootballClub> clubs,
@@ -39,11 +41,11 @@ public class CompetitionRoundsGenerator {
 
             for (MonoPair<Integer> numericMatch : numericCompRound) {
                 compRoundMatches.add(new FootballMatch(
-                        new FootballClubMatchStatistics(clubs.get(numericMatch.getA())),
-                        new FootballClubMatchStatistics(clubs.get(numericMatch.getB()))));
+                        new FootballMatchStatistics(clubs.get(numericMatch.getA())),
+                        new FootballMatchStatistics(clubs.get(numericMatch.getB()))));
             }
 
-            competitionRounds.add(new CompetitionRound(roundCounter++, compRoundMatches));
+            competitionRounds.add(new CompetitionRound(0, roundCounter++, compRoundMatches));
         }
 
         return competitionRounds;

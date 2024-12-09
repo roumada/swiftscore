@@ -1,8 +1,8 @@
 package com.roumada.swiftscore.match;
 
 import com.roumada.swiftscore.match.simulators.MatchSimulator;
-import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
 
 public class CompetitionRoundSimulator {
     private final MatchSimulator matchSimulator;
@@ -16,7 +16,7 @@ public class CompetitionRoundSimulator {
     }
 
     public void simulate(CompetitionRound competitionRound) {
-        for (FootballMatch match : competitionRound.matches()) {
+        for (FootballMatch match : competitionRound.getMatches()) {
             matchSimulator.simulateMatch(match);
         }
     }

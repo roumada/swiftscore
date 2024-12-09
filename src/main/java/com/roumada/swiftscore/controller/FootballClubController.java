@@ -11,16 +11,16 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class FootballClubController {
 
-    private final FootballClubRepository fcr;
+    private final FootballClubRepository repository;
 
     @PostMapping(consumes = "application/json")
     public long createFootballClub(@RequestBody FootballClubDTO dto){
-        FootballClub fc = FootballClub.builder().name(dto.getName()).victoryChance(dto.getVictoryChance()).build();
-        return fcr.save(fc).getId();
+        var fc = FootballClub.builder().name(dto.name()).victoryChance(dto.victoryChance()).build();
+        return repository.save(fc).getId();
     }
 
     @GetMapping("/{id}")
     public FootballClub getFootballClub(@PathVariable long id){
-        return fcr.findById(id).orElse(FootballClub.builder().build());
+        return repository.findById(id).orElse(FootballClub.builder().build());
     }
 }

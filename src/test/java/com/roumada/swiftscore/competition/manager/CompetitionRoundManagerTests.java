@@ -29,16 +29,16 @@ class CompetitionRoundManagerTests {
         competitionRoundManager.simulateRound();
 
         // assert
-        assertThat(competitionRoundManager.getPreviousCompetitionRound().matches())
+        assertThat(competitionRoundManager.getPreviousCompetitionRound().getMatches())
                 .filteredOn(match -> !match.getMatchResult().equals(FootballMatch.Result.UNFINISHED))
                 .hasSize(FootballClubTestUtils.generateFootballClubs().size() / 2);
-        assertThat(competitionRoundManager.getCurrentCompetitionRound().matches())
+        assertThat(competitionRoundManager.getCurrentCompetitionRound().getMatches())
                 .filteredOn(match -> match.getMatchResult().equals(FootballMatch.Result.UNFINISHED))
                 .hasSize(FootballClubTestUtils.generateFootballClubs().size() / 2);
-        List<String> homeSideFCs = competitionRoundManager.getPreviousCompetitionRound().matches().stream()
+        List<String> homeSideFCs = competitionRoundManager.getPreviousCompetitionRound().getMatches().stream()
                 .map(match -> match.getHomeSideStatistics().getFootballClub().getName())
                 .toList();
-        List<String> awaySideFCs = competitionRoundManager.getPreviousCompetitionRound().matches().stream()
+        List<String> awaySideFCs = competitionRoundManager.getPreviousCompetitionRound().getMatches().stream()
                 .map(match -> match.getAwaySideStatistics().getFootballClub().getName())
                 .toList();
         assertThat(List.of(homeSideFCs, awaySideFCs)).doesNotHaveDuplicates();
