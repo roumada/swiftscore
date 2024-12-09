@@ -3,6 +3,7 @@ package com.roumada.swiftscore.integration.repository;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.repository.FootballClubRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,8 +17,9 @@ class FootballClubDataLayerIntegrationTest extends AbstractBaseIntegrationTest {
     private FootballClubRepository repository;
 
     @Test
-    void test_givenFCRepository_whenSaveAndRetrieveClub_thenOK() {
-        FootballClub fc = FootballClub.builder().id(1).name("Norf FC").victoryChance(0.33f).build();
+    @DisplayName("Should save a football club to the database")
+    void shoudSaveToDatabase() {
+        FootballClub fc = FootballClub.builder().id(null).name("Norf FC").victoryChance(0.33f).build();
 
         FootballClub saved = repository.save(fc);
         Optional<FootballClub> optionalFC = repository.findById(saved.getId());

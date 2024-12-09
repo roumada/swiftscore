@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.roumada.swiftscore.competition.schedule.CompetitionRoundsGenerator.generateForLeague;
+import static com.roumada.swiftscore.competition.schedule.CompetitionRoundsGenerator.generate;
 import static com.roumada.swiftscore.util.FootballClubTestUtils.generateFootballClubs;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +20,7 @@ class CompetitionRoundsGeneratorTests {
         List<FootballClub> clubs = generateFootballClubs();
 
         // act
-        var competition = generateForLeague(clubs);
+        var competition = generate(clubs);
 
         // assert
         assertEquals(clubs.size() * 2 - 2, competition.getRounds().size());

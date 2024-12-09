@@ -16,6 +16,4 @@ public class CompetitionRound {
     private long id;
     private int round;
     private List<FootballMatch> matches;
-
-
 }

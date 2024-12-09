@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface FootballClubRepository extends MongoRepository<FootballClub, String> {
+public interface FootballClubRepository extends MongoRepository<FootballClub, Long> {
 
     Optional<FootballClub> findById(long id);
 }

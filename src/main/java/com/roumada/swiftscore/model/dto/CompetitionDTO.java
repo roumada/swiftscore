@@ -1,8 +1,11 @@
 package com.roumada.swiftscore.model.dto;
 
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.List;
 
-public record CompetitionDTO(int round, List<CompetitionRound> rounds) {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonSerialize
+public record CompetitionDTO(List<Long> participantIds) {
 }

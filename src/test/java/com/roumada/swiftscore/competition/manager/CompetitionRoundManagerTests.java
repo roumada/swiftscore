@@ -21,7 +21,7 @@ class CompetitionRoundManagerTests {
         // arrange
         CompetitionRoundManager competitionRoundManager = CompetitionRoundManager.builder()
                 .competitionRoundOperator(new CompetitionRoundOperator(
-                        CompetitionRoundsGenerator.generateForLeague(FootballClubTestUtils.generateFootballClubs())))
+                        CompetitionRoundsGenerator.generate(FootballClubTestUtils.generateFootballClubs())))
                 .competitionRoundSimulator(CompetitionRoundSimulator.withMatchSimulator(new SimpleMatchSimulator()))
                 .build();
 

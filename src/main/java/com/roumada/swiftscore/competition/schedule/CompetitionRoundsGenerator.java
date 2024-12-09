@@ -18,7 +18,7 @@ public class CompetitionRoundsGenerator {
     private CompetitionRoundsGenerator() {
     }
 
-    public static Competition generateForLeague(List<FootballClub> clubs) {
+    public static Competition generate(List<FootballClub> clubs) {
         if (clubs.size() % 2 == 1) {
             log.warn("Unable to generate competition rounds for odd amount of clubs. Aborting...");
             return new Competition();
