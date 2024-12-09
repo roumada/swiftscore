@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Data
-@Document("Competition")
+@Document("competition")
 @NoArgsConstructor
 public class Competition {
 

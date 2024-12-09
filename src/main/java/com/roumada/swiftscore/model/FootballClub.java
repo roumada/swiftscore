@@ -2,12 +2,13 @@ package com.roumada.swiftscore.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder(builderClassName = "Builder")
-@Document(collection = "FootballClub")
+@Document(collection = "football_club")
 public class FootballClub {
 
     @Id

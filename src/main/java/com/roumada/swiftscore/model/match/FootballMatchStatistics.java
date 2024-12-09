@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Data
-@Document("FootballMatchStatistics")
+@Document("football_match_statistics")
 public class FootballMatchStatistics {
     private final FootballClub footballClub;
     @Setter

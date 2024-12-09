@@ -4,6 +4,8 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.FootballClubDTO;
 import com.roumada.swiftscore.repository.FootballClubRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,7 +22,9 @@ public class FootballClubController {
     }
 
     @GetMapping("/{id}")
-    public FootballClub getFootballClub(@PathVariable long id){
-        return repository.findById(id).orElse(FootballClub.builder().build());
+    public ResponseEntity<FootballClub> getFootballClub(@PathVariable long id){
+        var fc = repository.findById(id);
+        return fc.map(footballClub -> new ResponseEntity<>(footballClub, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(FootballClub.builder().build(), HttpStatus.BAD_REQUEST));
     }
 }

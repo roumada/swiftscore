@@ -46,6 +46,9 @@ class CompetitionControllerTest extends AbstractBaseIntegrationTest {
         String compId = mvcResult.getResponse()
                 .getContentAsString();
 
+        mvc.perform(get("/competition/" + -1))
+                .andExpect(status().is4xxClientError());
+
         mvc.perform(get("/competition/" + compId))
                 .andExpect(status().isOk());
     }
