@@ -1,10 +1,7 @@
 package com.roumada.swiftscore.unit.competition.schedule;
 
-import com.roumada.swiftscore.model.FootballClub;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static com.roumada.swiftscore.logic.competition.schedule.CompetitionRoundsGenerator.generate;
 import static com.roumada.swiftscore.util.FootballClubTestUtils.generateFootballClubs;
@@ -17,7 +14,7 @@ class CompetitionRoundsGeneratorTests {
     @DisplayName("Should correctly generate matchups for a league in round-robin system")
     void shouldCorrectlyGenerateRoundRobinLeague() {
         // arrange
-        List<FootballClub> clubs = generateFootballClubs();
+        var clubs = generateFootballClubs();
 
         // act
         var rounds = generate(clubs);

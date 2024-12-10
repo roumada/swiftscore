@@ -32,10 +32,11 @@ class CompetitionDataLayerIntegrationTest extends AbstractBaseIntegrationTest {
         // act
         fc1 = fcDataLayer.save(fc1);
         fc2 = fcDataLayer.save(fc2);
-        var compId = dataLayer.generateAndSave(List.of(fc1.getId(), fc2.getId())).getId();
+        var optionalCompId = dataLayer.generateAndSave(List.of(fc1.getId(), fc2.getId()));
 
         // assert
-        var optionalComp = dataLayer.findCompetitionById(compId);
+        assert(optionalCompId).isPresent();
+        var optionalComp = dataLayer.findCompetitionById(optionalCompId.get());
         assert(optionalComp).isPresent();
         var comp = optionalComp.get();
         assertNotNull(comp.getId());

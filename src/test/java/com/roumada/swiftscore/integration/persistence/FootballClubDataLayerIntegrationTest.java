@@ -7,8 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FootballClubDataLayerIntegrationTest extends AbstractBaseIntegrationTest {
@@ -20,14 +18,15 @@ class FootballClubDataLayerIntegrationTest extends AbstractBaseIntegrationTest {
     @DisplayName("Should save a football club to the database")
     void shouldSaveToDatabase() {
         // arrange
-        FootballClub fc = FootballClub.builder().name("Norf FC").victoryChance(0.33f).build();
+        var fc = FootballClub.builder().name("Norf FC").victoryChance(0.33f).build();
+        var saved = dataLayer.save(fc);
 
-        FootballClub saved = dataLayer.save(fc);
-        Optional<FootballClub> optionalFC = dataLayer.findById(saved.getId());
+        // act
+        var optionalFC = dataLayer.findById(saved.getId());
 
+        // assert
         assertThat(optionalFC).isPresent();
-
-        FootballClub retrievedFC = optionalFC.get();
+        var retrievedFC = optionalFC.get();
         assertThat(retrievedFC.getName()).isEqualTo(fc.getName());
     }
 }

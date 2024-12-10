@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -37,6 +36,7 @@ class CompetitionControllerTest extends AbstractBaseIntegrationTest {
     @Test
     @DisplayName("Should create a competition if there are clubs with given IDs in the database")
     void shouldCreateCompetitionFromExistingClubs() throws Exception {
+        // arrange
         fcrepository.saveAll(List.of(
                 FootballClub.builder().id(1l).name("Norf FC").victoryChance(0.3f).build(),
                 FootballClub.builder().id(2l).name("Souf FC").victoryChance(0.4f).build(),
@@ -44,12 +44,14 @@ class CompetitionControllerTest extends AbstractBaseIntegrationTest {
                 FootballClub.builder().id(4l).name("East FC").victoryChance(0.6f).build()
         ));
 
-        MvcResult mvcResult = mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
+        // act
+        var mvcResult = mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionDTO(List.of(1l, 2l, 3l, 4l)))))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String compId = mvcResult.getResponse()
+        // assert
+        var compId = mvcResult.getResponse()
                 .getContentAsString();
 
         mvc.perform(get("/competition/" + -1))
@@ -62,17 +64,19 @@ class CompetitionControllerTest extends AbstractBaseIntegrationTest {
     @Test
     @DisplayName("Should return all competitions")
     void shouldReturnAllCompetitions() throws Exception {
+        // arrange
         competitionRepository.save(new Competition());
         competitionRepository.save(new Competition());
 
+        // act
         var result = mvc.perform(get("/competition/all"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-
         var resultArray = new JSONArray(result);
 
+        // assert
         assertEquals(2, resultArray.length());
     }
 }

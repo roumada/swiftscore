@@ -26,15 +26,15 @@ public class CompetitionDataLayer {
     private final FootballClubRepository footballClubRepository;
     private final FootballMatchDataLayer footballMatchDataLayer;
 
-    public Competition generateAndSave(List<Long> participantIds) {
+    public Optional<Long> generateAndSave(List<Long> participantIds) {
         var footballClubs = new ArrayList<FootballClub>();
         for (Long id : participantIds) {
             footballClubs.add(footballClubRepository.findById(id).orElse(null));
         }
 
         if (footballClubs.contains(null)) {
-            log.error("Failed to generate competition - at least one of the club IDs was invalid.");
-            return null;
+            log.error("Failed to generate competition - failed to retrieve at least one club from the database.");
+            return Optional.empty();
         }
 
         var rounds = CompetitionRoundsGenerator.generate(footballClubs);
@@ -43,7 +43,8 @@ public class CompetitionDataLayer {
         var competition = new Competition();
         competition.setParticipants(footballClubs);
         competition.setRounds(rounds);
-        return competitionRepository.save(competition);
+        competitionRepository.save(competition);
+        return Optional.of(competition.getId());
     }
 
     public Optional<Competition> findCompetitionById(Long id) {

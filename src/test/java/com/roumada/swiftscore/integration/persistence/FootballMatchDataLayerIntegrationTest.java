@@ -8,8 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FootballMatchDataLayerIntegrationTest extends AbstractBaseIntegrationTest {
@@ -27,7 +25,7 @@ class FootballMatchDataLayerIntegrationTest extends AbstractBaseIntegrationTest 
 
         // act
         var saved = dataLayer.saveMatch(match);
-        Optional<FootballMatch> optionalMatch = dataLayer.findMatchById(saved.getId());
+        var optionalMatch = dataLayer.findMatchById(saved.getId());
 
         // assert
         assertThat(optionalMatch).isPresent();

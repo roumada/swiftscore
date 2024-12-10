@@ -27,16 +27,18 @@ class FootballClubControllerTest extends AbstractBaseIntegrationTest {
     @Test
     @DisplayName("Should save and then retrieve football club")
     void shouldSaveAndGetFootballClub() throws Exception {
+        // act
         MvcResult mvcResult = mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(FootballClub.builder()
                                 .name("Norf FC").victoryChance(0.3f).build())))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String productId = new JSONObject(mvcResult.getResponse()
+        // assert
+        var clubId = new JSONObject(mvcResult.getResponse()
                 .getContentAsString()).getString("id");
 
-        mvc.perform(get("/footballclub/" + productId))
+        mvc.perform(get("/footballclub/" + clubId))
                 .andExpect(status().isOk());
     }
 }
