@@ -14,7 +14,7 @@ import java.util.List;
 public class Competition {
 
     @Id
-    private Long id;
+    private Long id = null;
     private int currentRound = 1;
     private List<FootballClub> participants;
     private List<CompetitionRound> rounds;

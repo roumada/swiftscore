@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.roumada.swiftscore.competition.schedule.CompetitionRoundsGenerator.generate;
+import static com.roumada.swiftscore.logic.competition.schedule.CompetitionRoundsGenerator.generate;
 import static com.roumada.swiftscore.util.FootballClubTestUtils.generateFootballClubs;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,10 +20,10 @@ class CompetitionRoundsGeneratorTests {
         List<FootballClub> clubs = generateFootballClubs();
 
         // act
-        var competition = generate(clubs);
+        var rounds = generate(clubs);
 
         // assert
-        assertEquals(clubs.size() * 2 - 2, competition.getRounds().size());
-        assertThat(competition.getRounds()).doesNotHaveDuplicates();
+        assertEquals(clubs.size() * 2 - 2, rounds.size());
+        assertThat(rounds).doesNotHaveDuplicates();
     }
 }

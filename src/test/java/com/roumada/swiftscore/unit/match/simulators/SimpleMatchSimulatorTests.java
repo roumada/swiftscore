@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.unit.match.simulators;
 
-import com.roumada.swiftscore.match.simulators.MatchSimulator;
-import com.roumada.swiftscore.match.simulators.SimpleMatchSimulator;
+import com.roumada.swiftscore.logic.match.simulators.MatchSimulator;
+import com.roumada.swiftscore.logic.match.simulators.SimpleMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.model.match.FootballMatch;

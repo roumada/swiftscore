@@ -1,59 +1,50 @@
 package com.roumada.swiftscore.integration.persistence;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
-import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.CompetitionRound;
-import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
-import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
+import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.persistence.CompetitionDataLayer;
+import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CompetitionDataLayerIntegrationTest extends AbstractBaseIntegrationTest {
 
     @Autowired
-    private CompetitionRepository repository;
+    private FootballClubDataLayer fcDataLayer;
     @Autowired
-    private CompetitionRoundRepository compRoundRepository;
+    private CompetitionDataLayer dataLayer;
 
     @Test
-    @DisplayName("Should save a competition to the database")
+    @DisplayName("Should generate and save a competition and all underlying objects to the database")
     void shouldSaveCompetition() {
-        var comp = new Competition(Collections.emptyList(), Collections.emptyList());
+        // arrange
+        var fc1 = FootballClub.builder().name("Norf FC").victoryChance(0.2f).build();
+        var fc2 = FootballClub.builder().name("Souf FC").victoryChance(0.3f).build();
 
-        var saved = repository.save(comp);
-        var retrieved = repository.findById(saved.getId());
+        // act
+        fc1 = fcDataLayer.save(fc1);
+        fc2 = fcDataLayer.save(fc2);
+        var compId = dataLayer.generateAndSave(List.of(fc1.getId(), fc2.getId())).getId();
 
-        assertThat(retrieved).isPresent();
-
-        comp = retrieved.get();
-        assertEquals(10000, comp.getId());
-        assertTrue(comp.getRounds().isEmpty());
-        assertTrue(comp.getParticipants().isEmpty());
-    }
-
-    @Test
-    @DisplayName("Should save a competition with competition rounds to the database")
-    void shouldSaveWithCompRounds() {
-        var compRound1 = CompetitionRound.builder().round(1).matches(Collections.emptyList()).build();
-        var compRound2 = CompetitionRound.builder().round(2).matches(Collections.emptyList()).build();
-        var comp = new Competition(Collections.emptyList(), List.of(compRound1, compRound2));
-
-        compRoundRepository.save(compRound1);
-        compRoundRepository.save(compRound2);
-        var saved = repository.save(comp);
-        var retrieved = repository.findById(saved.getId());
-
-        assertThat(retrieved).isPresent();
-
-        comp = retrieved.get();
-        assertEquals(2, comp.getRounds().size());
+        // assert
+        var optionalComp = dataLayer.findCompetitionById(compId);
+        assert(optionalComp).isPresent();
+        var comp = optionalComp.get();
+        assertNotNull(comp.getId());
+        assertEquals(List.of(fc1, fc2), comp.getParticipants());
+        for (CompetitionRound cr : comp.getRounds()) {
+            assertNotNull(cr.getId());
+            for (FootballMatch fm : cr.getMatches()) {
+                assertNotNull(fm.getId());
+            }
+        }
     }
 }

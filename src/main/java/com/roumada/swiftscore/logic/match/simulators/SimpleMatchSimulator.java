@@ -1,6 +1,6 @@
-package com.roumada.swiftscore.match.simulators;
+package com.roumada.swiftscore.logic.match.simulators;
 
-import com.roumada.swiftscore.match.resolvers.MatchResolverFactory;
+import com.roumada.swiftscore.logic.match.resolvers.MatchResolverFactory;
 import com.roumada.swiftscore.model.match.FootballMatch;
 
 public class SimpleMatchSimulator implements MatchSimulator {

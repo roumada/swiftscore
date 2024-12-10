@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class FootballMatchStatistics {
 
     @Id
-    private Long id;
+    private Long id = null;
     private final FootballClub footballClub;
     @Setter
     private int goalsScored = 0;

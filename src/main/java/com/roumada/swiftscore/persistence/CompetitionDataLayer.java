@@ -1,16 +1,13 @@
 package com.roumada.swiftscore.persistence;
 
-import com.roumada.swiftscore.competition.schedule.CompetitionRoundsGenerator;
+import com.roumada.swiftscore.logic.competition.schedule.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.MonoPair;
-import com.roumada.swiftscore.model.dto.CompetitionDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
-import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,9 +26,9 @@ public class CompetitionDataLayer {
     private final FootballClubRepository footballClubRepository;
     private final FootballMatchDataLayer footballMatchDataLayer;
 
-    public Competition saveWithClubIds(CompetitionDTO dto) {
+    public Competition generateAndSave(List<Long> participantIds) {
         var footballClubs = new ArrayList<FootballClub>();
-        for (Long id : dto.participantIds()) {
+        for (Long id : participantIds) {
             footballClubs.add(footballClubRepository.findById(id).orElse(null));
         }
 
@@ -49,11 +46,11 @@ public class CompetitionDataLayer {
         return competitionRepository.save(competition);
     }
 
-    public Optional<Competition> findById(Long id) {
+    public Optional<Competition> findCompetitionById(Long id) {
         return competitionRepository.findById(id);
     }
 
-    public List<Competition> findAll() {
+    public List<Competition> findAllComps() {
         return competitionRepository.findAll();
     }
 

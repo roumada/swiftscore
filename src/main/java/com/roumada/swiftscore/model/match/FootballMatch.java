@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class FootballMatch {
 
     @Id
-    private Long id;
+    private Long id = null;
     private FootballMatchStatistics homeSideStatistics;
     private FootballMatchStatistics awaySideStatistics;
     private Result matchResult = Result.UNFINISHED;

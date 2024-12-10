@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.match.simulators;
+package com.roumada.swiftscore.logic.match.simulators;
 
 import com.roumada.swiftscore.model.match.FootballMatch;
 

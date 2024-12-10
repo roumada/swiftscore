@@ -1,10 +1,11 @@
 package com.roumada.swiftscore.unit.competition.manager;
 
-import com.roumada.swiftscore.competition.manager.CompetitionRoundManager;
-import com.roumada.swiftscore.competition.operator.CompetitionRoundOperator;
-import com.roumada.swiftscore.competition.schedule.CompetitionRoundsGenerator;
-import com.roumada.swiftscore.competition.CompetitionRoundSimulator;
-import com.roumada.swiftscore.match.simulators.SimpleMatchSimulator;
+import com.roumada.swiftscore.logic.competition.manager.CompetitionRoundManager;
+import com.roumada.swiftscore.logic.competition.operator.CompetitionRoundOperator;
+import com.roumada.swiftscore.logic.competition.schedule.CompetitionRoundsGenerator;
+import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
+import com.roumada.swiftscore.logic.match.simulators.SimpleMatchSimulator;
+import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +23,8 @@ class CompetitionRoundManagerTests {
         // arrange
         CompetitionRoundManager competitionRoundManager = CompetitionRoundManager.builder()
                 .competitionRoundOperator(new CompetitionRoundOperator(
-                        CompetitionRoundsGenerator.generate(FootballClubTestUtils.generateFootballClubs())))
+                        new Competition(FootballClubTestUtils.generateFootballClubs(),
+                        CompetitionRoundsGenerator.generate(FootballClubTestUtils.generateFootballClubs()))))
                 .competitionRoundSimulator(CompetitionRoundSimulator.withMatchSimulator(new SimpleMatchSimulator()))
                 .build();
 

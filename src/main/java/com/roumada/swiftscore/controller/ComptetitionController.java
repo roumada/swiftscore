@@ -19,7 +19,7 @@ public class ComptetitionController {
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<Long> createCompetition(@RequestBody CompetitionDTO dto) {
-        var comp = dataLayer.saveWithClubIds(dto);
+        var comp = dataLayer.generateAndSave(dto.participantIds());
         return comp == null ?
                 new ResponseEntity<>(-1L, HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(comp.getId(), HttpStatus.OK);
@@ -27,12 +27,12 @@ public class ComptetitionController {
 
     @GetMapping("/all")
     public List<Competition> getAllCompetitions() {
-        return dataLayer.findAll();
+        return dataLayer.findAllComps();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Competition> getCompetition(@PathVariable long id) {
-        var comp = dataLayer.findById(id);
+        var comp = dataLayer.findCompetitionById(id);
         return comp.map(competition -> new ResponseEntity<>(comp.get(), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(new Competition(), HttpStatus.BAD_REQUEST));
     }
