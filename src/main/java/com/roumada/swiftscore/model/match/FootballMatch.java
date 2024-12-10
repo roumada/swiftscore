@@ -1,14 +1,22 @@
 package com.roumada.swiftscore.model.match;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
+@Document("football_match")
+@NoArgsConstructor
 public class FootballMatch {
-    private FootballClubMatchStatistics homeSideStatistics;
-    private FootballClubMatchStatistics awaySideStatistics;
+
+    @Id
+    private Long id = null;
+    private FootballMatchStatistics homeSideStatistics;
+    private FootballMatchStatistics awaySideStatistics;
     private Result matchResult = Result.UNFINISHED;
 
-    public FootballMatch(FootballClubMatchStatistics homeSideStatistics, FootballClubMatchStatistics awaySideStatistics) {
+    public FootballMatch(FootballMatchStatistics homeSideStatistics, FootballMatchStatistics awaySideStatistics) {
         this.homeSideStatistics = homeSideStatistics;
         this.awaySideStatistics = awaySideStatistics;
     }

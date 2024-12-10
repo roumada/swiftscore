@@ -4,6 +4,7 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -14,15 +15,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "com.roumada.swiftscore.repository")
+@EnableMongoRepositories(basePackages = "com.roumada.swiftscore.persistence.repository")
+@RequiredArgsConstructor
 public class MongoConfiguration extends AbstractMongoClientConfiguration {
     @Override
     protected String getDatabaseName() {
         return "test";
     }
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
     @Override
     public MongoClient mongoClient() {
