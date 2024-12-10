@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class FootballMatch {
 
     @Id
-    private long id;
+    private Long id;
     private FootballMatchStatistics homeSideStatistics;
     private FootballMatchStatistics awaySideStatistics;
     private Result matchResult = Result.UNFINISHED;
