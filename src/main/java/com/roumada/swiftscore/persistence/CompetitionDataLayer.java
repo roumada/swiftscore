@@ -2,38 +2,69 @@ package com.roumada.swiftscore.persistence;
 
 import com.roumada.swiftscore.competition.schedule.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.MonoPair;
 import com.roumada.swiftscore.model.dto.CompetitionDTO;
 import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
+import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
+@Slf4j
 @AllArgsConstructor
 public class CompetitionDataLayer {
 
     private final CompetitionRepository competitionRepository;
+    private final CompetitionRoundRepository competitionRoundRepository;
     private final FootballClubRepository footballClubRepository;
+    private final FootballMatchDataLayer footballMatchDataLayer;
 
-    public Competition persistWithClubIds(CompetitionDTO dto) {
+    public Competition saveWithClubIds(CompetitionDTO dto) {
         var footballClubs = new ArrayList<FootballClub>();
         for (Long id : dto.participantIds()) {
-            footballClubs.add(footballClubRepository.findById(id).orElse(FootballClub.builder().build()));
+            footballClubs.add(footballClubRepository.findById(id).orElse(null));
         }
 
-        var comp = CompetitionRoundsGenerator.generate(footballClubs);
-        return competitionRepository.save(comp);
+        if (footballClubs.contains(null)) {
+            log.error("Failed to generate competition - at least one of the club IDs was invalid.");
+            return null;
+        }
+
+        var rounds = CompetitionRoundsGenerator.generate(footballClubs);
+        saveRounds(rounds);
+
+        var competition = new Competition();
+        competition.setParticipants(footballClubs);
+        competition.setRounds(rounds);
+        return competitionRepository.save(competition);
     }
 
-    public Competition getById(Long id) {
-        return competitionRepository.findById(id).orElse(null);
+    public Optional<Competition> findById(Long id) {
+        return competitionRepository.findById(id);
     }
 
-    public List<Competition> getAll() {
+    public List<Competition> findAll() {
         return competitionRepository.findAll();
+    }
+
+    private void saveRounds(List<CompetitionRound> rounds) {
+        for(CompetitionRound round : rounds){
+            for(FootballMatch match : round.getMatches()) {
+                footballMatchDataLayer.saveStatistics(match.getHomeSideStatistics());
+                footballMatchDataLayer.saveStatistics(match.getAwaySideStatistics());
+                footballMatchDataLayer.saveMatch(match);
+            }
+        }
+        competitionRoundRepository.saveAll(rounds);
     }
 }

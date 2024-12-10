@@ -2,7 +2,6 @@ package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.dto.CompetitionDTO;
 import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,25 +18,22 @@ public class ComptetitionController {
     private final CompetitionDataLayer dataLayer;
 
     @PostMapping(consumes = "application/json")
-    public long createCompetition(@RequestBody CompetitionDTO dto) {
-        return dataLayer.persistWithClubIds(dto).getId();
+    public ResponseEntity<Long> createCompetition(@RequestBody CompetitionDTO dto) {
+        var comp = dataLayer.saveWithClubIds(dto);
+        return comp == null ?
+                new ResponseEntity<>(-1L, HttpStatus.BAD_REQUEST) :
+                new ResponseEntity<>(comp.getId(), HttpStatus.OK);
     }
 
     @GetMapping("/all")
     public List<Competition> getAllCompetitions() {
-        return dataLayer.getAll();
+        return dataLayer.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Competition> getCompetition(@PathVariable long id) {
-        var comp = dataLayer.getById(id);
-        return comp == null ?
-                new ResponseEntity<>(new Competition(), HttpStatus.BAD_REQUEST) :
-                new ResponseEntity<>(comp, HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}/round/")
-    public ResponseEntity<CompetitionRound> getAllCompetitionRounds(@PathVariable long id) {
-        return null;
+        var comp = dataLayer.findById(id);
+        return comp.map(competition -> new ResponseEntity<>(comp.get(), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(new Competition(), HttpStatus.BAD_REQUEST));
     }
 }

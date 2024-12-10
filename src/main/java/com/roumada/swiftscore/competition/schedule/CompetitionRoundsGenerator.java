@@ -9,6 +9,7 @@ import com.roumada.swiftscore.model.match.FootballMatch;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -18,17 +19,14 @@ public class CompetitionRoundsGenerator {
     private CompetitionRoundsGenerator() {
     }
 
-    public static Competition generate(List<FootballClub> clubs) {
+    public static List<CompetitionRound> generate(List<FootballClub> clubs) {
         if (clubs.size() % 2 == 1) {
             log.warn("Unable to generate competition rounds for odd amount of clubs. Aborting...");
-            return new Competition();
+            return Collections.emptyList();
         }
 
         List<List<MonoPair<Integer>>> numericRoundRobinMatchups = generateRoundRobinNumericMatchups(clubs.size());
-
-        var comp = new Competition();
-        comp.setRounds(createCompetitionRoundsOnNumericMatchups(clubs, numericRoundRobinMatchups));
-        return comp;
+        return createCompetitionRoundsOnNumericMatchups(clubs, numericRoundRobinMatchups);
     }
 
     private static List<CompetitionRound> createCompetitionRoundsOnNumericMatchups(List<FootballClub> clubs,
@@ -44,7 +42,6 @@ public class CompetitionRoundsGenerator {
                         new FootballMatchStatistics(clubs.get(numericMatch.getA())),
                         new FootballMatchStatistics(clubs.get(numericMatch.getB()))));
             }
-
             competitionRounds.add(new CompetitionRound(null,  roundCounter++, compRoundMatches));
         }
 

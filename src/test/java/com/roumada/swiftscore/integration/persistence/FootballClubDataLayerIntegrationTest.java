@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.integration.repository;
+package com.roumada.swiftscore.integration.persistence;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
