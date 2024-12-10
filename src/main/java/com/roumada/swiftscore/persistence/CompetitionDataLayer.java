@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -30,5 +31,9 @@ public class CompetitionDataLayer {
 
     public Competition getById(Long id) {
         return competitionRepository.findById(id).orElse(null);
+    }
+
+    public List<Competition> getAll() {
+        return competitionRepository.findAll();
     }
 }
