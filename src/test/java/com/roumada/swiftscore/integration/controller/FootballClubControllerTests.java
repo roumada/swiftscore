@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @AutoConfigureMockMvc
-class FootballClubControllerTest extends AbstractBaseIntegrationTest {
+class FootballClubControllerTests extends AbstractBaseIntegrationTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired

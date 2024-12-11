@@ -21,10 +21,6 @@ repositories {
     mavenCentral()
 }
 
-//ext {
-//	set('vaadinVersion', "24.3.5")
-//}
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
@@ -40,7 +36,6 @@ dependencies {
 
 dependencyManagement {
     imports {
-//		mavenBom "com.vaadin:vaadin-bom:${vaadinVersion}"
     }
 }
 

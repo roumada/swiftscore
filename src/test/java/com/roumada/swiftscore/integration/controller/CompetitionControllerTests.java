@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-class CompetitionControllerTest extends AbstractBaseIntegrationTest {
+class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired

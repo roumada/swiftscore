@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class FootballMatchDataLayerIntegrationTest extends AbstractBaseIntegrationTest {
+class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
 
     @Autowired
     private FootballMatchDataLayer dataLayer;
