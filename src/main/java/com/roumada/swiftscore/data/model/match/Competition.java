@@ -1,6 +1,6 @@
-package com.roumada.swiftscore.model.match;
+package com.roumada.swiftscore.data.model.match;
 
-import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.data.model.FootballClub;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -21,10 +21,12 @@ public class Competition {
     private List<FootballClub> participants;
     @DBRef
     private List<CompetitionRound> rounds;
+    private VarianceType varianceType;
 
-    public Competition(List<FootballClub> participants, List<CompetitionRound> rounds) {
+    public Competition(List<FootballClub> participants, List<CompetitionRound> rounds, VarianceType varianceType) {
         this.participants = participants;
         this.rounds = rounds;
+        this.varianceType = varianceType;
     }
 
     public enum VarianceType {NONE, SIMPLE}

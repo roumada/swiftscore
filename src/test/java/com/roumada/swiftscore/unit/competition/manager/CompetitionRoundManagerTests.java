@@ -4,9 +4,9 @@ import com.roumada.swiftscore.logic.competition.manager.CompetitionRoundManager;
 import com.roumada.swiftscore.logic.competition.operator.CompetitionRoundOperator;
 import com.roumada.swiftscore.logic.competition.schedule.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
-import com.roumada.swiftscore.logic.match.simulators.SimpleMatchSimulator;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.logic.match.simulators.NoVarianceMatchSimulator;
+import com.roumada.swiftscore.data.model.match.Competition;
+import com.roumada.swiftscore.data.model.match.FootballMatch;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,9 @@ class CompetitionRoundManagerTests {
         CompetitionRoundManager competitionRoundManager = CompetitionRoundManager.builder()
                 .competitionRoundOperator(new CompetitionRoundOperator(
                         new Competition(FootballClubTestUtils.generateFootballClubs(),
-                        CompetitionRoundsGenerator.generate(FootballClubTestUtils.generateFootballClubs()))))
-                .competitionRoundSimulator(CompetitionRoundSimulator.withMatchSimulator(new SimpleMatchSimulator()))
+                        CompetitionRoundsGenerator.generate(FootballClubTestUtils.generateFootballClubs()),
+                                Competition.VarianceType.NONE)))
+                .competitionRoundSimulator(CompetitionRoundSimulator.withMatchSimulator(new NoVarianceMatchSimulator()))
                 .build();
 
         // act

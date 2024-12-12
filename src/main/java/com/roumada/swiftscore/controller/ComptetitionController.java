@@ -1,7 +1,9 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.model.dto.CompetitionDTO;
-import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.data.model.dto.CompetitionResponseDTO;
+import com.roumada.swiftscore.data.mapper.CompetitionMapper;
+import com.roumada.swiftscore.data.model.match.Competition;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,11 @@ public class ComptetitionController {
     private final CompetitionDataLayer dataLayer;
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<Long> createCompetition(@RequestBody CompetitionDTO dto) {
-        var comp = dataLayer.generateAndSave(dto.participantIds());
-        return comp.map(competition -> new ResponseEntity<>(comp.get(), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(-1L, HttpStatus.BAD_REQUEST));
+    public ResponseEntity<CompetitionResponseDTO> createCompetition(@RequestBody CompetitionRequestDTO dto) {
+        var comp = dataLayer.generateAndSave(dto);
+        return comp.map(competition ->
+                        new ResponseEntity<>(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(comp.get()), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping("/{id}")

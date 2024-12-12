@@ -1,10 +1,12 @@
 package com.roumada.swiftscore.persistence;
 
 import com.roumada.swiftscore.logic.competition.schedule.CompetitionRoundsGenerator;
-import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
-import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.data.model.FootballClub;
+import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.data.mapper.CompetitionMapper;
+import com.roumada.swiftscore.data.model.match.Competition;
+import com.roumada.swiftscore.data.model.match.CompetitionRound;
+import com.roumada.swiftscore.data.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
@@ -26,9 +28,9 @@ public class CompetitionDataLayer {
     private final FootballClubRepository footballClubRepository;
     private final FootballMatchDataLayer footballMatchDataLayer;
 
-    public Optional<Long> generateAndSave(List<Long> participantIds) {
+    public Optional<Competition> generateAndSave(CompetitionRequestDTO dto) {
         var footballClubs = new ArrayList<FootballClub>();
-        for (Long id : participantIds) {
+        for (Long id : dto.participantIds()) {
             footballClubs.add(footballClubRepository.findById(id).orElse(null));
         }
 
@@ -36,15 +38,14 @@ public class CompetitionDataLayer {
             log.error("Failed to generate competition - failed to retrieve at least one club from the database.");
             return Optional.empty();
         }
-
         var rounds = CompetitionRoundsGenerator.generate(footballClubs);
         saveRounds(rounds);
 
-        var competition = new Competition();
+        var competition = CompetitionMapper.INSTANCE.competitionRequestDTOToCompetition(dto);
         competition.setParticipants(footballClubs);
         competition.setRounds(rounds);
         competitionRepository.save(competition);
-        return Optional.of(competition.getId());
+        return Optional.of(competition);
     }
 
     public Optional<Competition> findCompetitionById(Long id) {

@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.persistence;
 
-import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.data.model.FootballClub;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

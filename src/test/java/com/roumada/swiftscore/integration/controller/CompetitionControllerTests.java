@@ -1,12 +1,13 @@
 package com.roumada.swiftscore.integration.controller;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
-import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.CompetitionDTO;
-import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.data.model.FootballClub;
+import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.data.model.match.Competition;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,25 +39,23 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     void shouldCreateCompetitionFromExistingClubs() throws Exception {
         // arrange
         fcrepository.saveAll(List.of(
-                FootballClub.builder().id(1l).name("Norf FC").victoryChance(0.3f).build(),
-                FootballClub.builder().id(2l).name("Souf FC").victoryChance(0.4f).build(),
-                FootballClub.builder().id(3l).name("West FC").victoryChance(0.5f).build(),
-                FootballClub.builder().id(4l).name("East FC").victoryChance(0.6f).build()
+                FootballClub.builder().id(1L).name("Norf FC").victoryChance(0.3f).build(),
+                FootballClub.builder().id(2L).name("Souf FC").victoryChance(0.4f).build(),
+                FootballClub.builder().id(3L).name("West FC").victoryChance(0.5f).build(),
+                FootballClub.builder().id(4L).name("East FC").victoryChance(0.6f).build()
         ));
 
         // act
         var mvcResult = mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CompetitionDTO(
-                                null,
-                                List.of(1l, 2l, 3l, 4l),
-                                null,
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
+                                List.of(1L, 2L, 3L, 4L),
                                 null))))
                 .andExpect(status().isOk())
                 .andReturn();
 
         // assert
-        var compId = mvcResult.getResponse()
-                .getContentAsString();
+        var compId = new JSONObject(mvcResult.getResponse()
+                .getContentAsString()).getString("id");
 
         mvc.perform(get("/competition/" + -1))
                 .andExpect(status().is4xxClientError());

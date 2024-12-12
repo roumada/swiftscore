@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.util;
 
-import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.data.model.FootballClub;
 
 import java.util.List;
 

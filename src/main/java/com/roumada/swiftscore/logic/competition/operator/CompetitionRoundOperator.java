@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.logic.competition.operator;
 
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.data.model.match.Competition;
+import com.roumada.swiftscore.data.model.match.CompetitionRound;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

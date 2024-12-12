@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.FootballClubDTO;
+import com.roumada.swiftscore.data.model.FootballClub;
+import com.roumada.swiftscore.data.model.dto.FootballClubDTO;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
