@@ -46,7 +46,11 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var mvcResult = mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CompetitionDTO(List.of(1l, 2l, 3l, 4l)))))
+                        .content(objectMapper.writeValueAsString(new CompetitionDTO(
+                                null,
+                                List.of(1l, 2l, 3l, 4l),
+                                null,
+                                null))))
                 .andExpect(status().isOk())
                 .andReturn();
 
