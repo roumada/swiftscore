@@ -4,7 +4,10 @@ import com.roumada.swiftscore.data.model.FootballClub;
 import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.data.model.match.Competition;
 import com.roumada.swiftscore.data.model.match.CompetitionRound;
+import com.roumada.swiftscore.data.model.match.FootballMatch;
+import com.roumada.swiftscore.data.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
+import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import org.json.JSONArray;
@@ -32,6 +35,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     private MockMvc mvc;
     @Autowired
     private FootballClubRepository fcrepository;
+    @Autowired
+    private CompetitionDataLayer cdl;
     @Autowired
     private CompetitionRepository competitionRepository;
 
@@ -92,5 +97,29 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         assertEquals(2, resultArray.length());
+    }
+
+    @Test
+    @DisplayName("Should simulate a round successfully")
+    void shouldSimulateRoundsSuccessfully() throws Exception {
+        // arrange
+        var fc1 = FootballClub.builder().id(1L).name("Norf FC").victoryChance(0.3f).build();
+        var fc2 = FootballClub.builder().id(2L).name("Souf FC").victoryChance(0.4f).build();
+        fcrepository.save(fc1).getId();
+        fcrepository.save(fc2).getId();
+
+        var round = new CompetitionRound(1L, 1,
+                List.of(new FootballMatch(
+                        new FootballMatchStatistics(fc1),
+                        new FootballMatchStatistics(fc2))));
+        cdl.saveRound(round);
+
+        var saved = competitionRepository.save(new Competition(
+                List.of(fc1, fc2), List.of(round), 0));
+
+        // act
+        mvc.perform(get("/competition/%s/simulate".formatted(saved.getId())))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 }
