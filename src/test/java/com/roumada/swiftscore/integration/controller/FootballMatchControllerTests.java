@@ -20,26 +20,21 @@ class FootballMatchControllerTests extends AbstractBaseIntegrationTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private FootballMatchDataLayer dataLayer;
+    private FootballMatchDataLayer fmdl;
     @Autowired
-    private FootballClubDataLayer fcDataLayer;
+    private FootballClubDataLayer fcdl;
 
     @Test
     @DisplayName("Should retrieve football match")
     void shouldGetFootballMatch() throws Exception {
         // arrange
-        var fc1 = FootballClub.builder().name("Norf FC").victoryChance(0.3f).build();
-        var fc2 = FootballClub.builder().name("Souf FC").victoryChance(0.3f).build();
-        fcDataLayer.save(fc1);
-        fcDataLayer.save(fc2);
+        var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
+        var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
+        fcdl.save(fc1);
+        fcdl.save(fc2);
         var stats1 = new FootballMatchStatistics(fc1);
         var stats2 = new FootballMatchStatistics(fc2);
-        dataLayer.saveStatistics(stats1);
-        dataLayer.saveStatistics(stats2);
-        var matchId = dataLayer.saveMatch(new FootballMatch(
-                stats1,
-                stats2))
-                .getId();
+        var matchId = fmdl.saveMatch(new FootballMatch(stats1, stats2)).getId();
 
         // act & assert
         mvc.perform(get("/match/" + matchId))

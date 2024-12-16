@@ -33,8 +33,8 @@ class CompetitionMapperTests {
     void shouldConvertFromObjectToResponse() {
         // arrange
         var object = new Competition(List.of(
-                FootballClub.builder().name("Norf FC").id(1L).build(),
-                FootballClub.builder().name("Souf FC").id(2L).build()
+                FootballClub.builder().name("FC1").id(1L).build(),
+                FootballClub.builder().name("FC2").id(2L).build()
         ), List.of(
                 CompetitionRound.builder().id(3L).round(1).build(),
                 CompetitionRound.builder().id(4L).round(2).build()

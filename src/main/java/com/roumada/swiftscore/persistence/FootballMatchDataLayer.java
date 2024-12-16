@@ -19,6 +19,8 @@ public class FootballMatchDataLayer {
     private FootballMatchStatisticsRepository footballMatchStatisticsRepository;
 
     public FootballMatch saveMatch(FootballMatch match) {
+        saveStatistics(match.getHomeSideStatistics());
+        saveStatistics(match.getAwaySideStatistics());
         return footballMatchRepository.save(match);
     }
 

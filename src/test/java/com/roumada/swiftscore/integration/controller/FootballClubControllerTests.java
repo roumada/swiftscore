@@ -30,7 +30,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
         // act
         MvcResult mvcResult = mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(FootballClub.builder()
-                                .name("Norf FC").victoryChance(0.3f).build())))
+                                .name("FC1").victoryChance(0.3f).build())))
                 .andExpect(status().isOk())
                 .andReturn();
 

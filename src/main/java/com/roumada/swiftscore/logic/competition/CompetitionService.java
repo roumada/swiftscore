@@ -17,8 +17,8 @@ public class CompetitionService {
         var compSimulated = CompetitionManager.simulateCurrentRound(competition);
         if (compSimulated == null) return null;
 
-        var currRound = competition.getRounds().get(competition.getCurrentRoundNumber() - 2);
-        competitionDataLayer.saveRound(currRound);
+        var currRound = competition.getPreviousRound();
+        competitionDataLayer.saveCompetitionRound(currRound);
         competitionDataLayer.saveCompetition(compSimulated);
         return currRound;
     }

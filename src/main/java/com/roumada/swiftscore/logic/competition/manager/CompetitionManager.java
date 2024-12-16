@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CompetitionManager {
 
+    private CompetitionManager() {}
+
     public static Competition simulateCurrentRound(Competition competition) {
         if (!competition.canSimulate()) {
             log.error("Cannot simulate competition with {} and current round {}.", competition.getId(), competition.getCurrentRoundNumber());

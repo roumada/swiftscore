@@ -8,8 +8,8 @@ import com.roumada.swiftscore.data.model.match.FootballMatch;
 import com.roumada.swiftscore.data.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
-import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
-import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -34,22 +34,15 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private FootballClubRepository fcrepository;
+    private CompetitionDataLayer compdl;
     @Autowired
-    private CompetitionDataLayer cdl;
-    @Autowired
-    private CompetitionRepository competitionRepository;
+    private FootballClubDataLayer fcdl;
 
     @Test
     @DisplayName("Should create a competition if there are clubs with given IDs in the database")
     void shouldCreateCompetitionFromExistingClubs() throws Exception {
         // arrange
-        fcrepository.saveAll(List.of(
-                FootballClub.builder().id(1L).name("Norf FC").victoryChance(0.3f).build(),
-                FootballClub.builder().id(2L).name("Souf FC").victoryChance(0.4f).build(),
-                FootballClub.builder().id(3L).name("West FC").victoryChance(0.5f).build(),
-                FootballClub.builder().id(4L).name("East FC").victoryChance(0.6f).build()
-        ));
+        fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
 
         // act
         var mvcResult = mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
@@ -74,18 +67,10 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Should return all competitions")
     void shouldReturnAllCompetitions() throws Exception {
         // arrange
-        competitionRepository.save(new Competition(List.of(
-                FootballClub.builder().id(1L).name("Norf FC").victoryChance(0.3f).build(),
-                FootballClub.builder().id(2L).name("Souf FC").victoryChance(0.4f).build(),
-                FootballClub.builder().id(3L).name("West FC").victoryChance(0.5f).build(),
-                FootballClub.builder().id(4L).name("East FC").victoryChance(0.6f).build()
-        ), List.of(new CompetitionRound(1L, 1, null)), 0.0f));
-        competitionRepository.save(new Competition(List.of(
-                FootballClub.builder().id(1L).name("Norf FC").victoryChance(0.3f).build(),
-                FootballClub.builder().id(2L).name("Souf FC").victoryChance(0.4f).build(),
-                FootballClub.builder().id(3L).name("West FC").victoryChance(0.5f).build(),
-                FootballClub.builder().id(4L).name("East FC").victoryChance(0.6f).build()
-        ), List.of(new CompetitionRound(1L, 1, null)), 0.0f));
+        compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
+                List.of(new CompetitionRound(1L, 1, null)), 0.0f));
+        compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
+                List.of(new CompetitionRound(2L, 1, null)), 0.0f));
 
         // act
         var result = mvc.perform(get("/competition/all"))
@@ -100,26 +85,36 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should simulate a round successfully")
-    void shouldSimulateRoundsSuccessfully() throws Exception {
+    @DisplayName("Should return simulated round")
+    void shouldReturnSimulatedRound() throws Exception {
         // arrange
-        var fc1 = FootballClub.builder().id(1L).name("Norf FC").victoryChance(0.3f).build();
-        var fc2 = FootballClub.builder().id(2L).name("Souf FC").victoryChance(0.4f).build();
-        fcrepository.save(fc1).getId();
-        fcrepository.save(fc2).getId();
+        var fc1 = FootballClub.builder().id(1L).name("FC1").victoryChance(0.3f).build();
+        var fc2 = FootballClub.builder().id(2L).name("FC2").victoryChance(0.4f).build();
+        fcdl.save(fc1);
+        fcdl.save(fc2);
 
         var round = new CompetitionRound(1L, 1,
                 List.of(new FootballMatch(
                         new FootballMatchStatistics(fc1),
                         new FootballMatchStatistics(fc2))));
-        cdl.saveRound(round);
+        compdl.saveCompetitionRound(round);
 
-        var saved = competitionRepository.save(new Competition(
+        var saved = compdl.saveCompetition(new Competition(
                 List.of(fc1, fc2), List.of(round), 0));
 
         // act
-        mvc.perform(get("/competition/%s/simulate".formatted(saved.getId())))
+        var response = mvc.perform(get("/competition/%s/simulate".formatted(saved.getId())))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        mvc.perform(get("/competition/-1/simulate"))
+                .andExpect(status().is4xxClientError());
+
+        // assert
+        var responseJSON = new JSONObject(response);
+
+        assertEquals(1, responseJSON.getJSONArray("matches").length());
     }
 }

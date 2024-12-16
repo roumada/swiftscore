@@ -18,7 +18,7 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     @DisplayName("Should save a football club to the database")
     void shouldSaveToDatabase() {
         // arrange
-        var fc = FootballClub.builder().name("Norf FC").victoryChance(0.33f).build();
+        var fc = FootballClub.builder().name("FC1").victoryChance(0.33f).build();
         var saved = dataLayer.save(fc);
 
         // act

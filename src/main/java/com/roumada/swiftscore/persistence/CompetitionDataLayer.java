@@ -56,7 +56,7 @@ public class CompetitionDataLayer {
         return competitionRepository.findAll();
     }
 
-    public CompetitionRound saveRound(CompetitionRound round) {
+    public CompetitionRound saveCompetitionRound(CompetitionRound round) {
         for (FootballMatch match : round.getMatches()) {
             footballMatchDataLayer.saveStatistics(match.getHomeSideStatistics());
             footballMatchDataLayer.saveStatistics(match.getAwaySideStatistics());
@@ -67,7 +67,7 @@ public class CompetitionDataLayer {
 
     private void saveRounds(List<CompetitionRound> rounds) {
         for (CompetitionRound round : rounds) {
-            saveRound(round);
+            saveCompetitionRound(round);
         }
     }
 
