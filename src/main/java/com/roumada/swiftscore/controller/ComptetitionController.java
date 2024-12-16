@@ -4,6 +4,8 @@ import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.data.model.dto.CompetitionResponseDTO;
 import com.roumada.swiftscore.data.mapper.CompetitionMapper;
 import com.roumada.swiftscore.data.model.match.Competition;
+import com.roumada.swiftscore.data.model.match.CompetitionRound;
+import com.roumada.swiftscore.logic.competition.CompetitionService;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ComptetitionController {
 
     private final CompetitionDataLayer dataLayer;
+    private final CompetitionService competitionService;
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<CompetitionResponseDTO> createCompetition(@RequestBody CompetitionRequestDTO dto) {
@@ -37,5 +40,13 @@ public class ComptetitionController {
     @GetMapping("/all")
     public List<Competition> getAllCompetitions() {
         return dataLayer.findAllComps();
+    }
+
+    @PatchMapping("/{id}/simulate")
+    public ResponseEntity<CompetitionRound> simulate(@PathVariable long id){
+        var competition = dataLayer.findCompetitionById(id);
+        return competition
+                .map(c -> new ResponseEntity<>(competitionService.simulateRound(c), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.BAD_REQUEST));
     }
 }

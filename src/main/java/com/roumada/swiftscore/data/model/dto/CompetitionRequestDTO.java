@@ -9,5 +9,5 @@ import java.util.List;
 @JsonSerialize
 public record CompetitionRequestDTO(
         List<Long> participantIds,
-        String varianceType
+        float variance
 ) { }

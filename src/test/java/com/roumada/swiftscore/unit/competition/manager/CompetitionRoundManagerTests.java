@@ -25,7 +25,7 @@ class CompetitionRoundManagerTests {
                 .competitionRoundOperator(new CompetitionRoundOperator(
                         new Competition(FootballClubTestUtils.generateFootballClubs(),
                         CompetitionRoundsGenerator.generate(FootballClubTestUtils.generateFootballClubs()),
-                                Competition.VarianceType.NONE)))
+                                0.0f)))
                 .competitionRoundSimulator(CompetitionRoundSimulator.withMatchSimulator(new NoVarianceMatchSimulator()))
                 .build();
 

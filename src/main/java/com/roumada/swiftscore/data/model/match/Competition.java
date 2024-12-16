@@ -21,13 +21,11 @@ public class Competition {
     private List<FootballClub> participants;
     @DBRef
     private List<CompetitionRound> rounds;
-    private VarianceType varianceType;
+    private float variance;
 
-    public Competition(List<FootballClub> participants, List<CompetitionRound> rounds, VarianceType varianceType) {
+    public Competition(List<FootballClub> participants, List<CompetitionRound> rounds, float variance) {
         this.participants = participants;
         this.rounds = rounds;
-        this.varianceType = varianceType;
+        this.variance = variance;
     }
-
-    public enum VarianceType {NONE, SIMPLE}
 }

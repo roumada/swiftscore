@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.roumada.swiftscore.data.model.match.Competition.VarianceType.SIMPLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CompetitionMapperTests {
@@ -18,20 +17,20 @@ class CompetitionMapperTests {
 
     @Test
     @DisplayName("Should convert from request to object")
-    void shouldConvertFromRequestToObject(){
+    void shouldConvertFromRequestToObject() {
         // arrange
-        var request = new CompetitionRequestDTO(List.of(1L, 2L), "SIMPLE");
+        var request = new CompetitionRequestDTO(List.of(1L, 2L), 0.0f);
 
         // act
         var object = mapper.competitionRequestDTOToCompetition(request);
 
         // assert
-        assertEquals(SIMPLE, object.getVarianceType());
+        assertEquals(0.0f, object.getVariance());
     }
 
     @Test
     @DisplayName("Should convert from object to response")
-    void shouldConvertFromObjectToResponse(){
+    void shouldConvertFromObjectToResponse() {
         // arrange
         var object = new Competition(List.of(
                 FootballClub.builder().name("Norf FC").id(1L).build(),
@@ -39,7 +38,7 @@ class CompetitionMapperTests {
         ), List.of(
                 CompetitionRound.builder().id(3L).round(1).build(),
                 CompetitionRound.builder().id(4L).round(2).build()
-        ), SIMPLE);
+        ), 0.0f);
 
         // act
         var response = mapper.competitionToCompetitionResponseDTO(object);

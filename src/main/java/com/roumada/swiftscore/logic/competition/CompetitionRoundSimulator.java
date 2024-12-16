@@ -15,9 +15,10 @@ public class CompetitionRoundSimulator {
         return new CompetitionRoundSimulator(matchSimulator);
     }
 
-    public void simulate(CompetitionRound competitionRound) {
+    public CompetitionRound simulate(CompetitionRound competitionRound) {
         for (FootballMatch match : competitionRound.getMatches()) {
             matchSimulator.simulateMatch(match);
         }
+        return competitionRound;
     }
 }

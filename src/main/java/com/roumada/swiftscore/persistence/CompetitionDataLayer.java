@@ -1,12 +1,12 @@
 package com.roumada.swiftscore.persistence;
 
-import com.roumada.swiftscore.logic.competition.schedule.CompetitionRoundsGenerator;
+import com.roumada.swiftscore.data.mapper.CompetitionMapper;
 import com.roumada.swiftscore.data.model.FootballClub;
 import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.data.mapper.CompetitionMapper;
 import com.roumada.swiftscore.data.model.match.Competition;
 import com.roumada.swiftscore.data.model.match.CompetitionRound;
 import com.roumada.swiftscore.data.model.match.FootballMatch;
+import com.roumada.swiftscore.logic.competition.schedule.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
@@ -56,14 +56,22 @@ public class CompetitionDataLayer {
         return competitionRepository.findAll();
     }
 
-    private void saveRounds(List<CompetitionRound> rounds) {
-        for(CompetitionRound round : rounds){
-            for(FootballMatch match : round.getMatches()) {
-                footballMatchDataLayer.saveStatistics(match.getHomeSideStatistics());
-                footballMatchDataLayer.saveStatistics(match.getAwaySideStatistics());
-                footballMatchDataLayer.saveMatch(match);
-            }
+    public CompetitionRound saveRound(CompetitionRound round) {
+        for (FootballMatch match : round.getMatches()) {
+            footballMatchDataLayer.saveStatistics(match.getHomeSideStatistics());
+            footballMatchDataLayer.saveStatistics(match.getAwaySideStatistics());
+            footballMatchDataLayer.saveMatch(match);
         }
-        competitionRoundRepository.saveAll(rounds);
+        return competitionRoundRepository.save(round);
+    }
+
+    private void saveRounds(List<CompetitionRound> rounds) {
+        for (CompetitionRound round : rounds) {
+            saveRound(round);
+        }
+    }
+
+    public Competition saveCompetition(Competition competition) {
+        return competitionRepository.save(competition);
     }
 }
