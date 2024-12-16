@@ -10,7 +10,7 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
     private final float variance;
 
     public static SimpleVarianceMatchSimulator withVariance(float variance){
-        if (variance > 0 || variance < 1){
+        if (variance < 0 || variance > 1){
             throw new IllegalArgumentException("Variance cannot be lower than 0 and higher than 1");
         }
         return new SimpleVarianceMatchSimulator(variance);

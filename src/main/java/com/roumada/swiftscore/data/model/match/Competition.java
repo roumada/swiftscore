@@ -16,7 +16,7 @@ public class Competition {
 
     @Id
     private Long id = null;
-    private int currentRound = 1;
+    private int currentRoundNumber = 1;
     @DBRef
     private List<FootballClub> participants;
     @DBRef
@@ -27,5 +27,17 @@ public class Competition {
         this.participants = participants;
         this.rounds = rounds;
         this.variance = variance;
+    }
+
+    public boolean canSimulate() {
+        return rounds.size() + 1 > currentRoundNumber;
+    }
+
+    public CompetitionRound getCurrentRound() {
+        return rounds.get(currentRoundNumber - 1);
+    }
+
+    public void incrementCurrentRoundNumber(){
+        currentRoundNumber++;
     }
 }
