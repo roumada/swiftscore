@@ -1,13 +1,13 @@
 package com.roumada.swiftscore.controller;
 
+import com.roumada.swiftscore.data.mapper.CompetitionMapper;
 import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.data.model.dto.CompetitionResponseDTO;
-import com.roumada.swiftscore.data.mapper.CompetitionMapper;
 import com.roumada.swiftscore.data.model.match.Competition;
 import com.roumada.swiftscore.data.model.match.CompetitionRound;
 import com.roumada.swiftscore.logic.competition.CompetitionService;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/competition")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ComptetitionController {
 
     private final CompetitionDataLayer dataLayer;
@@ -27,14 +27,14 @@ public class ComptetitionController {
         var comp = dataLayer.generateAndSave(dto);
         return comp.map(competition ->
                         new ResponseEntity<>(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(comp.get()), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.BAD_REQUEST));
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Competition> getCompetition(@PathVariable long id) {
         var comp = dataLayer.findCompetitionById(id);
         return comp.map(competition -> new ResponseEntity<>(comp.get(), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(new Competition(), HttpStatus.BAD_REQUEST));
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping("/all")
@@ -42,11 +42,15 @@ public class ComptetitionController {
         return dataLayer.findAllComps();
     }
 
-    @PatchMapping("/{id}/simulate")
-    public ResponseEntity<CompetitionRound> simulate(@PathVariable long id){
+
+    @GetMapping("/{id}/simulate")
+    public ResponseEntity<CompetitionRound> simulate(@PathVariable long id) {
         var competition = dataLayer.findCompetitionById(id);
-        return competition
-                .map(c -> new ResponseEntity<>(competitionService.simulateRound(c), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.BAD_REQUEST));
+        if (competition.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        var simulated = competitionService.simulateRound(competition.get());
+        return simulated != null ?
+                new ResponseEntity<>(simulated, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

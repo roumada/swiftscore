@@ -1,9 +1,10 @@
 package com.roumada.swiftscore.integration.controller;
 
-import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.data.model.FootballClub;
 import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.data.model.match.Competition;
+import com.roumada.swiftscore.data.model.match.CompetitionRound;
+import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import org.json.JSONArray;
@@ -68,8 +69,18 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Should return all competitions")
     void shouldReturnAllCompetitions() throws Exception {
         // arrange
-        competitionRepository.save(new Competition());
-        competitionRepository.save(new Competition());
+        competitionRepository.save(new Competition(List.of(
+                FootballClub.builder().id(1L).name("Norf FC").victoryChance(0.3f).build(),
+                FootballClub.builder().id(2L).name("Souf FC").victoryChance(0.4f).build(),
+                FootballClub.builder().id(3L).name("West FC").victoryChance(0.5f).build(),
+                FootballClub.builder().id(4L).name("East FC").victoryChance(0.6f).build()
+        ), List.of(new CompetitionRound(1L, 1, null)), 0.0f));
+        competitionRepository.save(new Competition(List.of(
+                FootballClub.builder().id(1L).name("Norf FC").victoryChance(0.3f).build(),
+                FootballClub.builder().id(2L).name("Souf FC").victoryChance(0.4f).build(),
+                FootballClub.builder().id(3L).name("West FC").victoryChance(0.5f).build(),
+                FootballClub.builder().id(4L).name("East FC").victoryChance(0.6f).build()
+        ), List.of(new CompetitionRound(1L, 1, null)), 0.0f));
 
         // act
         var result = mvc.perform(get("/competition/all"))
