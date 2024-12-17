@@ -1,6 +1,6 @@
-package com.roumada.swiftscore.model.match;
+package com.roumada.swiftscore.data.model.match;
 
-import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.data.model.FootballClub;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;

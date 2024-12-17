@@ -1,5 +1,8 @@
 package com.roumada.swiftscore.integration;
 
+import com.roumada.swiftscore.persistence.repository.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -19,8 +22,28 @@ public abstract class AbstractBaseIntegrationTest {
         mongoDBContainer.start();
     }
 
+    @Autowired
+    CompetitionRepository competitionRepository;
+    @Autowired
+    CompetitionRoundRepository competitionRoundRepository;
+    @Autowired
+    FootballClubRepository footballClubRepository;
+    @Autowired
+    FootballMatchRepository footballMatchRepository;
+    @Autowired
+    FootballMatchStatisticsRepository footballMatchStatisticsRepository;
+
     @DynamicPropertySource
     static void containersProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+    }
+
+    @BeforeEach
+    void setup() {
+        competitionRepository.deleteAll();
+        competitionRoundRepository.deleteAll();
+        footballClubRepository.deleteAll();
+        footballMatchRepository.deleteAll();
+        footballMatchStatisticsRepository.deleteAll();
     }
 }

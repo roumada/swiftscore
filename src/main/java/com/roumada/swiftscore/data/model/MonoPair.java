@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.model;
+package com.roumada.swiftscore.data.model;
 
 import lombok.Getter;
 

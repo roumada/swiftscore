@@ -1,20 +1,21 @@
-package com.roumada.swiftscore.unit.match.simulators;
+package com.roumada.swiftscore.unit.logic.match.simulators;
 
 import com.roumada.swiftscore.logic.match.simulators.MatchSimulator;
-import com.roumada.swiftscore.logic.match.simulators.SimpleMatchSimulator;
-import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
-import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.logic.match.simulators.NoVarianceMatchSimulator;
+import com.roumada.swiftscore.data.model.FootballClub;
+import com.roumada.swiftscore.data.model.match.FootballMatchStatistics;
+import com.roumada.swiftscore.data.model.match.FootballMatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.roumada.swiftscore.model.match.FootballMatch.Result.*;
+import static com.roumada.swiftscore.data.model.match.FootballMatch.Result.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SimpleMatchSimulatorTests {
+class NoVarianceMatchSimulatorTests {
 
-    private final MatchSimulator matchSimulator = new SimpleMatchSimulator();
+    private final MatchSimulator matchSimulator = new NoVarianceMatchSimulator();
+
     @Test
     @DisplayName("Should end with victory for home team")
     void simulateMatch_shouldGrantVictoryToHomeTeam() {

@@ -1,9 +1,9 @@
 package com.roumada.swiftscore.logic.match.simulators;
 
 import com.roumada.swiftscore.logic.match.resolvers.MatchResolverFactory;
-import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.data.model.match.FootballMatch;
 
-public class SimpleMatchSimulator implements MatchSimulator {
+public class NoVarianceMatchSimulator implements MatchSimulator {
 
     @Override
     public void simulateMatch(FootballMatch footballMatch) {

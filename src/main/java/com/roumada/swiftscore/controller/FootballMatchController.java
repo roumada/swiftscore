@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.data.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

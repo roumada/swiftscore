@@ -1,11 +1,10 @@
-package com.roumada.swiftscore.logic.competition.schedule;
+package com.roumada.swiftscore.logic.competition;
 
-import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.MonoPair;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
-import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.data.model.FootballClub;
+import com.roumada.swiftscore.data.model.MonoPair;
+import com.roumada.swiftscore.data.model.match.CompetitionRound;
+import com.roumada.swiftscore.data.model.match.FootballMatchStatistics;
+import com.roumada.swiftscore.data.model.match.FootballMatch;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

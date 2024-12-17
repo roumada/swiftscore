@@ -1,18 +1,14 @@
-package com.roumada.swiftscore.model.dto;
+package com.roumada.swiftscore.data.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.roumada.swiftscore.model.match.Competition;
 
 import java.util.List;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
-public record CompetitionDTO(
+public record CompetitionResponseDTO(
         Long id,
         List<Long> participantIds,
-        List<Long> matchWeekIds,
-        Competition.VarianceType variance
-
-) {
-}
+        List<Long> roundIds
+) { }
