@@ -1,6 +1,8 @@
 package com.roumada.swiftscore.util;
 
 import com.roumada.swiftscore.data.model.FootballClub;
+import com.roumada.swiftscore.data.model.match.Competition;
+import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
 
 import java.util.List;
 
@@ -30,4 +32,16 @@ public class FootballClubTestUtils {
         );
     }
 
+    public static Competition getTwoClubCompetition(){
+        var participants = List.of(
+                FootballClub.builder().id(1L).name("FC1").victoryChance(1).build(),
+                FootballClub.builder().id(2L).name("FC2").victoryChance(0.9f).build()
+        );
+
+        return Competition.builder()
+                .participants(participants)
+                .rounds(CompetitionRoundsGenerator.generate(participants))
+                .variance(0.0f)
+                .build();
+    }
 }

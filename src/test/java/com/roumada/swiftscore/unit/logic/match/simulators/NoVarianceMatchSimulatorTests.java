@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.unit.match.simulators;
+package com.roumada.swiftscore.unit.logic.match.simulators;
 
 import com.roumada.swiftscore.logic.match.simulators.MatchSimulator;
 import com.roumada.swiftscore.logic.match.simulators.NoVarianceMatchSimulator;
@@ -12,9 +12,10 @@ import static com.roumada.swiftscore.data.model.match.FootballMatch.Result.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class NoSimpleVarianceMatchSimulatorTests {
+class NoVarianceMatchSimulatorTests {
 
     private final MatchSimulator matchSimulator = new NoVarianceMatchSimulator();
+
     @Test
     @DisplayName("Should end with victory for home team")
     void simulateMatch_shouldGrantVictoryToHomeTeam() {

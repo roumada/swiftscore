@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.unit.match;
+package com.roumada.swiftscore.unit.logic.competition;
 
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.match.simulators.NoVarianceMatchSimulator;
@@ -15,7 +15,7 @@ import static com.roumada.swiftscore.data.model.match.FootballMatch.Result.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CompetitionRoundExecutorTests {
+class CompetitionRoundSimulatorTests {
 
     private final CompetitionRoundSimulator competitionRoundSimulator = CompetitionRoundSimulator.withMatchSimulator(new NoVarianceMatchSimulator());
 

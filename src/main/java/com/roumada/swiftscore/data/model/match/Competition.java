@@ -1,6 +1,7 @@
 package com.roumada.swiftscore.data.model.match;
 
 import com.roumada.swiftscore.data.model.FootballClub;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -23,6 +24,7 @@ public class Competition {
     private List<CompetitionRound> rounds;
     private float variance;
 
+    @Builder
     public Competition(List<FootballClub> participants, List<CompetitionRound> rounds, float variance) {
         this.participants = participants;
         this.rounds = rounds;
@@ -37,7 +39,7 @@ public class Competition {
         return rounds.get(currentRoundNumber - 1);
     }
 
-    public void incrementCurrentRoundNumber(){
+    public void incrementCurrentRoundNumber() {
         currentRoundNumber++;
     }
 }

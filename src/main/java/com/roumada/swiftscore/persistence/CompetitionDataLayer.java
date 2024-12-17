@@ -6,7 +6,7 @@ import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.data.model.match.Competition;
 import com.roumada.swiftscore.data.model.match.CompetitionRound;
 import com.roumada.swiftscore.data.model.match.FootballMatch;
-import com.roumada.swiftscore.logic.competition.schedule.CompetitionRoundsGenerator;
+import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
