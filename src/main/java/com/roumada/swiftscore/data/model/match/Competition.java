@@ -18,11 +18,11 @@ public class Competition {
     @Id
     private Long id = null;
     private int currentRoundNumber = 1;
+    private float variance;
     @DBRef
     private List<FootballClub> participants;
     @DBRef
     private List<CompetitionRound> rounds;
-    private float variance;
 
     @Builder
     public Competition(List<FootballClub> participants, List<CompetitionRound> rounds, float variance) {
@@ -35,7 +35,8 @@ public class Competition {
         return rounds.size() + 1 > currentRoundNumber;
     }
 
-    public CompetitionRound getCurrentRound() {
+
+    public CompetitionRound currentRound() {
         return rounds.get(currentRoundNumber - 1);
     }
 

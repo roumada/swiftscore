@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,10 +68,14 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Should return all competitions")
     void shouldReturnAllCompetitions() throws Exception {
         // arrange
+        var round1 = new CompetitionRound(1L, 1, Collections.emptyList());
+        var round2 = new CompetitionRound(2L, 1, Collections.emptyList());
+        compdl.saveCompetitionRound(round1);
+        compdl.saveCompetitionRound(round2);
         compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
-                List.of(new CompetitionRound(1L, 1, null)), 0.0f));
+                List.of(round1), 0.0f));
         compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
-                List.of(new CompetitionRound(2L, 1, null)), 0.0f));
+                List.of(round2), 0.0f));
 
         // act
         var result = mvc.perform(get("/competition/all"))
