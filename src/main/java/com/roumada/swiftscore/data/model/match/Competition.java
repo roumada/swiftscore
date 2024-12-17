@@ -33,10 +33,6 @@ public class Competition {
         return rounds.size() + 1 > currentRoundNumber;
     }
 
-    public CompetitionRound getPreviousRound() {
-        return rounds.get(Math.max(0, currentRoundNumber - 2));
-    }
-
     public CompetitionRound getCurrentRound() {
         return rounds.get(currentRoundNumber - 1);
     }

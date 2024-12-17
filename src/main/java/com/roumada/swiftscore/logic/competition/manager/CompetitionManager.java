@@ -20,7 +20,6 @@ public class CompetitionManager {
 
         var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(pickMatchSimulatorFor(competition.getVariance()));
         roundSimulator.simulate(competition.getCurrentRound());
-        competition.incrementCurrentRoundNumber();
         return competition;
     }
 
