@@ -6,6 +6,7 @@ import com.roumada.swiftscore.logic.match.simulators.MatchSimulator;
 import com.roumada.swiftscore.logic.match.simulators.NoVarianceMatchSimulator;
 import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
+import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,29 +18,30 @@ public class CompetitionService {
 
     private final CompetitionDataLayer competitionDataLayer;
 
-    public CompetitionRound simulateRound(Competition competition) {
-        var compSimulated = simulateCurrentRound(competition);
-        if (compSimulated == null) return null;
+    public Either<String, CompetitionRound> simulateRound(Competition competition) {
+        if (!competition.canSimulate()) {
+            String error =
+                    "Cannot simulate competition with [%s] and current round [%s]. All of the competition's rounds have been simulated. Unable to simulate further"
+                            .formatted(competition.getId(), competition.getCurrentRoundNumber());
+            log.error(error);
+            return Either.left(error);
+        }
 
-        var currRound = competition.getCurrentRound();
+        var compSimulated = simulateCurrentRound(competition);
+        var currRound = competition.currentRound();
         persistChanges(compSimulated);
-        return currRound;
+        return Either.right(currRound);
     }
 
     private void persistChanges(Competition compSimulated) {
-        competitionDataLayer.saveCompetitionRound(compSimulated.getCurrentRound());
+        competitionDataLayer.saveCompetitionRound(compSimulated.currentRound());
         compSimulated.incrementCurrentRoundNumber();
         competitionDataLayer.saveCompetition(compSimulated);
     }
 
     private Competition simulateCurrentRound(Competition competition) {
-        if (!competition.canSimulate()) {
-            log.error("Cannot simulate competition with {} and current round {}.", competition.getId(), competition.getCurrentRoundNumber());
-            return null;
-        }
-
         var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(pickMatchSimulatorFor(competition.getVariance()));
-        roundSimulator.simulate(competition.getCurrentRound());
+        roundSimulator.simulate(competition.currentRound());
         return competition;
     }
 

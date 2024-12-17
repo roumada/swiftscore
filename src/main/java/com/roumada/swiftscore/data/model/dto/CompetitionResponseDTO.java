@@ -9,6 +9,7 @@ import java.util.List;
 @JsonSerialize
 public record CompetitionResponseDTO(
         Long id,
+        int currentRound,
         List<Long> participantIds,
         List<Long> roundIds
 ) { }
