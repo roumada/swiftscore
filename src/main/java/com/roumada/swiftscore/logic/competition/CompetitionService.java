@@ -2,8 +2,6 @@ package com.roumada.swiftscore.logic.competition;
 
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
-import com.roumada.swiftscore.logic.match.simulators.MatchSimulator;
-import com.roumada.swiftscore.logic.match.simulators.NoVarianceMatchSimulator;
 import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import io.vavr.control.Either;
@@ -40,14 +38,9 @@ public class CompetitionService {
     }
 
     private Competition simulateCurrentRound(Competition competition) {
-        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(pickMatchSimulatorFor(competition.getVariance()));
+        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withVariance(competition.getVariance()));
         roundSimulator.simulate(competition.currentRound());
         log.info("Competition with id [{}] simulated.", competition.getId());
         return competition;
-    }
-
-    private MatchSimulator pickMatchSimulatorFor(float variance) {
-        if (variance == 0) return new NoVarianceMatchSimulator();
-        else return SimpleVarianceMatchSimulator.withVariance(variance);
     }
 }
