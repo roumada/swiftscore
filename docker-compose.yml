@@ -1,0 +1,26 @@
+services:
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: swiftscore
+    ports:
+      - "8090:8080"
+    depends_on:
+      - mongo
+    environment:
+      SPRING_DATA_MONGODB_URI: "mongodb://mongo:27017/test"  # MongoDB connection URI
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:latest
+    container_name: swiftscore-db
+    ports:
+      - "27020:27017"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
