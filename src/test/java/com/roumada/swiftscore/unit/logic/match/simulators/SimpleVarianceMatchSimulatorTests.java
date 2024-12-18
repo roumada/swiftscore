@@ -39,7 +39,6 @@ class SimpleVarianceMatchSimulatorTests {
         assertEquals(result, footballMatch.getMatchResult());
     }
 
-
     @Test
     @DisplayName("Simulate match - with non-zero variance - should not end with a draw for identical victory chances")
     void simulateMatch_nonZeroVariance_shouldNotEndWithADraw() {
