@@ -25,7 +25,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     private MockMvc mvc;
 
     @Test
-    @DisplayName("On football club creation - with valid data - should save")
+    @DisplayName("Create football club - with valid data - should save")
     void createFootballClub_validData_shouldSave() throws Exception {
         // arrange
         var dto = new FootballClubDTO("FC1", 0.5f);
@@ -36,7 +36,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("On football club creation - with invalid victory chance - should return error code")
+    @DisplayName("Create football club - with invalid victory chance - should return error code")
     void createFootballClub_invalidVictoryChance_shouldReturnErrorCode() throws Exception {
         // arrange
         var dto = new FootballClubDTO("FC1", 2.2f);
@@ -47,7 +47,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("On football club creation - with missing name - should return error code")
+    @DisplayName("Create football club - with missing name - should return error code")
     void createFootballClub_missingName_shouldReturnErrorCode() throws Exception {
         // arrange
         var dto = new FootballClubDTO(null, 2.2f);
@@ -58,7 +58,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("On football club retrieval - with valid ID - should return")
+    @DisplayName("Get football club - with valid ID - should return")
     void getFootballClub_validId_shouldReturn() throws Exception {
         // arrange
         var dto = new FootballClubDTO("FC1", 0.5f);
@@ -81,7 +81,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("On football club retrieval - with invalid ID - should return error code")
+    @DisplayName("Get football club - with invalid ID - should return error code")
     void getFootballClub_invalidId_shouldReturnErrorCode() throws Exception {
         // arrange
         var dto = new FootballClubDTO("FC1", 0.5f);
