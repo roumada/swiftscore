@@ -13,7 +13,7 @@ public class FootballClub {
     @Id
     private Long id;
     private String name;
-    private float victoryChance;
+    private double victoryChance;
 
     public static class Builder {
         public FootballClub build() {

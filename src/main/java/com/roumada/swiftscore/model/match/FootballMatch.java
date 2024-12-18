@@ -24,11 +24,11 @@ public class FootballMatch {
         this.awaySideStatistics = awaySideStatistics;
     }
 
-    public float getHomeSideVictoryChance() {
+    public double getHomeSideVictoryChance() {
         return homeSideStatistics.getFootballClub().getVictoryChance();
     }
 
-    public float getAwaySideVictoryChance() {
+    public double getAwaySideVictoryChance() {
         return awaySideStatistics.getFootballClub().getVictoryChance();
     }
 

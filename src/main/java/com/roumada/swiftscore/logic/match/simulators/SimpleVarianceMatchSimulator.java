@@ -9,16 +9,16 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class SimpleVarianceMatchSimulator implements MatchSimulator {
 
-    private final float variance;
+    private final double variance;
 
-    public static SimpleVarianceMatchSimulator withVariance(float variance){
+    public static SimpleVarianceMatchSimulator withVariance(double variance){
         if (variance < 0 || variance > 1){
             throw new IllegalArgumentException("Variance cannot be lower than 0 and higher than 1");
         }
         return new SimpleVarianceMatchSimulator(variance);
     }
 
-    private SimpleVarianceMatchSimulator(float variance) {
+    private SimpleVarianceMatchSimulator(double variance) {
         this.variance = variance;
     }
 
@@ -29,12 +29,10 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
     }
 
     private void determineResult(FootballMatch footballMatch) {
-        var homeSideVictoryChance = footballMatch.getHomeSideVictoryChance() +
-                ((float) ThreadLocalRandom.current().nextInt(1, (int) (variance * 100)) / 100);
-        log.info("Home side base victory chance: [{}]. New victory chance: [{}]", footballMatch.getHomeSideVictoryChance(), homeSideVictoryChance);
-        var awaySideVictoryChance = footballMatch.getAwaySideVictoryChance() +
-                ((float) ThreadLocalRandom.current().nextInt(1, (int) (variance * 100)) / 100);
-        log.info("Away side base victory chance: [{}]. New victory chance: [{}]", footballMatch.getAwaySideVictoryChance(), awaySideVictoryChance);
+        var homeSideVictoryChance = Math.max(0, footballMatch.getHomeSideVictoryChance() + calculateVariant());
+        var awaySideVictoryChance = Math.max(0, footballMatch.getAwaySideVictoryChance() + calculateVariant());
+        log.info("Away side base victory chance: [{}]. New victory chance: [{}]", footballMatch.getAwaySideVictoryChance(),
+                String.format("%.3f", awaySideVictoryChance));
 
         if (homeSideVictoryChance > awaySideVictoryChance) {
             footballMatch.setMatchResult(FootballMatch.Result.HOME_SIDE_VICTORY);
@@ -43,5 +41,10 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
         } else {
             footballMatch.setMatchResult(FootballMatch.Result.DRAW);
         }
+    }
+
+    private double calculateVariant() {
+        if (variance == 0) return 0;
+        return ((double) ThreadLocalRandom.current().nextInt(1, (int) (variance * 2 * 100)) / 100) - variance;
     }
 }
