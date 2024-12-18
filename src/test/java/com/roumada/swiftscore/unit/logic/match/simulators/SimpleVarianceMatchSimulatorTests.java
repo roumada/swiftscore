@@ -22,8 +22,8 @@ class SimpleVarianceMatchSimulatorTests {
             "0.5, 0.6, AWAY_SIDE_VICTORY",
             "0.6, 0.5, HOME_SIDE_VICTORY"
     })
-    @DisplayName("Simulate match - with zero variance - should end with victories for correct sides")
-    void simulateMatch_zeroVariance_shouldEndWithADraw(double homeVictoryChance, double awayVictoryChance, FootballMatch.Result result) {
+    @DisplayName("Simulate match - with zero variance - should end with expected results")
+    void simulateMatch_zeroVariance_shouldEndWithExpectedResults(double homeVictoryChance, double awayVictoryChance, FootballMatch.Result result) {
         // arrange
         final MatchSimulator matchSimulator = SimpleVarianceMatchSimulator.withVariance(0.0);
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(homeVictoryChance).build();
