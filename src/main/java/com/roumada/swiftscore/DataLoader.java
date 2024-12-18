@@ -41,6 +41,7 @@ public class DataLoader implements CommandLineRunner {
                 FootballClub.builder().name("FC7").victoryChance(0.7).build(),
                 FootballClub.builder().name("FC8").victoryChance(0.8).build(),
                 FootballClub.builder().name("FC9").victoryChance(0.9).build(),
+                FootballClub.builder().name("FC11").victoryChance(0.9).build(),
                 FootballClub.builder().name("FC10").victoryChance(1).build()
         ));
         log.info("Football clubs saved");
