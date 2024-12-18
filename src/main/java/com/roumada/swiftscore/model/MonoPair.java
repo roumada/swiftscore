@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.data.model;
+package com.roumada.swiftscore.model;
 
 import lombok.Getter;
 
@@ -19,10 +19,6 @@ public class MonoPair<T> {
 
     public static <T> MonoPair<T> of (T a, T b) {
         return new MonoPair<>(a, b);
-    }
-
-    public MonoPair<T> invert() {
-        return new MonoPair<>(b, a);
     }
 
     @Override

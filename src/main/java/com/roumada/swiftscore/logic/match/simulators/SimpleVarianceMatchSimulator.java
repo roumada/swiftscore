@@ -1,10 +1,12 @@
 package com.roumada.swiftscore.logic.match.simulators;
 
 import com.roumada.swiftscore.logic.match.resolvers.MatchResolverFactory;
-import com.roumada.swiftscore.data.model.match.FootballMatch;
+import com.roumada.swiftscore.model.match.FootballMatch;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 public class SimpleVarianceMatchSimulator implements MatchSimulator {
 
     private final float variance;
@@ -29,8 +31,10 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
     private void determineResult(FootballMatch footballMatch) {
         var homeSideVictoryChance = footballMatch.getHomeSideVictoryChance() +
                 ((float) ThreadLocalRandom.current().nextInt(1, (int) (variance * 100)) / 100);
+        log.info("Home side base victory chance: [{}]. New victory chance: [{}]", footballMatch.getHomeSideVictoryChance(), homeSideVictoryChance);
         var awaySideVictoryChance = footballMatch.getAwaySideVictoryChance() +
                 ((float) ThreadLocalRandom.current().nextInt(1, (int) (variance * 100)) / 100);
+        log.info("Away side base victory chance: [{}]. New victory chance: [{}]", footballMatch.getAwaySideVictoryChance(), awaySideVictoryChance);
 
         if (homeSideVictoryChance > awaySideVictoryChance) {
             footballMatch.setMatchResult(FootballMatch.Result.HOME_SIDE_VICTORY);

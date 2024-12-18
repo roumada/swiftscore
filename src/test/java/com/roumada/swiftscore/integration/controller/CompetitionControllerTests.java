@@ -1,12 +1,12 @@
 package com.roumada.swiftscore.integration.controller;
 
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.data.model.match.Competition;
-import com.roumada.swiftscore.data.model.match.CompetitionRound;
-import com.roumada.swiftscore.data.model.match.FootballMatch;
-import com.roumada.swiftscore.data.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
@@ -40,8 +40,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     private FootballClubDataLayer fcdl;
 
     @Test
-    @DisplayName("Should create a competition if there are clubs with given IDs in the database")
-    void shouldCreateCompetitionFromExistingClubs() throws Exception {
+    @DisplayName("Create competition - with valid football club IDs - should create")
+    void createCompetition_validData_isCreated() throws Exception {
         // arrange
         fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
 
@@ -57,16 +57,90 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var compId = new JSONObject(mvcResult.getResponse()
                 .getContentAsString()).getString("id");
 
-        mvc.perform(get("/competition/" + -1))
-                .andExpect(status().is4xxClientError());
-
         mvc.perform(get("/competition/" + compId))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Should return all competitions")
-    void shouldReturnAllCompetitions() throws Exception {
+    @DisplayName("Create competition - with invalid football club IDs - should return error code")
+    void createCompetition_invalidIds_shouldReturnErrorCode() throws Exception {
+        // arrange
+        fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+
+        // act
+        mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
+                                List.of(1L, 2L, 3L, 9L),
+                                0.0f))))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("Create competition  - with uneven football club ID count - should return error code")
+    void createCompetition_invalidIdCount_shouldReturnErrorCode() throws Exception {
+        // arrange
+        fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+
+        // act
+        mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
+                                List.of(1L, 2L, 3L),
+                                0.0f))))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("Create competition  - with invalid variance value - should return error code")
+    void createCompetition_invalidVarianceNumber_shouldReturnErrorCode() throws Exception {
+        // arrange
+        fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+
+        // act
+        mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
+                                List.of(1L, 2L, 3L),
+                                9.1f))))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("Get a competitions - with valid ID - should return")
+    void getCompetition_withValidID_shouldReturn() throws Exception {
+        // arrange
+        var round1 = new CompetitionRound(1L, 1, Collections.emptyList());
+        compdl.saveCompetitionRound(round1);
+        var id = compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
+                List.of(round1), 0.0f)).getId();
+
+        // act
+        var result = mvc.perform(get("/competition/" + id))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        var resultJSON = new JSONObject(result);
+
+        // assert
+        assertEquals(id, resultJSON.getLong("id"));
+    }
+
+    @Test
+    @DisplayName("Get a competitions - with invalid ID - should return error code")
+    void getCompetition_withInvalidID_shouldReturnErrorCode() throws Exception {
+        // arrange
+        var round1 = new CompetitionRound(1L, 1, Collections.emptyList());
+        compdl.saveCompetitionRound(round1);
+        compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
+                List.of(round1), 0.0f));
+
+        // act
+        mvc.perform(get("/competition/999"))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("Get all competitions - should return")
+    void getAllCompetitions_shouldReturnAll() throws Exception {
         // arrange
         var round1 = new CompetitionRound(1L, 1, Collections.emptyList());
         var round2 = new CompetitionRound(2L, 1, Collections.emptyList());
@@ -90,8 +164,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should return simulated round")
-    void shouldReturnSimulatedRound() throws Exception {
+    @DisplayName("Simulate competition  - is still simulable - should simulate and return simulated round")
+    void simulateCompetitionRound_isStillSimulable_shouldSimulateAndReturn() throws Exception {
         // arrange
         var fc1 = FootballClub.builder().id(1L).name("FC1").victoryChance(0.3f).build();
         var fc2 = FootballClub.builder().id(2L).name("FC2").victoryChance(0.4f).build();
@@ -121,5 +195,30 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var responseJSON = new JSONObject(response);
 
         assertEquals(1, responseJSON.getJSONArray("matches").length());
+    }
+
+    @Test
+    @DisplayName("Simulate competition  - is originally simulable - should return error code when no longer simulable")
+    void simulateCompetitionRound_isOriginallySimulable_shouldReturnErrorCodeWhenNoLongerSimulable() throws Exception {
+        // arrange
+        var fc1 = FootballClub.builder().id(1L).name("FC1").victoryChance(0.3f).build();
+        var fc2 = FootballClub.builder().id(2L).name("FC2").victoryChance(0.4f).build();
+        fcdl.save(fc1);
+        fcdl.save(fc2);
+
+        var round = new CompetitionRound(1L, 1,
+                List.of(new FootballMatch(
+                        new FootballMatchStatistics(fc1),
+                        new FootballMatchStatistics(fc2))));
+        compdl.saveCompetitionRound(round);
+
+        var saved = compdl.saveCompetition(new Competition(
+                List.of(fc1, fc2), List.of(round), 0));
+
+        // act
+        mvc.perform(get("/competition/%s/simulate".formatted(saved.getId())))
+                .andExpect(status().isOk());
+        mvc.perform(get("/competition/%s/simulate".formatted(saved.getId())))
+                .andExpect(status().is4xxClientError());
     }
 }

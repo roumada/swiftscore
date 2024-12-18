@@ -1,9 +1,9 @@
 package com.roumada.swiftscore.integration.persistence;
 
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.data.model.match.CompetitionRound;
-import com.roumada.swiftscore.data.model.match.FootballMatch;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
@@ -37,7 +37,6 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
         var optionalCompId = dataLayer.generateAndSave(dto);
 
         // assert
-        assert (optionalCompId).isPresent();
         var optionalComp = dataLayer.findCompetitionById(optionalCompId.get().getId());
         assert (optionalComp).isPresent();
         var comp = optionalComp.get();

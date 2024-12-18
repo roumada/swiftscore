@@ -17,7 +17,7 @@ class CompetitionRoundsGeneratorTests {
         var clubs = getTenFootballClubs();
 
         // act
-        var rounds = generate(clubs);
+        var rounds = generate(clubs).get();
 
         // assert
         assertEquals(clubs.size() * 2 - 2, rounds.size());

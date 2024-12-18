@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.persistence;
 
-import com.roumada.swiftscore.data.model.match.FootballMatch;
-import com.roumada.swiftscore.data.model.match.FootballMatchStatistics;
+import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
 import com.roumada.swiftscore.persistence.repository.FootballMatchStatisticsRepository;
 import lombok.AllArgsConstructor;
@@ -24,8 +24,9 @@ public class FootballMatchDataLayer {
         return footballMatchRepository.save(match);
     }
 
-    public FootballMatchStatistics saveStatistics(FootballMatchStatistics statistics){
-        return footballMatchStatisticsRepository.save(statistics);
+    public void saveStatistics(FootballMatchStatistics statistics) {
+        var saved = footballMatchStatisticsRepository.save(statistics);
+        log.info("Match statistics with data [{}] saved.", saved);
     }
 
     public Optional<FootballMatch> findMatchById(long id) {

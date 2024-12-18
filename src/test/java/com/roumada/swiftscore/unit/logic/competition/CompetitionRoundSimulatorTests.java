@@ -2,16 +2,16 @@ package com.roumada.swiftscore.unit.logic.competition;
 
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.match.simulators.NoVarianceMatchSimulator;
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.match.CompetitionRound;
-import com.roumada.swiftscore.data.model.match.FootballMatchStatistics;
-import com.roumada.swiftscore.data.model.match.FootballMatch;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatchStatistics;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.roumada.swiftscore.data.model.match.FootballMatch.Result.*;
+import static com.roumada.swiftscore.model.match.FootballMatch.Result.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
