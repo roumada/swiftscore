@@ -17,12 +17,10 @@ public class FootballClub {
 
     public static class Builder {
         public FootballClub build() {
-            if (victoryChance > 1) {
-                throw new IllegalArgumentException("Victory chance cannot exceed 1");
-            }
-            if (victoryChance < 0) {
-                throw new IllegalArgumentException("Victory chance cannot be lower than 0");
-            }
+            if(name == null || name.isEmpty()) throw new IllegalArgumentException("Club should have a name");
+            if (victoryChance > 1) throw new IllegalArgumentException("Victory chance cannot exceed 1");
+            if (victoryChance < 0) throw new IllegalArgumentException("Victory chance cannot be lower than 0");
+
             return new FootballClub(id, name, victoryChance);
         }
     }

@@ -2,6 +2,7 @@ package com.roumada.swiftscore.persistence;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.FootballClubDTO;
+import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
@@ -19,13 +20,13 @@ public class FootballClubDataLayer {
     private final FootballClubRepository repository;
 
     public FootballClub save(FootballClub footballClub) {
-        var saved =  repository.save(footballClub);
+        var saved = repository.save(footballClub);
         log.info("Football club with data [{}] saved.", footballClub);
         return saved;
     }
 
-    public List<FootballClub> saveAll(List<FootballClub> fcs) {
-        return repository.saveAll(fcs);
+    public void saveAll(List<FootballClub> fcs) {
+        repository.saveAll(fcs);
     }
 
     public Optional<FootballClub> findById(long id) {
@@ -39,8 +40,7 @@ public class FootballClubDataLayer {
     public Either<String, FootballClub> saveFromDto(FootballClubDTO dto) {
         FootballClub footballClub;
         try {
-            footballClub =
-                    FootballClub.builder().name(dto.name()).victoryChance(dto.victoryChance()).build();
+            footballClub = FootballClubMapper.INSTANCE.footballClubDTOtoFootballClub(dto);
         } catch (IllegalArgumentException iae) {
             return Either.left(iae.getLocalizedMessage());
         }
