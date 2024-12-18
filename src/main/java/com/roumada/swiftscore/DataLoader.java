@@ -1,6 +1,7 @@
 package com.roumada.swiftscore;
 
 import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,5 +43,6 @@ public class DataLoader implements CommandLineRunner {
                 FootballClub.builder().name("FC9").victoryChance(0.9).build(),
                 FootballClub.builder().name("FC10").victoryChance(1).build()
         ));
+        log.info("Football clubs saved");
     }
 }
