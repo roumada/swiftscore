@@ -1,16 +1,18 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.data.mapper.CompetitionMapper;
-import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.data.model.dto.CompetitionResponseDTO;
+import com.roumada.swiftscore.model.mapper.CompetitionMapper;
+import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.CompetitionResponseDTO;
 import com.roumada.swiftscore.logic.competition.CompetitionService;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/competition")
 @RequiredArgsConstructor
@@ -21,16 +23,16 @@ public class ComptetitionController {
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<Object> createCompetition(@RequestBody CompetitionRequestDTO dto) {
+        log.debug("Accessed POST endpoint {} with request body {}", "/competition", dto);
         var result = dataLayer.generateAndSave(dto);
-        return result
-                .<ResponseEntity<Object>>map(res ->
-                        ResponseEntity.ok(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(res)))
-                .orElseGet(() ->
-                        ResponseEntity.badRequest().body("Couldn't create competition. Check validity of provided club IDs"));
+        return result.fold(
+                error -> ResponseEntity.badRequest().body(error),
+                success -> ResponseEntity.ok(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(success)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCompetition(@PathVariable long id) {
+        log.info("Accessed GET endpoint {}", "/competition/%s".formatted(id));
         var comp = dataLayer.findCompetitionById(id);
         return comp
                 .<ResponseEntity<Object>>map(ResponseEntity::ok)
@@ -40,12 +42,14 @@ public class ComptetitionController {
 
     @GetMapping("/all")
     public List<CompetitionResponseDTO> getAllCompetitions() {
+        log.info("Accessed GET endpoint {}", "/competition/all");
         return dataLayer.findAllComps().stream().map(CompetitionMapper.INSTANCE::competitionToCompetitionResponseDTO).toList();
     }
 
 
     @GetMapping("/{id}/simulate")
     public ResponseEntity<Object> simulate(@PathVariable long id) {
+        log.info("Accessed GET endpoint {}", "/competition/%s/simulate".formatted(id));
         var competition = dataLayer.findCompetitionById(id);
         if (competition.isEmpty()) return ResponseEntity.badRequest()
                 .body("Competition with ID [%s] not found.".formatted(id));
@@ -53,7 +57,7 @@ public class ComptetitionController {
         var simulated = competitionService.simulateRound(competition.get());
         return simulated.fold(
                 error -> ResponseEntity.badRequest().body(error),
-                success -> ResponseEntity.ok(success)
+                ResponseEntity::ok
         );
     }
 }

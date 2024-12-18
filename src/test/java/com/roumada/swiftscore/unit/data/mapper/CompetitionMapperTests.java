@@ -1,10 +1,9 @@
 package com.roumada.swiftscore.unit.data.mapper;
 
-import com.roumada.swiftscore.data.mapper.CompetitionMapper;
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.data.model.match.Competition;
-import com.roumada.swiftscore.data.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.mapper.CompetitionMapper;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.match.CompetitionRound;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,19 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CompetitionMapperTests {
     private final CompetitionMapper mapper = CompetitionMapper.INSTANCE;
-
-    @Test
-    @DisplayName("Should convert from request to object")
-    void shouldConvertFromRequestToObject() {
-        // arrange
-        var request = new CompetitionRequestDTO(List.of(1L, 2L), 0.0f);
-
-        // act
-        var object = mapper.competitionRequestDTOToCompetition(request);
-
-        // assert
-        assertEquals(0.0f, object.getVariance());
-    }
 
     @Test
     @DisplayName("Should convert from object to response")
@@ -47,6 +33,4 @@ class CompetitionMapperTests {
         assertEquals(List.of(1L, 2L), response.participantIds());
         assertEquals(List.of(3L, 4L), response.roundIds());
     }
-
-
 }

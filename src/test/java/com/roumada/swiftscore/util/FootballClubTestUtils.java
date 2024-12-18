@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.util;
 
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.match.Competition;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class FootballClubTestUtils {
 
         return Competition.builder()
                 .participants(participants)
-                .rounds(CompetitionRoundsGenerator.generate(participants))
+                .rounds(CompetitionRoundsGenerator.generate(participants).get())
                 .variance(0.0f)
                 .build();
     }

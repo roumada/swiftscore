@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.persistence;
 
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.dto.FootballClubDTO;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.FootballClubDTO;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,9 @@ public class FootballClubDataLayer {
     private final FootballClubRepository repository;
 
     public FootballClub save(FootballClub footballClub) {
-        return repository.save(footballClub);
+        var saved =  repository.save(footballClub);
+        log.info("Football club with data [{}] saved.", footballClub);
+        return saved;
     }
 
     public List<FootballClub> saveAll(List<FootballClub> fcs) {
@@ -42,6 +44,6 @@ public class FootballClubDataLayer {
         } catch (IllegalArgumentException iae) {
             return Either.left(iae.getLocalizedMessage());
         }
-        return Either.right(repository.save(footballClub));
+        return Either.right(save(footballClub));
     }
 }

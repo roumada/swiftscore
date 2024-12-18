@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.persistence.listener;
 
 import com.roumada.swiftscore.persistence.sequence.PrimarySequenceService;
-import com.roumada.swiftscore.data.model.FootballClub;
+import com.roumada.swiftscore.model.FootballClub;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;

@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.data.model.match;
+package com.roumada.swiftscore.model.match;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

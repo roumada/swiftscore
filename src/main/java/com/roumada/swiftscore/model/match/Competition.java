@@ -1,6 +1,6 @@
-package com.roumada.swiftscore.data.model.match;
+package com.roumada.swiftscore.model.match;
 
-import com.roumada.swiftscore.data.model.FootballClub;
+import com.roumada.swiftscore.model.FootballClub;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

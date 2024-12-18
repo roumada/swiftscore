@@ -1,14 +1,14 @@
 package com.roumada.swiftscore.logic.competition;
 
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.MonoPair;
-import com.roumada.swiftscore.data.model.match.CompetitionRound;
-import com.roumada.swiftscore.data.model.match.FootballMatchStatistics;
-import com.roumada.swiftscore.data.model.match.FootballMatch;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.MonoPair;
+import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatchStatistics;
+import com.roumada.swiftscore.model.match.FootballMatch;
+import io.vavr.control.Either;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -18,14 +18,15 @@ public class CompetitionRoundsGenerator {
     private CompetitionRoundsGenerator() {
     }
 
-    public static List<CompetitionRound> generate(List<FootballClub> clubs) {
+    public static Either<String, List<CompetitionRound>> generate(List<FootballClub> clubs) {
         if (clubs.size() % 2 == 1) {
-            log.warn("Unable to generate competition rounds for odd amount of clubs. Aborting...");
-            return Collections.emptyList();
+            String error = "Unable to generate competition rounds for odd amount of clubs.";
+            log.error(error);
+            return Either.left(error);
         }
 
         List<List<MonoPair<Integer>>> numericRoundRobinMatchups = generateRoundRobinNumericMatchups(clubs.size());
-        return createCompetitionRoundsOnNumericMatchups(clubs, numericRoundRobinMatchups);
+        return Either.right(createCompetitionRoundsOnNumericMatchups(clubs, numericRoundRobinMatchups));
     }
 
     private static List<CompetitionRound> createCompetitionRoundsOnNumericMatchups(List<FootballClub> clubs,

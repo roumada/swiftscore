@@ -1,10 +1,9 @@
-package com.roumada.swiftscore.data.mapper;
+package com.roumada.swiftscore.model.mapper;
 
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.data.model.dto.CompetitionResponseDTO;
-import com.roumada.swiftscore.data.model.match.Competition;
-import com.roumada.swiftscore.data.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.CompetitionResponseDTO;
+import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.match.CompetitionRound;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -16,17 +15,14 @@ import java.util.List;
 public interface CompetitionMapper {
     CompetitionMapper INSTANCE = Mappers.getMapper(CompetitionMapper.class);
 
-    @Mapping(source = "variance", target = "variance")
-    Competition competitionRequestDTOToCompetition(CompetitionRequestDTO request);
-
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "participants", target = "participantIds", qualifiedByName = "participantstoIds")
+    @Mapping(source = "participants", target = "participantIds", qualifiedByName = "participantsToIds")
     @Mapping(source = "rounds", target = "roundIds", qualifiedByName = "roundsToIds")
     @Mapping(source = "currentRoundNumber", target = "currentRound")
     CompetitionResponseDTO competitionToCompetitionResponseDTO(Competition competition);
 
-    @Named(value = "participantstoIds")
-    default List<Long> participantstoIds(List<FootballClub> participants) {
+    @Named(value = "participantsToIds")
+    default List<Long> participantsToIds(List<FootballClub> participants) {
         return participants.stream().map(FootballClub::getId).toList();
     }
 

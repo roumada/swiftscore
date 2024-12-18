@@ -1,15 +1,15 @@
 package com.roumada.swiftscore.persistence;
 
-import com.roumada.swiftscore.data.mapper.CompetitionMapper;
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.data.model.match.Competition;
-import com.roumada.swiftscore.data.model.match.CompetitionRound;
-import com.roumada.swiftscore.data.model.match.FootballMatch;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,25 +28,33 @@ public class CompetitionDataLayer {
     private final FootballClubRepository footballClubRepository;
     private final FootballMatchDataLayer footballMatchDataLayer;
 
-    public Optional<Competition> generateAndSave(CompetitionRequestDTO dto) {
+    public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
         var footballClubs = new ArrayList<FootballClub>();
         for (Long id : dto.participantIds()) {
             footballClubs.add(footballClubRepository.findById(id).orElse(null));
         }
 
         if (footballClubs.contains(null)) {
-            log.error("Failed to generate competition - failed to retrieve at least one club from the database.");
-            return Optional.empty();
+            var error = "Failed to generate competition - failed to retrieve at least one club from the database.";
+            log.error(error);
+            return Either.left(error);
         }
-        var rounds = CompetitionRoundsGenerator.generate(footballClubs);
-        saveRounds(rounds);
+        var generationResult = CompetitionRoundsGenerator.generate(footballClubs);
+        return generationResult.fold(
+                Either::left,
+                rounds -> {
+                    saveRounds(rounds);
 
-        var competition = CompetitionMapper.INSTANCE.competitionRequestDTOToCompetition(dto);
-        competition.setParticipants(footballClubs);
-        competition.setRounds(rounds);
-        competitionRepository.save(competition);
-        return Optional.of(competition);
+                    var competition = Competition.builder()
+                            .variance(dto.variance())
+                            .participants(footballClubs)
+                            .rounds(rounds)
+                            .build();
+                    competitionRepository.save(competition);
+                    return Either.right(competition);
+                });
     }
+
 
     public Optional<Competition> findCompetitionById(Long id) {
         return competitionRepository.findById(id);
@@ -56,13 +64,10 @@ public class CompetitionDataLayer {
         return competitionRepository.findAll();
     }
 
-    public CompetitionRound saveCompetitionRound(CompetitionRound round) {
-        for (FootballMatch match : round.getMatches()) {
-            footballMatchDataLayer.saveStatistics(match.getHomeSideStatistics());
-            footballMatchDataLayer.saveStatistics(match.getAwaySideStatistics());
-            footballMatchDataLayer.saveMatch(match);
-        }
-        return competitionRoundRepository.save(round);
+    public Competition saveCompetition(Competition competition) {
+        var saved = competitionRepository.save(competition);
+        log.info("Competition with ID [{}] saved.", saved.getId());
+        return saved;
     }
 
     private void saveRounds(List<CompetitionRound> rounds) {
@@ -71,7 +76,16 @@ public class CompetitionDataLayer {
         }
     }
 
-    public Competition saveCompetition(Competition competition) {
-        return competitionRepository.save(competition);
+    public void saveCompetitionRound(CompetitionRound round) {
+        for (FootballMatch match : round.getMatches()) {
+            saveMatch(match);
+        }
+        var roundId = competitionRoundRepository.save(round).getId();
+        log.info("Competition round with ID [{}] saved", roundId);
+    }
+
+    private void saveMatch(FootballMatch match) {
+        var matchId = footballMatchDataLayer.saveMatch(match).getId();
+        log.info("Match with ID [{}] saved.", matchId);
     }
 }

@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.integration.controller;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
-import com.roumada.swiftscore.data.model.FootballClub;
+import com.roumada.swiftscore.model.FootballClub;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

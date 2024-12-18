@@ -1,11 +1,11 @@
 package com.roumada.swiftscore.integration.controller;
 
-import com.roumada.swiftscore.data.model.FootballClub;
-import com.roumada.swiftscore.data.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.data.model.match.Competition;
-import com.roumada.swiftscore.data.model.match.CompetitionRound;
-import com.roumada.swiftscore.data.model.match.FootballMatch;
-import com.roumada.swiftscore.data.model.match.FootballMatchStatistics;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
