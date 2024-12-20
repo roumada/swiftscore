@@ -10,6 +10,7 @@ import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
+import com.roumada.swiftscore.util.PersistenceTestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -43,12 +44,13 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with valid football club IDs - should create")
     void createCompetition_validData_isCreated() throws Exception {
         // arrange
-        fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(
+                fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs()));
 
         // act
         var mvcResult = mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
-                                List.of(1L, 2L, 3L, 4L),
+                                ids,
                                 0.0f))))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -108,8 +110,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     void getCompetition_withValidID_shouldReturn() throws Exception {
         // arrange
         var round1 = new CompetitionRound(1L, 1, Collections.emptyList());
-        compdl.saveCompetitionRound(round1);
-        var id = compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
+        var saved = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        var id = compdl.saveCompetition(new Competition(saved,
                 List.of(round1), 0.0f)).getId();
 
         // act
@@ -130,7 +132,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // arrange
         var round1 = new CompetitionRound(1L, 1, Collections.emptyList());
         compdl.saveCompetitionRound(round1);
-        compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
+        var saved = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        compdl.saveCompetition(new Competition(saved,
                 List.of(round1), 0.0f));
 
         // act
@@ -146,9 +149,10 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var round2 = new CompetitionRound(2L, 1, Collections.emptyList());
         compdl.saveCompetitionRound(round1);
         compdl.saveCompetitionRound(round2);
-        compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
+        var savedClubs = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        compdl.saveCompetition(new Competition(savedClubs,
                 List.of(round1), 0.0f));
-        compdl.saveCompetition(new Competition(FootballClubTestUtils.getFourFootballClubs(),
+        compdl.saveCompetition(new Competition(savedClubs,
                 List.of(round2), 0.0f));
 
         // act
@@ -167,8 +171,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Simulate competition  - is still simulable - should simulate and return simulated round")
     void simulateCompetitionRound_isStillSimulable_shouldSimulateAndReturn() throws Exception {
         // arrange
-        var fc1 = FootballClub.builder().id(1L).name("FC1").victoryChance(0.3f).build();
-        var fc2 = FootballClub.builder().id(2L).name("FC2").victoryChance(0.4f).build();
+        var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
+        var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
         fcdl.save(fc1);
         fcdl.save(fc2);
 
@@ -201,8 +205,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Simulate competition  - is originally simulable - should return error code when no longer simulable")
     void simulateCompetitionRound_isOriginallySimulable_shouldReturnErrorCodeWhenNoLongerSimulable() throws Exception {
         // arrange
-        var fc1 = FootballClub.builder().id(1L).name("FC1").victoryChance(0.3f).build();
-        var fc2 = FootballClub.builder().id(2L).name("FC2").victoryChance(0.4f).build();
+        var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
+        var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
         fcdl.save(fc1);
         fcdl.save(fc2);
 
