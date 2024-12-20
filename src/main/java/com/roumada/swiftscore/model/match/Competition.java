@@ -18,14 +18,14 @@ public class Competition {
     @Id
     private Long id = null;
     private int currentRoundNumber = 1;
-    private float variance;
+    private double variance;
     @DBRef
     private List<FootballClub> participants;
     @DBRef
     private List<CompetitionRound> rounds;
 
     @Builder
-    public Competition(List<FootballClub> participants, List<CompetitionRound> rounds, float variance) {
+    public Competition(List<FootballClub> participants, List<CompetitionRound> rounds, double variance) {
         this.participants = participants;
         this.rounds = rounds;
         this.variance = variance;

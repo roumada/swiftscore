@@ -5,5 +5,5 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
-public record FootballClubDTO(String name, float victoryChance) {
+public record FootballClubDTO(String name, double victoryChance) {
 }
