@@ -15,7 +15,7 @@ public class FootballClub {
     private double victoryChance;
 
     @Builder
-    private FootballClub(String name, double victoryChance) {
+    public FootballClub(String name, double victoryChance) {
         if (name == null || name.isEmpty()) throw new IllegalArgumentException("Club should have a name");
         if (victoryChance > 1) throw new IllegalArgumentException("Victory chance cannot exceed 1");
         if (victoryChance < 0) throw new IllegalArgumentException("Victory chance cannot be lower than 0");

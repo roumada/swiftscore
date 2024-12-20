@@ -76,12 +76,13 @@ public class CompetitionDataLayer {
         }
     }
 
-    public void saveCompetitionRound(CompetitionRound round) {
+    public CompetitionRound saveCompetitionRound(CompetitionRound round) {
         for (FootballMatch match : round.getMatches()) {
             saveMatch(match);
         }
-        var roundId = competitionRoundRepository.save(round).getId();
-        log.info("Competition round with ID [{}] saved", roundId);
+        var saved = competitionRoundRepository.save(round);
+        log.info("Competition round with ID [{}] saved", saved.getId());
+        return saved;
     }
 
     private void saveMatch(FootballMatch match) {

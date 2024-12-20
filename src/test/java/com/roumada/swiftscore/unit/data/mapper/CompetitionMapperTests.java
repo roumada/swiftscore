@@ -22,11 +22,12 @@ class CompetitionMapperTests {
         fc1.setId(1L);
         var fc2 = FootballClub.builder().name("FC2").build();
         fc2.setId(2L);
-        var object = new Competition(List.of(fc1, fc2),
-                List.of(
-                CompetitionRound.builder().id(3L).round(1).build(),
-                CompetitionRound.builder().id(4L).round(2).build()
-        ), 0.0f);
+        var cr1 = CompetitionRound.builder().round(1).build();
+        var cr2 = CompetitionRound.builder().round(2).build();
+        cr1.setId(3L);
+        cr2.setId(4L);
+        var object = new Competition(0.0, List.of(fc1, fc2),
+                List.of(cr1, cr2));
 
         // act
         var response = mapper.competitionToCompetitionResponseDTO(object);

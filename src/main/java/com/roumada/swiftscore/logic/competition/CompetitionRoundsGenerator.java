@@ -42,7 +42,7 @@ public class CompetitionRoundsGenerator {
                         new FootballMatchStatistics(clubs.get(numericMatch.getA())),
                         new FootballMatchStatistics(clubs.get(numericMatch.getB()))));
             }
-            competitionRounds.add(new CompetitionRound(null,  roundCounter++, compRoundMatches));
+            competitionRounds.add(new CompetitionRound(roundCounter++, compRoundMatches));
         }
 
         return competitionRounds;

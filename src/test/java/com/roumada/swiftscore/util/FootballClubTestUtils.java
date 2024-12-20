@@ -41,7 +41,7 @@ public class FootballClubTestUtils {
         return Competition.builder()
                 .participants(participants)
                 .rounds(CompetitionRoundsGenerator.generate(participants).get())
-                .variance(0.0f)
+                .variance(0.0)
                 .build();
     }
 }

@@ -1,6 +1,5 @@
 package com.roumada.swiftscore.model.match;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -11,13 +10,17 @@ import java.util.List;
 
 @Data
 @Document("competition_round")
-@AllArgsConstructor
-@Builder
 public class CompetitionRound {
 
     @Id
-    private Long id;
+    private Long id = null;
     private int round;
     @DBRef
     private List<FootballMatch> matches;
+
+    @Builder
+    public CompetitionRound(int round, List<FootballMatch> matches) {
+        this.round = round;
+        this.matches = matches;
+    }
 }

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CompetitionRoundSimulatorTests {
 
     private final CompetitionRoundSimulator competitionRoundSimulator =
-            CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withVariance(0.0f));
+            CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withVariance(0.0));
 
     @Test
     @DisplayName("Should simulate an entire match week and change match statuses")
@@ -51,6 +51,6 @@ class CompetitionRoundSimulatorTests {
         FootballMatch footballMatch3 = new FootballMatch(new FootballMatchStatistics(footballClub2),
                 new FootballMatchStatistics(footballClub2));
 
-        return new CompetitionRound(null, 1, List.of(footballMatch1, footballMatch2, footballMatch3));
+        return new CompetitionRound(1, List.of(footballMatch1, footballMatch2, footballMatch3));
     }
 }

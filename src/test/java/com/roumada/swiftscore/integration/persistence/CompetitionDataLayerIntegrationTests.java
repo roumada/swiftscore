@@ -31,7 +31,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
         fc1 = fcDataLayer.save(fc1);
         fc2 = fcDataLayer.save(fc2);
-        var dto = new CompetitionRequestDTO(List.of(fc1.getId(), fc2.getId()), 0.0f);
+        var dto = new CompetitionRequestDTO(List.of(fc1.getId(), fc2.getId()), 0.0);
 
         // act
         var optionalCompId = dataLayer.generateAndSave(dto);
