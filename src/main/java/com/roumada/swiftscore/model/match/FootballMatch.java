@@ -11,6 +11,8 @@ public class FootballMatch {
 
     @Id
     private Long id = null;
+    private Long competitionId;
+    private Long competitionRoundId;
     @DBRef
     private FootballMatchStatistics homeSideStatistics;
     @DBRef

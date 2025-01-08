@@ -51,15 +51,24 @@ public class CompetitionDataLayer {
                             .build();
                     competition = saveCompetition(competition);
 
-                    for(CompetitionRound round : rounds){
+                    for (CompetitionRound round : rounds) {
                         round.setCompetitionId(competition.getId());
                     }
                     var savedRounds = saveRounds(rounds);
                     competition.setRounds(savedRounds);
                     competition = saveCompetition(competition);
+                    saveFootballMatchesWithCompIds(competition);
 
                     return Either.right(competition);
                 });
+    }
+
+    private void saveFootballMatchesWithCompIds(Competition competition) {
+        for (CompetitionRound round : competition.getRounds()) {
+            for (FootballMatch match : round.getMatches()) {
+                saveMatchForCompId(match, round.getId(), round.getCompetitionId());
+            }
+        }
     }
 
     public Competition saveCompetition(Competition competition) {
@@ -83,6 +92,12 @@ public class CompetitionDataLayer {
         var saved = competitionRoundRepository.save(round);
         log.info("Competition round with ID [{}] saved", saved.getId());
         return saved;
+    }
+
+    private void saveMatchForCompId(FootballMatch match, Long compRoundId, Long competitionId) {
+        match.setCompetitionId(competitionId);
+        match.setCompetitionRoundId(compRoundId);
+        saveMatch(match);
     }
 
     private void saveMatch(FootballMatch match) {
