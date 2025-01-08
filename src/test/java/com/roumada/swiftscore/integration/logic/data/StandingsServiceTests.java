@@ -51,11 +51,13 @@ class StandingsServiceTests extends AbstractBaseIntegrationTest {
         var standings2 = standings.get(1);
         assertEquals("FC1", standings1.getFootballClubName());
         assertEquals(2, standings1.getWins());
+        assertEquals(0, standings1.getDraws());
         assertEquals(0, standings1.getLosses());
         assertEquals(6, standings1.getPoints());
         assertTrue(standings1.getGoalsScored() > standings1.getGoalsConceded());
         assertEquals("FC2", standings2.getFootballClubName());
         assertEquals(0, standings2.getWins());
+        assertEquals(0, standings2.getDraws());
         assertEquals(2, standings2.getLosses());
         assertEquals(0, standings2.getPoints());
         assertTrue(standings2.getGoalsScored() < standings2.getGoalsConceded());
