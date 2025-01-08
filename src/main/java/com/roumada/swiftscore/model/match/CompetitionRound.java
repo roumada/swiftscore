@@ -25,4 +25,8 @@ public class CompetitionRound {
         this.round = round;
         this.matches = matches;
     }
+
+    public CompetitionRound(int round, List<FootballMatch> matches) {
+        this(null, round, matches);
+    }
 }

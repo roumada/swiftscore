@@ -109,7 +109,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get a competition - with valid ID - should return")
     void getCompetition_withValidID_shouldReturn() throws Exception {
         // arrange
-        var round1 = new CompetitionRound(null, 1, Collections.emptyList());
+        var round1 = new CompetitionRound(1, Collections.emptyList());
         round1 = compdl.saveCompetitionRound(round1);
         var saved = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
         var id = compdl.saveCompetition(new Competition(0.0, saved,
@@ -131,7 +131,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get a competitions - with invalid ID - should return error code")
     void getCompetition_withInvalidID_shouldReturnErrorCode() throws Exception {
         // arrange
-        var round1 = new CompetitionRound(null, 1, Collections.emptyList());
+        var round1 = new CompetitionRound(1, Collections.emptyList());
         compdl.saveCompetitionRound(round1);
         var saved = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
         compdl.saveCompetition(new Competition(0.0, saved,
@@ -146,8 +146,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get all competitions - should return")
     void getAllCompetitions_shouldReturnAll() throws Exception {
         // arrange
-        var round1 = new CompetitionRound(null, 1, Collections.emptyList());
-        var round2 = new CompetitionRound(null, 1, Collections.emptyList());
+        var round1 = new CompetitionRound(1, Collections.emptyList());
+        var round2 = new CompetitionRound(1, Collections.emptyList());
         compdl.saveCompetitionRound(round1);
         compdl.saveCompetitionRound(round2);
         var savedClubs = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
@@ -211,7 +211,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         fcdl.save(fc1);
         fcdl.save(fc2);
 
-        var round = new CompetitionRound(null, 1,
+        var round = new CompetitionRound(1,
                 List.of(new FootballMatch(
                         new FootballMatchStatistics(fc1),
                         new FootballMatchStatistics(fc2))));

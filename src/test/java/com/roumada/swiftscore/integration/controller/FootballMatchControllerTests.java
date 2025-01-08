@@ -51,7 +51,7 @@ class FootballMatchControllerTests extends AbstractBaseIntegrationTest {
         fcdl.save(fc2);
         var stats1 = new FootballMatchStatistics(fc1);
         var stats2 = new FootballMatchStatistics(fc2);
-        fmdl.saveMatch(new FootballMatch(stats1, stats2)).getId();
+        fmdl.saveMatch(new FootballMatch(stats1, stats2));
 
         // act & assert
         mvc.perform(get("/match/" + 999))
