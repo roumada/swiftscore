@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.util;
+package com.roumada.swiftscore;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
