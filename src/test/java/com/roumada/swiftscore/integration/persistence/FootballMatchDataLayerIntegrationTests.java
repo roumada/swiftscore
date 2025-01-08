@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
 
@@ -34,12 +35,14 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         var match = new FootballMatch(stats1, stats2);
 
         // act
-        var saved = dataLayer.saveMatch(match);
+        var saved = dataLayer.createMatch(match);
         var optionalMatch = dataLayer.findMatchById(saved.getId());
 
         // assert
         assertThat(optionalMatch).isPresent();
         var retrievedMatch = optionalMatch.get();
         assertThat(retrievedMatch.getId()).isEqualTo(saved.getId());
+        assertEquals(retrievedMatch.getHomeSideStatistics().getFootballMatchId(), retrievedMatch.getId());
+        assertEquals(retrievedMatch.getAwaySideStatistics().getFootballMatchId(), retrievedMatch.getId());
     }
 }

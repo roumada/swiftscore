@@ -12,6 +12,7 @@ public class FootballMatchStatistics {
 
     @Id
     private Long id = null;
+    private Long footballMatchId;
     @DBRef
     private FootballClub footballClub;
     private int goalsScored = 0;

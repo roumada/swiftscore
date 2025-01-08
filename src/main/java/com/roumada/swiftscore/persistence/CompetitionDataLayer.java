@@ -101,7 +101,7 @@ public class CompetitionDataLayer {
     }
 
     private void saveMatch(FootballMatch match) {
-        var matchId = footballMatchDataLayer.saveMatch(match).getId();
+        var matchId = footballMatchDataLayer.createMatch(match).getId();
         log.info("Match with ID [{}] saved.", matchId);
     }
 
