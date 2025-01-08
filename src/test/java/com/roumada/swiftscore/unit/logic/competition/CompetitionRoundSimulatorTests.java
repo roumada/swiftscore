@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CompetitionRoundSimulatorTests {
 
     private final CompetitionRoundSimulator competitionRoundSimulator =
-            CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withVariance(0.0f));
+            CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withVariance(0.0));
 
     @Test
     @DisplayName("Should simulate an entire match week and change match statuses")

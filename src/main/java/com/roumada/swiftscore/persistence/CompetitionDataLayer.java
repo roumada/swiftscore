@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,25 +44,31 @@ public class CompetitionDataLayer {
         return generationResult.fold(
                 Either::left,
                 rounds -> {
-                    saveRounds(rounds);
-
                     var competition = Competition.builder()
                             .variance(dto.variance())
                             .participants(footballClubs)
-                            .rounds(rounds)
+                            .rounds(Collections.emptyList())
                             .build();
-                    competitionRepository.save(competition);
+                    competition = saveCompetition(competition);
+
+                    for (CompetitionRound round : rounds) {
+                        round.setCompetitionId(competition.getId());
+                    }
+                    var savedRounds = saveRounds(rounds);
+                    competition.setRounds(savedRounds);
+                    competition = saveCompetition(competition);
+                    saveFootballMatchesWithCompIds(competition);
+
                     return Either.right(competition);
                 });
     }
 
-
-    public Optional<Competition> findCompetitionById(Long id) {
-        return competitionRepository.findById(id);
-    }
-
-    public List<Competition> findAllComps() {
-        return competitionRepository.findAll();
+    private void saveFootballMatchesWithCompIds(Competition competition) {
+        for (CompetitionRound round : competition.getRounds()) {
+            for (FootballMatch match : round.getMatches()) {
+                saveMatchForCompId(match, round.getId(), round.getCompetitionId());
+            }
+        }
     }
 
     public Competition saveCompetition(Competition competition) {
@@ -70,22 +77,39 @@ public class CompetitionDataLayer {
         return saved;
     }
 
-    private void saveRounds(List<CompetitionRound> rounds) {
+    private List<CompetitionRound> saveRounds(List<CompetitionRound> rounds) {
+        List<CompetitionRound> saved = new ArrayList<>();
         for (CompetitionRound round : rounds) {
-            saveCompetitionRound(round);
+            saved.add(saveCompetitionRound(round));
         }
+        return saved;
     }
 
-    public void saveCompetitionRound(CompetitionRound round) {
+    public CompetitionRound saveCompetitionRound(CompetitionRound round) {
         for (FootballMatch match : round.getMatches()) {
             saveMatch(match);
         }
-        var roundId = competitionRoundRepository.save(round).getId();
-        log.info("Competition round with ID [{}] saved", roundId);
+        var saved = competitionRoundRepository.save(round);
+        log.info("Competition round with ID [{}] saved", saved.getId());
+        return saved;
+    }
+
+    private void saveMatchForCompId(FootballMatch match, Long compRoundId, Long competitionId) {
+        match.setCompetitionId(competitionId);
+        match.setCompetitionRoundId(compRoundId);
+        saveMatch(match);
     }
 
     private void saveMatch(FootballMatch match) {
-        var matchId = footballMatchDataLayer.saveMatch(match).getId();
+        var matchId = footballMatchDataLayer.createMatch(match).getId();
         log.info("Match with ID [{}] saved.", matchId);
+    }
+
+    public Optional<Competition> findCompetitionById(Long id) {
+        return competitionRepository.findById(id);
+    }
+
+    public List<Competition> findAllCompetitions() {
+        return competitionRepository.findAll();
     }
 }

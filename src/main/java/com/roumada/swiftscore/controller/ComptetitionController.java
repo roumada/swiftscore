@@ -43,7 +43,7 @@ public class ComptetitionController {
     @GetMapping("/all")
     public List<CompetitionResponseDTO> getAllCompetitions() {
         log.info("Accessed GET endpoint {}", "/competition/all");
-        return dataLayer.findAllComps().stream().map(CompetitionMapper.INSTANCE::competitionToCompetitionResponseDTO).toList();
+        return dataLayer.findAllCompetitions().stream().map(CompetitionMapper.INSTANCE::competitionToCompetitionResponseDTO).toList();
     }
 
 

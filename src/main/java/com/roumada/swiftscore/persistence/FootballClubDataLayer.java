@@ -25,8 +25,8 @@ public class FootballClubDataLayer {
         return saved;
     }
 
-    public void saveAll(List<FootballClub> fcs) {
-        repository.saveAll(fcs);
+    public List<FootballClub> saveAll(List<FootballClub> fcs) {
+        return repository.saveAll(fcs);
     }
 
     public Optional<FootballClub> findById(long id) {
