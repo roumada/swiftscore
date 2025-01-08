@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.roumada.swiftscore.util.LogStringLiterals.GET_ENDPOINT;
+
 @Slf4j
 @RestController
 @RequestMapping("/match")
@@ -19,7 +21,7 @@ public class FootballMatchController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getMatch(@PathVariable long id) {
-        log.info("Accessed GET endpoint {}", "/match/%s".formatted(id));
+        log.info(GET_ENDPOINT + "{}", "/match/%s".formatted(id));
         var result = dataLayer.findMatchById(id);
         return result.<ResponseEntity<Object>>map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().body("Couldn't find football match with ID [%s]".formatted(id)));

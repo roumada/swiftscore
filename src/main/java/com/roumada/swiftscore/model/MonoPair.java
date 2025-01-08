@@ -1,31 +1,27 @@
 package com.roumada.swiftscore.model;
 
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * An implementation of a single-type pair.
+ *
  * @param <T> preferred pair type
  */
 @Getter
+@ToString
 public class MonoPair<T> {
 
-    private final T a;
-    private final T b;
+    private final T left;
+    private final T right;
 
-    private MonoPair(T a, T b) {
-        this.a = a;
-        this.b = b;
+    private MonoPair(T left, T right) {
+        this.left = left;
+        this.right = right;
     }
 
-    public static <T> MonoPair<T> of (T a, T b) {
+    public static <T> MonoPair<T> of(T a, T b) {
         return new MonoPair<>(a, b);
     }
 
-    @Override
-    public String toString() {
-        return "MonoPair{" +
-                "a=" + a +
-                ", b=" + b +
-                '}';
-    }
 }

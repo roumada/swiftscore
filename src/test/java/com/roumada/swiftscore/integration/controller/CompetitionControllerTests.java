@@ -100,7 +100,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
-                                List.of(1L, 2L, 3L),
+                                List.of(1L, 2L, 3L, 9L),
                                 9.1f))))
                 .andExpect(status().is4xxClientError());
     }

@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.roumada.swiftscore.util.LogStringLiterals.GET_ENDPOINT;
+
 @Slf4j
 @RestController
 @RequestMapping("/footballclub")
@@ -17,7 +19,7 @@ public class FootballClubController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getFootballClub(@PathVariable long id) {
-        log.info("Accessed GET endpoint {}", "/footballclub/%s".formatted(id));
+        log.info(GET_ENDPOINT + " {}", "/footballclub/%s".formatted(id));
         var findResult = dataLayer.findById(id);
         return findResult.<ResponseEntity<Object>>map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().body("Couldn't find football club with ID [%s]".formatted(id)));
@@ -25,7 +27,7 @@ public class FootballClubController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllClubs() {
-        log.info("Accessed GET endpoint {}", "/footballclub/all");
+        log.info(GET_ENDPOINT + " {}", "/footballclub/all");
         return ResponseEntity.ok(dataLayer.findAll());
     }
 

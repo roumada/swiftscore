@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.model.match;
 
+import com.roumada.swiftscore.model.MonoPair;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -30,6 +31,10 @@ public class FootballMatch {
 
     public double getAwaySideVictoryChance() {
         return awaySideStatistics.getFootballClub().getVictoryChance();
+    }
+
+    public MonoPair<FootballMatchStatistics> getStatistics() {
+        return MonoPair.of(homeSideStatistics, awaySideStatistics);
     }
 
     public enum Result {
