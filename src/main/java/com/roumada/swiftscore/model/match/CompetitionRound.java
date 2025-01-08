@@ -14,12 +14,14 @@ public class CompetitionRound {
 
     @Id
     private Long id = null;
+    private Long competitionId;
     private int round;
     @DBRef
     private List<FootballMatch> matches;
 
     @Builder
-    public CompetitionRound(int round, List<FootballMatch> matches) {
+    public CompetitionRound(Long competitionId, int round, List<FootballMatch> matches) {
+        this.competitionId = competitionId;
         this.round = round;
         this.matches = matches;
     }
