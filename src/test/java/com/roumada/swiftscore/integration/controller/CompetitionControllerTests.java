@@ -109,7 +109,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get a competition - with valid ID - should return")
     void getCompetition_withValidID_shouldReturn() throws Exception {
         // arrange
-        var round1 = new CompetitionRound(1L, 1, Collections.emptyList());
+        var round1 = new CompetitionRound(null, 1, Collections.emptyList());
         round1 = compdl.saveCompetitionRound(round1);
         var saved = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
         var id = compdl.saveCompetition(new Competition(0.0, saved,

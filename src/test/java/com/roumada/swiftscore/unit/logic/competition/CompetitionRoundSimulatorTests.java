@@ -51,6 +51,6 @@ class CompetitionRoundSimulatorTests {
         FootballMatch footballMatch3 = new FootballMatch(new FootballMatchStatistics(footballClub2),
                 new FootballMatchStatistics(footballClub2));
 
-        return new CompetitionRound(1L, 1, List.of(footballMatch1, footballMatch2, footballMatch3));
+        return new CompetitionRound(null, 1, List.of(footballMatch1, footballMatch2, footballMatch3));
     }
 }
