@@ -25,7 +25,7 @@ public class StatisticsService {
     private final CompetitionDataLayer competitionDataLayer;
     private final FootballClubDataLayer footballClubDataLayer;
     private final FootballMatchDataLayer footballMatchDataLayer;
-    private Map<FootballClub, StandingsDTO> standingsForFC;
+    private Map<Long, StandingsDTO> standingsForFC;
 
     private static void addGoals(MonoPair<FootballMatchStatistics> stats, StandingsDTO standingsForHomeSide, StandingsDTO standingsForAwaySide) {
         standingsForHomeSide.addGoalsScored(stats.getLeft().getGoalsScored());
@@ -45,7 +45,7 @@ public class StatisticsService {
 
         var comp = optCompetition.get();
         standingsForFC = new HashMap<>();
-        for (FootballClub fc : comp.getParticipants()) standingsForFC.put(fc, new StandingsDTO(fc.getName()));
+        for (FootballClub fc : comp.getParticipants()) standingsForFC.put(fc.getId(), new StandingsDTO(fc.getName()));
 
         for (CompetitionRound cr : comp.getRounds()) {
             for (FootballMatch fm : cr.getMatches()) {
@@ -58,8 +58,8 @@ public class StatisticsService {
 
     private void processMatch(FootballMatch match) {
         var stats = match.getStatistics();
-        StandingsDTO standingsForHomeSide = standingsForFC.get(stats.getLeft().getFootballClub());
-        StandingsDTO standingsForAwaySide = standingsForFC.get(stats.getRight().getFootballClub());
+        StandingsDTO standingsForHomeSide = standingsForFC.get(stats.getLeft().getFootballClubId());
+        StandingsDTO standingsForAwaySide = standingsForFC.get(stats.getRight().getFootballClubId());
 
         switch (match.getMatchResult()) {
             case UNFINISHED ->

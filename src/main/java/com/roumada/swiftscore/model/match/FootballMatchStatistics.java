@@ -1,9 +1,7 @@
 package com.roumada.swiftscore.model.match;
 
-import com.roumada.swiftscore.model.FootballClub;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -13,12 +11,10 @@ public class FootballMatchStatistics {
     @Id
     private Long id = null;
     private Long footballMatchId;
-    @DBRef
-    private FootballClub footballClub;
+    private Long footballClubId;
     private int goalsScored = 0;
 
-    public FootballMatchStatistics(FootballClub footballClub) {
-        this.footballClub = footballClub;
+    FootballMatchStatistics(Long id) {
+        this.footballClubId = id;
     }
-
 }

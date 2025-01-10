@@ -4,7 +4,6 @@ import com.roumada.swiftscore.logic.match.simulators.MatchSimulator;
 import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,8 +28,7 @@ class SimpleVarianceMatchSimulatorTests {
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(homeVictoryChance).build();
         FootballClub footballClub2 = FootballClub.builder().name("Football club 2").victoryChance(awayVictoryChance).build();
 
-        FootballMatch footballMatch = new FootballMatch(new FootballMatchStatistics(footballClub1),
-                new FootballMatchStatistics(footballClub2));
+        FootballMatch footballMatch = new FootballMatch(footballClub1, footballClub2);
 
         // act
         matchSimulator.simulateMatch(footballMatch);
@@ -47,8 +45,7 @@ class SimpleVarianceMatchSimulatorTests {
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(0.5).build();
         FootballClub footballClub2 = FootballClub.builder().name("Football club 2").victoryChance(0.5).build();
 
-        FootballMatch footballMatch = new FootballMatch(new FootballMatchStatistics(footballClub1),
-                new FootballMatchStatistics(footballClub2));
+        FootballMatch footballMatch = new FootballMatch(footballClub1, footballClub2);
 
         // act
         matchSimulator.simulateMatch(footballMatch);

@@ -43,6 +43,6 @@ public class FootballMatchDataLayer {
     }
 
     public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub) {
-        return footballMatchStatisticsRepository.findByFootballClub(footballClub);
+        return footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId());
     }
 }
