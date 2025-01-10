@@ -1,6 +1,7 @@
 package com.roumada.swiftscore.integration.controller;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
+import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
@@ -26,24 +27,38 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     private FootballClubDataLayer fcdl;
 
     @Test
-    @DisplayName("Get standings - with valid competition IDs - should return")
-    void getStandings_validCompetitionId_shouldReturn() throws Exception {
+    @DisplayName("Get competition statistics - with valid competition ID - should return")
+    void getCompetitionStatistics_validCompetitionId_shouldReturn() throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(
-                fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs()));
         var comp = compdl.generateAndSave(new CompetitionRequestDTO(ids, 0.0)).get();
         var compId = compdl.saveCompetition(comp).getId();
 
         // act & assert
-        mvc.perform(get("/standings/" + compId))
-                .andExpect(status().isOk());
+        mvc.perform(get("/statistics/competition/" + compId)).andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Get standings - with invalid competition IDs - should return error code")
-    void getStandings_invalidCompetitionId_shouldReturnError() throws Exception {
+    @DisplayName("Get competition statistics - with invalid competition ID - should return error code")
+    void getCompetitionStatistics_invalidCompetitionId_shouldReturnError() throws Exception {
         // act & assert
-        mvc.perform(get("/standings/" + 111))
-                .andExpect(status().is4xxClientError());
+        mvc.perform(get("/statistics/competition/" + -1)).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("Get club statistics - with valid club ID - should return")
+    void getClubStatistics_validClubId_shouldReturn() throws Exception {
+        // arrange
+        var id = fcdl.save(new FootballClub("FC1", 1)).getId();
+
+        // act & assert
+        mvc.perform(get("/statistics/club/" + id)).andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Get club statistics - with invalid club ID - should return error code")
+    void getClubStatistics_invalidClubId_shouldReturnError() throws Exception {
+        // act & assert
+        mvc.perform(get("/statistics/club/" + -1)).andExpect(status().is4xxClientError());
     }
 }
