@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.roumada.swiftscore.util.LogStringLiterals.GET_ENDPOINT;
+
 @Slf4j
 @RestController
 @RequestMapping("/standings/")
@@ -19,7 +21,7 @@ public class StandingsController {
 
     @GetMapping("{competitionId}")
     public ResponseEntity<Object> getStandingsForCompetition(@PathVariable long competitionId) {
-        log.info("Accessed GET endpoint {}", "/standings/%s".formatted(competitionId));
+        log.info(GET_ENDPOINT + "/standings/{}", competitionId);
 
         return service.getForCompetition(competitionId).fold(
                 error -> ResponseEntity.badRequest().body(error),
