@@ -36,8 +36,12 @@ public class StatisticsService {
 
     public Either<String, List<StandingsDTO>> getForCompetition(Long competitionId) {
         Optional<Competition> optCompetition = competitionDataLayer.findCompetitionById(competitionId);
-        if (optCompetition.isEmpty())
-            return Either.left("Couldn't find competition with ID [%s]".formatted(competitionId));
+        if (optCompetition.isEmpty()) {
+            String errorMsg = "Couldn't find competition with ID [%s]".formatted(competitionId);
+            log.warn(errorMsg);
+            return Either.left(errorMsg);
+        }
+
 
         var comp = optCompetition.get();
         standingsForFC = new HashMap<>();
@@ -58,7 +62,8 @@ public class StatisticsService {
         StandingsDTO standingsForAwaySide = standingsForFC.get(stats.getRight().getFootballClub());
 
         switch (match.getMatchResult()) {
-            case UNFINISHED -> log.info("Match with ID [{}] is unfinished. Not including it in standings", match.getId());
+            case UNFINISHED ->
+                    log.info("Match with ID [{}] is unfinished. Not including it in standings", match.getId());
             case HOME_SIDE_VICTORY -> {
                 addGoals(stats, standingsForHomeSide, standingsForAwaySide);
                 standingsForHomeSide.addWin();
@@ -79,7 +84,11 @@ public class StatisticsService {
 
     public Either<String, List<FootballMatchStatistics>> getForClub(long clubId) {
         var optionalFC = footballClubDataLayer.findById(clubId);
-        if(optionalFC.isEmpty()) return Either.left("Couldn't find club with ID [%s]".formatted(clubId));
+        if (optionalFC.isEmpty()) {
+            String errorMsg = "Couldn't find club with ID [%s]".formatted(clubId);
+            log.warn(errorMsg);
+            return Either.left(errorMsg);
+        }
 
         var fc = optionalFC.get();
         return Either.right(footballMatchDataLayer.findMatchStatisticsForClub(fc));

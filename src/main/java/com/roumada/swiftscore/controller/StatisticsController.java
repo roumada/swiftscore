@@ -19,9 +19,9 @@ public class StatisticsController {
 
     private final StatisticsService service;
 
-    @GetMapping("{competitionId}")
+    @GetMapping("competition/{competitionId}")
     public ResponseEntity<Object> getStatisticsForCompetition(@PathVariable long competitionId) {
-        log.info(GET_ENDPOINT + "/statistics/{}", competitionId);
+        log.info(GET_ENDPOINT + "/statistics/competition/{}", competitionId);
 
         return service.getForCompetition(competitionId).fold(
                 error -> ResponseEntity.badRequest().body(error),
