@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-class StandingsControllerTests extends AbstractBaseIntegrationTest {
+class StatisticsControllerTests extends AbstractBaseIntegrationTest {
 
     @Autowired
     private MockMvc mvc;

@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.persistence;
 
+import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -25,7 +27,7 @@ public class FootballMatchDataLayer {
         return updateMatch(match);
     }
 
-    public FootballMatch updateMatch(FootballMatch match){
+    public FootballMatch updateMatch(FootballMatch match) {
         saveStatistics(match.getHomeSideStatistics());
         saveStatistics(match.getAwaySideStatistics());
         return footballMatchRepository.save(match);
@@ -38,5 +40,9 @@ public class FootballMatchDataLayer {
 
     public Optional<FootballMatch> findMatchById(long id) {
         return footballMatchRepository.findById(id);
+    }
+
+    public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub) {
+        return footballMatchStatisticsRepository.findByFootballClub(footballClub);
     }
 }

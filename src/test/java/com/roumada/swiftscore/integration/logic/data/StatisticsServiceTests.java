@@ -2,7 +2,7 @@ package com.roumada.swiftscore.integration.logic.data;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.logic.data.CompetitionService;
-import com.roumada.swiftscore.logic.data.StandingsService;
+import com.roumada.swiftscore.logic.data.StatisticsService;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class StandingsServiceTests extends AbstractBaseIntegrationTest {
+class StatisticsServiceTests extends AbstractBaseIntegrationTest {
 
     @Autowired
-    private StandingsService service;
+    private StatisticsService service;
 
     @Autowired
     private CompetitionService compService;

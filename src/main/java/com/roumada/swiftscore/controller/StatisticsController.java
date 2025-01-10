@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.logic.data.StandingsService;
+import com.roumada.swiftscore.logic.data.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,17 +13,27 @@ import static com.roumada.swiftscore.util.LogStringLiterals.GET_ENDPOINT;
 
 @Slf4j
 @RestController
-@RequestMapping("/standings/")
+@RequestMapping("/statistics/")
 @RequiredArgsConstructor
-public class StandingsController {
+public class StatisticsController {
 
-    private final StandingsService service;
+    private final StatisticsService service;
 
     @GetMapping("{competitionId}")
-    public ResponseEntity<Object> getStandingsForCompetition(@PathVariable long competitionId) {
-        log.info(GET_ENDPOINT + "/standings/{}", competitionId);
+    public ResponseEntity<Object> getStatisticsForCompetition(@PathVariable long competitionId) {
+        log.info(GET_ENDPOINT + "/statistics/{}", competitionId);
 
         return service.getForCompetition(competitionId).fold(
+                error -> ResponseEntity.badRequest().body(error),
+                ResponseEntity::ok
+        );
+    }
+
+    @GetMapping("club/{clubId}")
+    public ResponseEntity<Object> getStatisticsForClub(@PathVariable long clubId) {
+        log.info(GET_ENDPOINT + "/statistics/club/{}", clubId);
+
+        return service.getForClub(clubId).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok
         );

@@ -8,6 +8,8 @@ import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
+import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +20,11 @@ import java.util.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class StandingsService {
+public class StatisticsService {
 
     private final CompetitionDataLayer competitionDataLayer;
+    private final FootballClubDataLayer footballClubDataLayer;
+    private final FootballMatchDataLayer footballMatchDataLayer;
     private Map<FootballClub, StandingsDTO> standingsForFC;
 
     private static void addGoals(MonoPair<FootballMatchStatistics> stats, StandingsDTO standingsForHomeSide, StandingsDTO standingsForAwaySide) {
@@ -71,5 +75,13 @@ public class StandingsService {
                 standingsForAwaySide.addDraw();
             }
         }
+    }
+
+    public Either<String, List<FootballMatchStatistics>> getForClub(long clubId) {
+        var optionalFC = footballClubDataLayer.findById(clubId);
+        if(optionalFC.isEmpty()) return Either.left("Couldn't find club with ID [%s]".formatted(clubId));
+
+        var fc = optionalFC.get();
+        return Either.right(footballMatchDataLayer.findMatchStatisticsForClub(fc));
     }
 }
