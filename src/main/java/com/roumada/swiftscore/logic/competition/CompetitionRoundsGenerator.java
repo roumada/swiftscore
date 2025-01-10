@@ -39,8 +39,8 @@ public class CompetitionRoundsGenerator {
 
             for (MonoPair<Integer> numericMatch : numericCompRound) {
                 compRoundMatches.add(new FootballMatch(
-                        new FootballMatchStatistics(clubs.get(numericMatch.getA())),
-                        new FootballMatchStatistics(clubs.get(numericMatch.getB()))));
+                        new FootballMatchStatistics(clubs.get(numericMatch.getLeft())),
+                        new FootballMatchStatistics(clubs.get(numericMatch.getRight()))));
             }
             competitionRounds.add(new CompetitionRound(null, roundCounter++, compRoundMatches));
         }

@@ -1,12 +1,25 @@
 package com.roumada.swiftscore.util;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
 
 import java.util.List;
 
 public class FootballClubTestUtils {
+    public static List<FootballClub> getTwoFootballClubs() {
+        return List.of(
+                FootballClub.builder().name("FC1").victoryChance(1).build(),
+                FootballClub.builder().name("FC2").victoryChance(0.9f).build()
+        );
+    }
+
+    public static List<FootballClub> getFourFootballClubs() {
+        return List.of(
+                FootballClub.builder().name("FC1").victoryChance(1).build(),
+                FootballClub.builder().name("FC2").victoryChance(0.9f).build(),
+                FootballClub.builder().name("FC3").victoryChance(0.8f).build(),
+                FootballClub.builder().name("FC4").victoryChance(0.7f).build()
+        );
+    }
 
     public static List<FootballClub> getTenFootballClubs() {
         return List.of(
@@ -21,27 +34,5 @@ public class FootballClubTestUtils {
                 FootballClub.builder().name("FC9").victoryChance(0.2f).build(),
                 FootballClub.builder().name("FC10").victoryChance(0.1f).build()
         );
-    }
-
-    public static List<FootballClub> getFourFootballClubs() {
-        return List.of(
-                FootballClub.builder().name("FC1").victoryChance(1).build(),
-                FootballClub.builder().name("FC2").victoryChance(0.9f).build(),
-                FootballClub.builder().name("FC3").victoryChance(0.8f).build(),
-                FootballClub.builder().name("FC4").victoryChance(0.7f).build()
-        );
-    }
-
-    public static Competition getTwoClubCompetition(){
-        var participants = List.of(
-                FootballClub.builder().name("FC1").victoryChance(1).build(),
-                FootballClub.builder().name("FC2").victoryChance(0.9f).build()
-        );
-
-        return Competition.builder()
-                .participants(participants)
-                .rounds(CompetitionRoundsGenerator.generate(participants).get())
-                .variance(0.0)
-                .build();
     }
 }

@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.roumada.swiftscore.util.LogStringLiterals.GET_ENDPOINT;
+import static com.roumada.swiftscore.util.LogStringLiterals.POST_ENDPOINT;
+
 @Slf4j
 @RestController
 @RequestMapping("/footballclub")
@@ -17,7 +20,7 @@ public class FootballClubController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getFootballClub(@PathVariable long id) {
-        log.info("Accessed GET endpoint {}", "/footballclub/%s".formatted(id));
+        log.info(GET_ENDPOINT + " /footballclub/{}", id);
         var findResult = dataLayer.findById(id);
         return findResult.<ResponseEntity<Object>>map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().body("Couldn't find football club with ID [%s]".formatted(id)));
@@ -25,13 +28,13 @@ public class FootballClubController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllClubs() {
-        log.info("Accessed GET endpoint {}", "/footballclub/all");
+        log.info(GET_ENDPOINT + " /footballclub/all");
         return ResponseEntity.ok(dataLayer.findAll());
     }
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<Object> createFootballClub(@RequestBody FootballClubDTO dto) {
-        log.debug("Accessed POST endpoint {} with request body {}", "/footballclub", dto);
+        log.debug(POST_ENDPOINT + " {} with request body {}", "/footballclub", dto);
         var saveResult = dataLayer.saveFromDto(dto);
         return saveResult.fold(
                 error -> ResponseEntity.badRequest().body(error),

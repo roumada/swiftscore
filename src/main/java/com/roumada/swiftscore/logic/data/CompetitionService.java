@@ -1,5 +1,6 @@
-package com.roumada.swiftscore.logic.competition;
+package com.roumada.swiftscore.logic.data;
 
+import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;

@@ -112,4 +112,6 @@ public class CompetitionDataLayer {
     public List<Competition> findAllCompetitions() {
         return competitionRepository.findAll();
     }
+
+
 }
