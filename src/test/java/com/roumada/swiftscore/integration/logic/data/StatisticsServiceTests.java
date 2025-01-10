@@ -28,9 +28,9 @@ class StatisticsServiceTests extends AbstractBaseIntegrationTest {
     private FootballClubDataLayer fcdl;
 
     @Test
-    @DisplayName("Generate standings - for a competition with two clubs after two match weeks simulated - " +
-            "should return appropriate standings")
-    void generateStandings_forFullySimulatedTwoClubCompetition_shouldReturnSorted() {
+    @DisplayName("Generate competition statistics - for a competition with two clubs after two match weeks simulated - " +
+            "should return appropriate statistics")
+    void generateCompetitionStatistics_forFullySimulatedTwoClubCompetition_shouldReturnSorted() {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getTwoFootballClubs()));
         var comp = cdl.generateAndSave(new CompetitionRequestDTO(ids, 0.0)).get();
