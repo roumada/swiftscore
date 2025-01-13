@@ -29,11 +29,11 @@ public class StatisticsController {
         );
     }
 
-    @GetMapping("club/{clubId}")
-    public ResponseEntity<Object> getStatisticsForClub(@PathVariable long clubId) {
+    @GetMapping("club/{clubId}/{page}")
+    public ResponseEntity<Object> getStatisticsForClub(@PathVariable long clubId, @PathVariable int page) {
         log.info(GET_ENDPOINT + "/statistics/club/{}", clubId);
 
-        return service.getForClub(clubId).fold(
+        return service.getForClub(clubId, page).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok
         );

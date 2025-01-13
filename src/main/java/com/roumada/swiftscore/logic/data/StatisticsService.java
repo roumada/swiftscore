@@ -13,6 +13,7 @@ import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -82,7 +83,7 @@ public class StatisticsService {
         }
     }
 
-    public Either<String, List<FootballMatchStatistics>> getForClub(long clubId) {
+    public Either<String, List<FootballMatchStatistics>> getForClub(long clubId, int page) {
         var optionalFC = footballClubDataLayer.findById(clubId);
         if (optionalFC.isEmpty()) {
             String errorMsg = "Couldn't find club with ID [%s]".formatted(clubId);
@@ -91,6 +92,6 @@ public class StatisticsService {
         }
 
         var fc = optionalFC.get();
-        return Either.right(footballMatchDataLayer.findMatchStatisticsForClub(fc));
+        return Either.right(footballMatchDataLayer.findMatchStatisticsForClub(fc, page));
     }
 }

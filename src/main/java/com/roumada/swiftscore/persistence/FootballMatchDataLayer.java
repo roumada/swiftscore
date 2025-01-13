@@ -7,6 +7,8 @@ import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
 import com.roumada.swiftscore.persistence.repository.FootballMatchStatisticsRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,7 +44,10 @@ public class FootballMatchDataLayer {
         return footballMatchRepository.findById(id);
     }
 
-    public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub) {
-        return footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId());
+    public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub, int page) {
+        PageRequest pageRequest = PageRequest.of(page, 10);
+        Page<FootballMatchStatistics> pageResult
+                = footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest);
+        return pageResult.getContent();
     }
 }
