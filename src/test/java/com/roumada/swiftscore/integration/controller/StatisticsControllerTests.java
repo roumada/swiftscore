@@ -1,6 +1,7 @@
 package com.roumada.swiftscore.integration.controller;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
+import com.roumada.swiftscore.logic.data.CompetitionService;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
@@ -22,6 +23,8 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
+    private CompetitionService compService;
+    @Autowired
     private CompetitionDataLayer compdl;
     @Autowired
     private FootballClubDataLayer fcdl;
@@ -31,7 +34,7 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     void getCompetitionStatistics_validCompetitionId_shouldReturn() throws Exception {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs()));
-        var comp = compdl.generateAndSave(new CompetitionRequestDTO(ids, 0.0)).get();
+        var comp = compService.generateAndSave(new CompetitionRequestDTO(ids, 0.0)).get();
         var compId = compdl.saveCompetition(comp).getId();
 
         // act & assert

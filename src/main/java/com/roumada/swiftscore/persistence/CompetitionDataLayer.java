@@ -29,41 +29,9 @@ public class CompetitionDataLayer {
     private final FootballClubRepository footballClubRepository;
     private final FootballMatchDataLayer footballMatchDataLayer;
 
-    public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
-        var footballClubs = new ArrayList<FootballClub>();
-        for (Long id : dto.participantIds()) {
-            footballClubs.add(footballClubRepository.findById(id).orElse(null));
-        }
 
-        if (footballClubs.contains(null)) {
-            var error = "Failed to generate competition - failed to retrieve at least one club from the database.";
-            log.error(error);
-            return Either.left(error);
-        }
-        var generationResult = CompetitionRoundsGenerator.generate(footballClubs);
-        return generationResult.fold(
-                Either::left,
-                rounds -> {
-                    var competition = Competition.builder()
-                            .variance(dto.variance())
-                            .participants(footballClubs)
-                            .rounds(Collections.emptyList())
-                            .build();
-                    competition = saveCompetition(competition);
 
-                    for (CompetitionRound round : rounds) {
-                        round.setCompetitionId(competition.getId());
-                    }
-                    var savedRounds = saveRounds(rounds);
-                    competition.setRounds(savedRounds);
-                    competition = saveCompetition(competition);
-                    saveFootballMatchesWithCompIds(competition);
-
-                    return Either.right(competition);
-                });
-    }
-
-    private void saveFootballMatchesWithCompIds(Competition competition) {
+    public void saveFootballMatchesWithCompIds(Competition competition) {
         for (CompetitionRound round : competition.getRounds()) {
             for (FootballMatch match : round.getMatches()) {
                 saveMatchForCompId(match, round.getId(), round.getCompetitionId());
@@ -77,7 +45,7 @@ public class CompetitionDataLayer {
         return saved;
     }
 
-    private List<CompetitionRound> saveRounds(List<CompetitionRound> rounds) {
+    public List<CompetitionRound> saveRounds(List<CompetitionRound> rounds) {
         List<CompetitionRound> saved = new ArrayList<>();
         for (CompetitionRound round : rounds) {
             saved.add(saveCompetitionRound(round));

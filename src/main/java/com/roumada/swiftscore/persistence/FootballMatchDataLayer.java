@@ -48,18 +48,22 @@ public class FootballMatchDataLayer {
 
     public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub, int page, boolean includeUnresolved) {
         PageRequest pageRequest = PageRequest.of(page, 5);
+
         Page<FootballMatchStatistics> pageResult = includeUnresolved ?
                  footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest) :
                 footballMatchStatisticsRepository.findByFootballClubIdExcludeUnfinished(footballClub.getId(), pageRequest);
+
         return pageResult.getContent();
     }
 
     public List<FootballMatchStatistics> findMatchStatisticsForClubInCompetition(Long competitionId, FootballClub footballClub, int page, boolean includeUnresolved) {
         PageRequest pageRequest = PageRequest.of(page, 5);
+
         Page<FootballMatchStatistics> pageResult = includeUnresolved ?
                 footballMatchStatisticsRepository
                         .findByFootballClubIdAndCompetitionId(competitionId, footballClub.getId(), pageRequest) :
                 footballMatchStatisticsRepository.findByFootballClubIdAndCompetitionIdExcludeUnfinished(competitionId, footballClub.getId(), pageRequest);
+
         return pageResult.getContent();
     }
 }
