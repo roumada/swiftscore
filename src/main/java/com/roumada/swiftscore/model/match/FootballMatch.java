@@ -24,7 +24,7 @@ public class FootballMatch {
     private FootballMatchStatistics homeSideStatistics;
     @DBRef
     private FootballMatchStatistics awaySideStatistics;
-    private Result matchResult = Result.UNFINISHED;
+    private MatchResult matchResult = MatchResult.UNFINISHED;
 
     public FootballMatch(FootballClub homeSideFootballClub, FootballClub awaySideFootballClub) {
         this.homeSideFootballClub = homeSideFootballClub;
@@ -46,7 +46,7 @@ public class FootballMatch {
         return MonoPair.of(homeSideStatistics, awaySideStatistics);
     }
 
-    public enum Result {
+    public enum MatchResult {
         HOME_SIDE_VICTORY, AWAY_SIDE_VICTORY, DRAW, UNFINISHED
     }
 }

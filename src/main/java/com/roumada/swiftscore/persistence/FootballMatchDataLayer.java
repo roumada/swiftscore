@@ -45,7 +45,7 @@ public class FootballMatchDataLayer {
     }
 
     public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub, int page) {
-        PageRequest pageRequest = PageRequest.of(page, 10);
+        PageRequest pageRequest = PageRequest.of(page, 5);
         Page<FootballMatchStatistics> pageResult
                 = footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest);
         return pageResult.getContent();

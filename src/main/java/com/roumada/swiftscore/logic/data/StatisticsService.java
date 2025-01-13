@@ -2,7 +2,9 @@ package com.roumada.swiftscore.logic.data;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.MonoPair;
+import com.roumada.swiftscore.model.dto.FootballMatchStatisticsDTO;
 import com.roumada.swiftscore.model.dto.StandingsDTO;
+import com.roumada.swiftscore.model.mapper.FootballMatchStatisticsMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -13,7 +15,6 @@ import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -54,6 +55,14 @@ public class StatisticsService {
             }
         }
 
+        for (FootballClub fc : comp.getParticipants()) {
+            standingsForFC.get(fc.getId())
+                    .setStatistics(footballMatchDataLayer.findMatchStatisticsForClub(fc, 0)
+                            .stream()
+                            .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
+                            .toList());
+        }
+
         return Either.right(standingsForFC.values().stream().sorted(Comparator.comparingInt(StandingsDTO::getPoints).reversed()).toList());
     }
 
@@ -83,7 +92,7 @@ public class StatisticsService {
         }
     }
 
-    public Either<String, List<FootballMatchStatistics>> getForClub(long clubId, int page) {
+    public Either<String, List<FootballMatchStatisticsDTO>> getForClub(long clubId, int page) {
         var optionalFC = footballClubDataLayer.findById(clubId);
         if (optionalFC.isEmpty()) {
             String errorMsg = "Couldn't find club with ID [%s]".formatted(clubId);
@@ -92,6 +101,11 @@ public class StatisticsService {
         }
 
         var fc = optionalFC.get();
-        return Either.right(footballMatchDataLayer.findMatchStatisticsForClub(fc, page));
+        var statsDTO = footballMatchDataLayer
+                .findMatchStatisticsForClub(fc, page)
+                .stream()
+                .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
+                .toList();
+        return Either.right(statsDTO);
     }
 }

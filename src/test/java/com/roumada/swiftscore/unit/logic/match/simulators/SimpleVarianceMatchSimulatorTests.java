@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static com.roumada.swiftscore.model.match.FootballMatch.Result.DRAW;
+import static com.roumada.swiftscore.model.match.FootballMatch.MatchResult.DRAW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -22,7 +22,7 @@ class SimpleVarianceMatchSimulatorTests {
             "0.6, 0.5, HOME_SIDE_VICTORY"
     })
     @DisplayName("Simulate match - with zero variance - should end with expected results")
-    void simulateMatch_zeroVariance_shouldEndWithExpectedResults(double homeVictoryChance, double awayVictoryChance, FootballMatch.Result result) {
+    void simulateMatch_zeroVariance_shouldEndWithExpectedResults(double homeVictoryChance, double awayVictoryChance, FootballMatch.MatchResult matchResult) {
         // arrange
         final MatchSimulator matchSimulator = SimpleVarianceMatchSimulator.withVariance(0.0);
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(homeVictoryChance).build();
@@ -34,7 +34,7 @@ class SimpleVarianceMatchSimulatorTests {
         matchSimulator.simulateMatch(footballMatch);
 
         // assert
-        assertEquals(result, footballMatch.getMatchResult());
+        assertEquals(matchResult, footballMatch.getMatchResult());
     }
 
     @Test

@@ -12,9 +12,14 @@ public class FootballMatchStatistics {
     private Long id = null;
     private Long footballMatchId;
     private Long footballClubId;
+    private MatchStatisticsResult result = MatchStatisticsResult.UNFINISHED;
     private int goalsScored = 0;
 
     FootballMatchStatistics(Long id) {
         this.footballClubId = id;
+    }
+
+    public enum MatchStatisticsResult {
+        VICTORY, LOSS, DRAW, UNFINISHED
     }
 }
