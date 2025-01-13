@@ -4,14 +4,13 @@ import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.CompetitionRound;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.roumada.swiftscore.model.match.FootballMatch.Result.*;
+import static com.roumada.swiftscore.model.match.FootballMatch.MatchResult.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -44,12 +43,9 @@ class CompetitionRoundSimulatorTests {
     }
 
     private static CompetitionRound prepareMatchWeek(FootballClub footballClub1, FootballClub footballClub2) {
-        FootballMatch footballMatch1 = new FootballMatch(new FootballMatchStatistics(footballClub1),
-                new FootballMatchStatistics(footballClub2));
-        FootballMatch footballMatch2 = new FootballMatch(new FootballMatchStatistics(footballClub2),
-                new FootballMatchStatistics(footballClub1));
-        FootballMatch footballMatch3 = new FootballMatch(new FootballMatchStatistics(footballClub2),
-                new FootballMatchStatistics(footballClub2));
+        FootballMatch footballMatch1 = new FootballMatch(footballClub1, footballClub2);
+        FootballMatch footballMatch2 = new FootballMatch(footballClub2, footballClub1);
+        FootballMatch footballMatch3 = new FootballMatch(footballClub2, footballClub2);
 
         return new CompetitionRound(null, 1, List.of(footballMatch1, footballMatch2, footballMatch3));
     }

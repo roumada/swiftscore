@@ -6,7 +6,6 @@ import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
@@ -178,9 +177,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         fcdl.save(fc2);
 
         var round = new CompetitionRound(null, 1,
-                List.of(new FootballMatch(
-                        new FootballMatchStatistics(fc1),
-                        new FootballMatchStatistics(fc2))));
+                List.of(new FootballMatch(fc1, fc2)));
         compdl.saveCompetitionRound(round);
 
         var saved = compdl.saveCompetition(new Competition(0,
@@ -212,9 +209,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         fcdl.save(fc2);
 
         var round = new CompetitionRound(1,
-                List.of(new FootballMatch(
-                        new FootballMatchStatistics(fc1),
-                        new FootballMatchStatistics(fc2))));
+                List.of(new FootballMatch(fc1, fc2)));
         compdl.saveCompetitionRound(round);
 
         var saved = compdl.saveCompetition(new Competition(0,

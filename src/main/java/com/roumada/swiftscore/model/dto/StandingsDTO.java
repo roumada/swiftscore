@@ -2,6 +2,8 @@ package com.roumada.swiftscore.model.dto;
 
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class StandingsDTO {
     private final String footballClubName;
@@ -11,6 +13,7 @@ public class StandingsDTO {
     private int goalsScored = 0;
     private int goalsConceded = 0;
     private int points = 0;
+    private List<FootballMatchStatisticsDTO> lastMatchesStatistics;
 
     public StandingsDTO(String footballClubName) {
         this.footballClubName = footballClubName;
@@ -40,5 +43,9 @@ public class StandingsDTO {
 
     public void addPoints(int points) {
         this.points += points;
+    }
+
+    public void setStatistics(List<FootballMatchStatisticsDTO> statistics){
+        this.lastMatchesStatistics = statistics;
     }
 }

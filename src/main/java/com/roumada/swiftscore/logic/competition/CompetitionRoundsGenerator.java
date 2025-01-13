@@ -3,7 +3,6 @@ package com.roumada.swiftscore.logic.competition;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.MonoPair;
 import com.roumada.swiftscore.model.match.CompetitionRound;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import io.vavr.control.Either;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class CompetitionRoundsGenerator {
     }
 
     private static List<CompetitionRound> createCompetitionRoundsOnNumericMatchups(List<FootballClub> clubs,
-                                                                 List<List<MonoPair<Integer>>> numericRoundRobinMatchups) {
+                                                                                   List<List<MonoPair<Integer>>> numericRoundRobinMatchups) {
         List<CompetitionRound> competitionRounds = new ArrayList<>();
         int roundCounter = 1;
 
@@ -38,9 +37,7 @@ public class CompetitionRoundsGenerator {
             List<FootballMatch> compRoundMatches = new ArrayList<>();
 
             for (MonoPair<Integer> numericMatch : numericCompRound) {
-                compRoundMatches.add(new FootballMatch(
-                        new FootballMatchStatistics(clubs.get(numericMatch.getLeft())),
-                        new FootballMatchStatistics(clubs.get(numericMatch.getRight()))));
+                compRoundMatches.add(new FootballMatch(clubs.get(numericMatch.getLeft()), clubs.get(numericMatch.getRight())));
             }
             competitionRounds.add(new CompetitionRound(null, roundCounter++, compRoundMatches));
         }

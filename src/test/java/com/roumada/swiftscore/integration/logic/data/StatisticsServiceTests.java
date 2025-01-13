@@ -33,7 +33,7 @@ class StatisticsServiceTests extends AbstractBaseIntegrationTest {
     void generateCompetitionStatistics_forFullySimulatedTwoClubCompetition_shouldReturnSorted() {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getTwoFootballClubs()));
-        var comp = cdl.generateAndSave(new CompetitionRequestDTO(ids, 0.0)).get();
+        var comp = compService.generateAndSave(new CompetitionRequestDTO(ids, 0.0)).get();
         compService.simulateRound(comp);
         compService.simulateRound(comp);
 

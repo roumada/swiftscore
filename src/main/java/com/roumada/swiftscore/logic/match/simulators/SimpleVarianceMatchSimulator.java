@@ -2,6 +2,7 @@ package com.roumada.swiftscore.logic.match.simulators;
 
 import com.roumada.swiftscore.logic.match.resolvers.MatchResolverFactory;
 import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -40,11 +41,17 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
         }
 
         if (homeSideVictoryChance > awaySideVictoryChance) {
-            footballMatch.setMatchResult(FootballMatch.Result.HOME_SIDE_VICTORY);
+            footballMatch.setMatchResult(FootballMatch.MatchResult.HOME_SIDE_VICTORY);
+            footballMatch.getHomeSideStatistics().setResult(FootballMatchStatistics.MatchStatisticsResult.VICTORY);
+            footballMatch.getAwaySideStatistics().setResult(FootballMatchStatistics.MatchStatisticsResult.LOSS);
         } else if (homeSideVictoryChance < awaySideVictoryChance) {
-            footballMatch.setMatchResult(FootballMatch.Result.AWAY_SIDE_VICTORY);
+            footballMatch.setMatchResult(FootballMatch.MatchResult.AWAY_SIDE_VICTORY);
+            footballMatch.getHomeSideStatistics().setResult(FootballMatchStatistics.MatchStatisticsResult.LOSS);
+            footballMatch.getAwaySideStatistics().setResult(FootballMatchStatistics.MatchStatisticsResult.VICTORY);
         } else {
-            footballMatch.setMatchResult(FootballMatch.Result.DRAW);
+            footballMatch.setMatchResult(FootballMatch.MatchResult.DRAW);
+            footballMatch.getHomeSideStatistics().setResult(FootballMatchStatistics.MatchStatisticsResult.DRAW);
+            footballMatch.getAwaySideStatistics().setResult(FootballMatchStatistics.MatchStatisticsResult.DRAW);
         }
     }
 

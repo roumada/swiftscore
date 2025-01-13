@@ -27,7 +27,7 @@ public class ComptetitionController {
     @PostMapping(consumes = "application/json")
     public ResponseEntity<Object> createCompetition(@RequestBody CompetitionRequestDTO dto) {
         log.debug(POST_ENDPOINT + " {} with request body {}", "/competition", dto);
-        var result = dataLayer.generateAndSave(dto);
+        var result = competitionService.generateAndSave(dto);
         return result.fold(
                 error -> ResponseEntity.badRequest().body(error),
                 success -> ResponseEntity.ok(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(success)));

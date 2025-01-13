@@ -3,7 +3,6 @@ package com.roumada.swiftscore.integration.controller;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import org.junit.jupiter.api.DisplayName;
@@ -32,9 +31,7 @@ class FootballMatchControllerTests extends AbstractBaseIntegrationTest {
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
         fcdl.save(fc1);
         fcdl.save(fc2);
-        var stats1 = new FootballMatchStatistics(fc1);
-        var stats2 = new FootballMatchStatistics(fc2);
-        var matchId = fmdl.createMatch(new FootballMatch(stats1, stats2)).getId();
+        var matchId = fmdl.createMatch(new FootballMatch(fc1, fc2)).getId();
 
         // act & assert
         mvc.perform(get("/match/" + matchId))
@@ -49,9 +46,7 @@ class FootballMatchControllerTests extends AbstractBaseIntegrationTest {
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
         fcdl.save(fc1);
         fcdl.save(fc2);
-        var stats1 = new FootballMatchStatistics(fc1);
-        var stats2 = new FootballMatchStatistics(fc2);
-        fmdl.createMatch(new FootballMatch(stats1, stats2));
+        fmdl.createMatch(new FootballMatch(fc1, fc2));
 
         // act & assert
         mvc.perform(get("/match/" + 999))

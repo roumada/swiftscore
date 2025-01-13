@@ -4,10 +4,7 @@ import com.roumada.swiftscore.logic.data.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.roumada.swiftscore.util.LogStringLiterals.GET_ENDPOINT;
 
@@ -30,10 +27,14 @@ public class StatisticsController {
     }
 
     @GetMapping("club/{clubId}")
-    public ResponseEntity<Object> getStatisticsForClub(@PathVariable long clubId) {
+    public ResponseEntity<Object> getStatisticsForClub(@PathVariable long clubId,
+                                                       @RequestParam(required = false) Integer page,
+                                                       @RequestParam(required = false) Boolean includeUnresolved) {
         log.info(GET_ENDPOINT + "/statistics/club/{}", clubId);
+        if(includeUnresolved == null) includeUnresolved = false;
+        if(page == null) page = 0;
 
-        return service.getForClub(clubId).fold(
+        return service.getForClub(clubId, page, includeUnresolved).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok
         );

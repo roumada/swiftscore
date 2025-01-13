@@ -7,6 +7,8 @@ import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
 import com.roumada.swiftscore.persistence.repository.FootballMatchStatisticsRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,13 +23,13 @@ public class FootballMatchDataLayer {
     private FootballMatchStatisticsRepository footballMatchStatisticsRepository;
 
     public FootballMatch createMatch(FootballMatch match) {
-        updateMatch(match);
-        match.getHomeSideStatistics().setFootballMatchId(match.getId());
-        match.getAwaySideStatistics().setFootballMatchId(match.getId());
-        return updateMatch(match);
+        saveMatchWithStatistics(match);
+        setIdsInStatistics(match.getHomeSideStatistics(), match.getId(), match.getCompetitionId());
+        setIdsInStatistics(match.getAwaySideStatistics(), match.getId(), match.getCompetitionId());
+        return saveMatchWithStatistics(match);
     }
 
-    public FootballMatch updateMatch(FootballMatch match) {
+    public FootballMatch saveMatchWithStatistics(FootballMatch match) {
         saveStatistics(match.getHomeSideStatistics());
         saveStatistics(match.getAwaySideStatistics());
         return footballMatchRepository.save(match);
@@ -38,11 +40,33 @@ public class FootballMatchDataLayer {
         log.info("Match statistics with data [{}] saved.", saved);
     }
 
+    private void setIdsInStatistics(FootballMatchStatistics statistics, Long matchId, Long competitionId) {
+        statistics.setFootballMatchId(matchId);
+        statistics.setCompetitionId(competitionId);
+    }
+
     public Optional<FootballMatch> findMatchById(long id) {
         return footballMatchRepository.findById(id);
     }
 
-    public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub) {
-        return footballMatchStatisticsRepository.findByFootballClub(footballClub);
+    public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub, int page, boolean includeUnresolved) {
+        PageRequest pageRequest = PageRequest.of(page, 5);
+
+        Page<FootballMatchStatistics> pageResult = includeUnresolved ?
+                footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest) :
+                footballMatchStatisticsRepository.findByFootballClubIdExcludeUnfinished(footballClub.getId(), pageRequest);
+
+        return pageResult.getContent();
+    }
+
+    public List<FootballMatchStatistics> findMatchStatisticsForClubInCompetition(Long competitionId, FootballClub footballClub, int page, boolean includeUnresolved) {
+        PageRequest pageRequest = PageRequest.of(page, 5);
+
+        Page<FootballMatchStatistics> pageResult = includeUnresolved ?
+                footballMatchStatisticsRepository
+                        .findByFootballClubIdAndCompetitionId(competitionId, footballClub.getId(), pageRequest) :
+                footballMatchStatisticsRepository.findByFootballClubIdAndCompetitionIdExcludeUnfinished(competitionId, footballClub.getId(), pageRequest);
+
+        return pageResult.getContent();
     }
 }

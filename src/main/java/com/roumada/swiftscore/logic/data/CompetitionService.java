@@ -1,14 +1,21 @@
 package com.roumada.swiftscore.logic.data;
 
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
+import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
+import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
-import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
+import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 @Service
 @Slf4j
@@ -16,6 +23,41 @@ import org.springframework.stereotype.Service;
 public class CompetitionService {
 
     private final CompetitionDataLayer competitionDataLayer;
+    private final FootballClubDataLayer fcDataLayer;
+
+    public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
+        var footballClubs = new ArrayList<FootballClub>();
+        for (Long id : dto.participantIds()) {
+            footballClubs.add(fcDataLayer.findById(id).orElse(null));
+        }
+
+        if (footballClubs.contains(null)) {
+            var error = "Failed to generate competition - failed to retrieve at least one club from the database.";
+            log.error(error);
+            return Either.left(error);
+        }
+        var generationResult = CompetitionRoundsGenerator.generate(footballClubs);
+        return generationResult.fold(
+                Either::left,
+                rounds -> {
+                    var competition = Competition.builder()
+                            .variance(dto.variance())
+                            .participants(footballClubs)
+                            .rounds(Collections.emptyList())
+                            .build();
+                    competition = competitionDataLayer.saveCompetition(competition);
+
+                    for (CompetitionRound round : rounds) {
+                        round.setCompetitionId(competition.getId());
+                    }
+                    var savedRounds = competitionDataLayer.saveRounds(rounds);
+                    competition.setRounds(savedRounds);
+                    competition = competitionDataLayer.saveCompetition(competition);
+                    competitionDataLayer.deepSaveCompetitionMatchesWithCompIds(competition);
+
+                    return Either.right(competition);
+                });
+    }
 
     public Either<String, CompetitionRound> simulateRound(Competition competition) {
         if (!competition.canSimulate()) {
