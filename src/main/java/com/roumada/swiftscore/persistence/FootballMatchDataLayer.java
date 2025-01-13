@@ -25,7 +25,9 @@ public class FootballMatchDataLayer {
     public FootballMatch createMatch(FootballMatch match) {
         updateMatch(match);
         match.getHomeSideStatistics().setFootballMatchId(match.getId());
+        match.getHomeSideStatistics().setCompetitionId(match.getCompetitionId());
         match.getAwaySideStatistics().setFootballMatchId(match.getId());
+        match.getAwaySideStatistics().setCompetitionId(match.getCompetitionId());
         return updateMatch(match);
     }
 
@@ -44,10 +46,20 @@ public class FootballMatchDataLayer {
         return footballMatchRepository.findById(id);
     }
 
-    public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub, int page) {
+    public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub, int page, boolean includeUnresolved) {
         PageRequest pageRequest = PageRequest.of(page, 5);
-        Page<FootballMatchStatistics> pageResult
-                = footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest);
+        Page<FootballMatchStatistics> pageResult = includeUnresolved ?
+                 footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest) :
+                footballMatchStatisticsRepository.findByFootballClubIdExcludeUnfinished(footballClub.getId(), pageRequest);
+        return pageResult.getContent();
+    }
+
+    public List<FootballMatchStatistics> findMatchStatisticsForClubInCompetition(Long competitionId, FootballClub footballClub, int page, boolean includeUnresolved) {
+        PageRequest pageRequest = PageRequest.of(page, 5);
+        Page<FootballMatchStatistics> pageResult = includeUnresolved ?
+                footballMatchStatisticsRepository
+                        .findByFootballClubIdAndCompetitionId(competitionId, footballClub.getId(), pageRequest) :
+                footballMatchStatisticsRepository.findByFootballClubIdAndCompetitionIdExcludeUnfinished(competitionId, footballClub.getId(), pageRequest);
         return pageResult.getContent();
     }
 }

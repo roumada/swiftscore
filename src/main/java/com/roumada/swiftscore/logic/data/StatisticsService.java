@@ -57,7 +57,7 @@ public class StatisticsService {
 
         for (FootballClub fc : comp.getParticipants()) {
             standingsForFC.get(fc.getId())
-                    .setStatistics(footballMatchDataLayer.findMatchStatisticsForClub(fc, 0)
+                    .setStatistics(footballMatchDataLayer.findMatchStatisticsForClubInCompetition(competitionId, fc, 0, false)
                             .stream()
                             .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
                             .toList());
@@ -92,7 +92,7 @@ public class StatisticsService {
         }
     }
 
-    public Either<String, List<FootballMatchStatisticsDTO>> getForClub(long clubId, int page) {
+    public Either<String, List<FootballMatchStatisticsDTO>> getForClub(long clubId, int page, boolean includeUnresolved) {
         var optionalFC = footballClubDataLayer.findById(clubId);
         if (optionalFC.isEmpty()) {
             String errorMsg = "Couldn't find club with ID [%s]".formatted(clubId);
@@ -102,7 +102,7 @@ public class StatisticsService {
 
         var fc = optionalFC.get();
         var statsDTO = footballMatchDataLayer
-                .findMatchStatisticsForClub(fc, page)
+                .findMatchStatisticsForClub(fc, page, includeUnresolved)
                 .stream()
                 .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
                 .toList();
