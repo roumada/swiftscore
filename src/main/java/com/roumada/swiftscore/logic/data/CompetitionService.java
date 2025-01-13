@@ -53,7 +53,7 @@ public class CompetitionService {
                     var savedRounds = competitionDataLayer.saveRounds(rounds);
                     competition.setRounds(savedRounds);
                     competition = competitionDataLayer.saveCompetition(competition);
-                    competitionDataLayer.saveFootballMatchesWithCompIds(competition);
+                    competitionDataLayer.deepSaveCompetitionMatchesWithCompIds(competition);
 
                     return Either.right(competition);
                 });

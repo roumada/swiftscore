@@ -1,21 +1,15 @@
 package com.roumada.swiftscore.persistence;
 
-import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
-import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
-import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
-import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,15 +20,12 @@ public class CompetitionDataLayer {
 
     private final CompetitionRepository competitionRepository;
     private final CompetitionRoundRepository competitionRoundRepository;
-    private final FootballClubRepository footballClubRepository;
     private final FootballMatchDataLayer footballMatchDataLayer;
 
-
-
-    public void saveFootballMatchesWithCompIds(Competition competition) {
+    public void deepSaveCompetitionMatchesWithCompIds(Competition competition) {
         for (CompetitionRound round : competition.getRounds()) {
             for (FootballMatch match : round.getMatches()) {
-                saveMatchForCompId(match, round.getId(), round.getCompetitionId());
+                saveMatchesWithCompIds(match, round.getId(), round.getCompetitionId());
             }
         }
     }
@@ -62,7 +53,7 @@ public class CompetitionDataLayer {
         return saved;
     }
 
-    private void saveMatchForCompId(FootballMatch match, Long compRoundId, Long competitionId) {
+    private void saveMatchesWithCompIds(FootballMatch match, Long compRoundId, Long competitionId) {
         match.setCompetitionId(competitionId);
         match.setCompetitionRoundId(compRoundId);
         saveMatch(match);

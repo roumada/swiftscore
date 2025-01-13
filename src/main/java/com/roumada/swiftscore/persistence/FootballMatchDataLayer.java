@@ -23,15 +23,13 @@ public class FootballMatchDataLayer {
     private FootballMatchStatisticsRepository footballMatchStatisticsRepository;
 
     public FootballMatch createMatch(FootballMatch match) {
-        updateMatch(match);
-        match.getHomeSideStatistics().setFootballMatchId(match.getId());
-        match.getHomeSideStatistics().setCompetitionId(match.getCompetitionId());
-        match.getAwaySideStatistics().setFootballMatchId(match.getId());
-        match.getAwaySideStatistics().setCompetitionId(match.getCompetitionId());
-        return updateMatch(match);
+        saveMatchWithStatistics(match);
+        setIdsInStatistics(match.getHomeSideStatistics(), match.getId(), match.getCompetitionId());
+        setIdsInStatistics(match.getAwaySideStatistics(), match.getId(), match.getCompetitionId());
+        return saveMatchWithStatistics(match);
     }
 
-    public FootballMatch updateMatch(FootballMatch match) {
+    public FootballMatch saveMatchWithStatistics(FootballMatch match) {
         saveStatistics(match.getHomeSideStatistics());
         saveStatistics(match.getAwaySideStatistics());
         return footballMatchRepository.save(match);
@@ -42,6 +40,11 @@ public class FootballMatchDataLayer {
         log.info("Match statistics with data [{}] saved.", saved);
     }
 
+    private void setIdsInStatistics(FootballMatchStatistics statistics, Long matchId, Long competitionId) {
+        statistics.setFootballMatchId(matchId);
+        statistics.setCompetitionId(competitionId);
+    }
+
     public Optional<FootballMatch> findMatchById(long id) {
         return footballMatchRepository.findById(id);
     }
@@ -50,7 +53,7 @@ public class FootballMatchDataLayer {
         PageRequest pageRequest = PageRequest.of(page, 5);
 
         Page<FootballMatchStatistics> pageResult = includeUnresolved ?
-                 footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest) :
+                footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest) :
                 footballMatchStatisticsRepository.findByFootballClubIdExcludeUnfinished(footballClub.getId(), pageRequest);
 
         return pageResult.getContent();
