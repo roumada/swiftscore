@@ -52,7 +52,7 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
         var id = fcdl.save(new FootballClub("FC1", 1)).getId();
 
         // act & assert
-        mvc.perform(get("/statistics/club/" + id + "/1")).andExpect(status().isOk());
+        mvc.perform(get("/statistics/club/" + id)).andExpect(status().isOk());
     }
 
     @Test
