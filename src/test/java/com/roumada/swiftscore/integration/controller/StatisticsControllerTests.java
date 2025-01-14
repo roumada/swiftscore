@@ -53,7 +53,7 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get club statistics - with valid club ID - should return")
     void getClubStatistics_validClubId_shouldReturn() throws Exception {
         // arrange
-        var id = fcdl.save(new FootballClub("FC1", 1)).getId();
+        var id = fcdl.save(FootballClub.builder().name("FC1").victoryChance(1).build()).getId();
 
         // act & assert
         mvc.perform(get("/statistics/club/" + id)).andExpect(status().isOk());

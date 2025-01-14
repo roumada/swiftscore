@@ -17,8 +17,8 @@ class ScoreResolverFactoryTests {
     void resolveScore_homeSideVictory_shouldResolveInFavorOfHomeSide() {
         // arrange
         FootballMatch fm = new FootballMatch(
-                new FootballClub("FC1", 1),
-                new FootballClub("FC2", 0.5));
+                FootballClub.builder().name("FC1").victoryChance(1).build(),
+                FootballClub.builder().name("FC2").victoryChance(0.5).build());
         fm.setHomeSideStatistics(new FootballMatchStatistics(1L));
         fm.setAwaySideStatistics(new FootballMatchStatistics(2L));
         fm.setMatchResult(FootballMatch.MatchResult.HOME_SIDE_VICTORY);
@@ -35,8 +35,8 @@ class ScoreResolverFactoryTests {
     void resolveScore_awaySideVictory_shouldResolveInFavorOfAwaySide() {
         // arrange
         FootballMatch fm = new FootballMatch(
-                new FootballClub("FC1", 0.4),
-                new FootballClub("FC2", 0.5));
+                FootballClub.builder().name("FC1").victoryChance(0.4).build(),
+                FootballClub.builder().name("FC2").victoryChance(0.5).build());
         fm.setHomeSideStatistics(new FootballMatchStatistics(1L));
         fm.setAwaySideStatistics(new FootballMatchStatistics(2L));
         fm.setMatchResult(FootballMatch.MatchResult.AWAY_SIDE_VICTORY);
@@ -53,8 +53,8 @@ class ScoreResolverFactoryTests {
     void resolveScore_draw_shouldResolveAsADraw() {
         // arrange
         FootballMatch fm = new FootballMatch(
-                new FootballClub("FC1", 0.5),
-                new FootballClub("FC2", 0.5));
+                FootballClub.builder().name("FC1").victoryChance(0.5).build(),
+                FootballClub.builder().name("FC2").victoryChance(0.5).build());
         fm.setHomeSideStatistics(new FootballMatchStatistics(1L));
         fm.setAwaySideStatistics(new FootballMatchStatistics(2L));
         fm.setMatchResult(FootballMatch.MatchResult.DRAW);
@@ -71,8 +71,8 @@ class ScoreResolverFactoryTests {
     void resolveScore_unresolved_shouldThrowAnException() {
         // arrange
         FootballMatch fm = new FootballMatch(
-                new FootballClub("FC1", 0.5),
-                new FootballClub("FC2", 0.5));
+                FootballClub.builder().name("FC1").victoryChance(0.5).build(),
+                FootballClub.builder().name("FC2").victoryChance(0.5).build());
         fm.setHomeSideStatistics(new FootballMatchStatistics(1L));
         fm.setAwaySideStatistics(new FootballMatchStatistics(2L));
         fm.setMatchResult(FootballMatch.MatchResult.UNFINISHED);

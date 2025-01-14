@@ -66,7 +66,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get football club - with valid ID - should return")
     void getFootballClub_validId_shouldReturn() throws Exception {
         // arrange
-        var fcID = footballClubDataLayer.save(new FootballClub("FC1", 0.5f)).getId();
+        var fcID = footballClubDataLayer.save(FootballClub.builder().name("FC1").victoryChance(0.5).build()).getId();
 
         // act
         var response = mvc.perform(get("/footballclub/" + fcID))
@@ -82,7 +82,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get football club - with invalid ID - should return error code")
     void getFootballClub_invalidId_shouldReturnErrorCode() throws Exception {
         // arrange
-        footballClubDataLayer.save(new FootballClub("FC1", 0.5f));
+        footballClubDataLayer.save(FootballClub.builder().name("FC1").victoryChance(0.5).build());
 
         // act & assert
         mvc.perform(get("/footballclub/" + 999))
@@ -93,8 +93,8 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get all football clubs  - should return")
     void getAllFootballClubs_shouldReturn() throws Exception {
         // arrange
-        footballClubDataLayer.save(new FootballClub("FC1", 0.5f));
-        footballClubDataLayer.save(new FootballClub("FC2", 0.4f));
+        footballClubDataLayer.save(FootballClub.builder().name("FC1").victoryChance(0.5).build());
+        footballClubDataLayer.save(FootballClub.builder().name("FC2").victoryChance(0.4).build());
 
         // act
         var response = mvc.perform(get("/footballclub/all"))
