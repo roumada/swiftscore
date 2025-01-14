@@ -2,6 +2,7 @@ package com.roumada.swiftscore.integration.controller;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.SimulatorValues;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
@@ -14,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -35,22 +38,22 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private CompetitionDataLayer compdl;
+    private CompetitionDataLayer competitionDataLayer;
     @Autowired
-    private FootballClubDataLayer fcdl;
+    private FootballClubDataLayer footballClubDataLayer;
 
     @Test
     @DisplayName("Create competition - with valid football club IDs - should create")
     void createCompetition_validData_isCreated() throws Exception {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(
-                fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+                footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
 
         // act
         var mvcResult = mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 ids,
-                                0.0))))
+                                new SimulatorValues(0)))))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -66,13 +69,13 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with invalid football club IDs - should return error code")
     void createCompetition_invalidIds_shouldReturnErrorCode() throws Exception {
         // arrange
-        fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
 
         // act
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 List.of(1L, 2L, 3L, 9L),
-                                0.0))))
+                                new SimulatorValues(0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -80,27 +83,61 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with uneven football club ID count - should return error code")
     void createCompetition_invalidIdCount_shouldReturnErrorCode() throws Exception {
         // arrange
-        fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
 
         // act
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 List.of(1L, 2L, 3L),
-                                0.0))))
+                                new SimulatorValues(0)))))
                 .andExpect(status().is4xxClientError());
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(doubles = {-0.1, 1.1}) // One parameter: int
     @DisplayName("Create competition  - with invalid variance value - should return error code")
-    void createCompetition_invalidVarianceNumber_shouldReturnErrorCode() throws Exception {
+    void createCompetition_invalidVarianceNumber_shouldReturnErrorCode(double variation) throws Exception {
         // arrange
-        fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(
+                footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
 
         // act
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
-                                List.of(1L, 2L, 3L, 9L),
-                                9.1f))))
+                                ids,
+                                new SimulatorValues(variation, 0.0, 0.0)))))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {-0.1, 1.1}) // One parameter: int
+    @DisplayName("Create competition  - with invalid draw trigger chance value - should return error code")
+    void createCompetition_invalidDrawTriggerChanceValue_shouldReturnErrorCode(double drawTriggerChance) throws Exception {
+        // arrange
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(
+                footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+
+        // act
+        mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
+                                ids,
+                                new SimulatorValues(0.0, 0.0, drawTriggerChance)))))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {-0.1, 1.1}) // One parameter: int
+    @DisplayName("Create competition  - with invalid score diff draw trigger value - should return error code")
+    void createCompetition_invalidScoreDiffDrawTriggerValue_shouldReturnErrorCode(double scoreDifferenceDrawTrigger) throws Exception {
+        // arrange
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(
+                footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+
+        // act
+        mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
+                                ids,
+                                new SimulatorValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -109,9 +146,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     void getCompetition_withValidID_shouldReturn() throws Exception {
         // arrange
         var round1 = new CompetitionRound(1, Collections.emptyList());
-        round1 = compdl.saveCompetitionRound(round1);
-        var saved = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        var id = compdl.saveCompetition(new Competition(0.0, saved,
+        round1 = competitionDataLayer.saveCompetitionRound(round1);
+        var saved = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        var id = competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0), saved,
                 List.of(round1))).getId();
 
         // act
@@ -131,12 +168,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     void getCompetition_withInvalidID_shouldReturnErrorCode() throws Exception {
         // arrange
         var round1 = new CompetitionRound(1, Collections.emptyList());
-        compdl.saveCompetitionRound(round1);
-        var saved = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        compdl.saveCompetition(new Competition(0.0, saved,
+        competitionDataLayer.saveCompetitionRound(round1);
+        var saved = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0), saved,
                 List.of(round1)));
 
-        // act
+        // act & assert
         mvc.perform(get("/competition/999"))
                 .andExpect(status().is4xxClientError());
     }
@@ -147,12 +184,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // arrange
         var round1 = new CompetitionRound(1, Collections.emptyList());
         var round2 = new CompetitionRound(1, Collections.emptyList());
-        compdl.saveCompetitionRound(round1);
-        compdl.saveCompetitionRound(round2);
-        var savedClubs = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        compdl.saveCompetition(new Competition(0.0, savedClubs,
+        competitionDataLayer.saveCompetitionRound(round1);
+        competitionDataLayer.saveCompetitionRound(round2);
+        var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0), savedClubs,
                 List.of(round1)));
-        compdl.saveCompetition(new Competition(0.0, savedClubs,
+        competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0), savedClubs,
                 List.of(round2)));
 
         // act
@@ -173,14 +210,14 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // arrange
         var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
-        fcdl.save(fc1);
-        fcdl.save(fc2);
+        footballClubDataLayer.save(fc1);
+        footballClubDataLayer.save(fc2);
 
         var round = new CompetitionRound(null, 1,
                 List.of(new FootballMatch(fc1, fc2)));
-        compdl.saveCompetitionRound(round);
+        competitionDataLayer.saveCompetitionRound(round);
 
-        var saved = compdl.saveCompetition(new Competition(0,
+        var saved = competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0),
                 List.of(fc1, fc2), List.of(round)));
 
         // act
@@ -205,14 +242,14 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // arrange
         var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
-        fcdl.save(fc1);
-        fcdl.save(fc2);
+        footballClubDataLayer.save(fc1);
+        footballClubDataLayer.save(fc2);
 
         var round = new CompetitionRound(1,
                 List.of(new FootballMatch(fc1, fc2)));
-        compdl.saveCompetitionRound(round);
+        competitionDataLayer.saveCompetitionRound(round);
 
-        var saved = compdl.saveCompetition(new Competition(0,
+        var saved = competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0),
                 List.of(fc1, fc2), List.of(round)));
 
         // act

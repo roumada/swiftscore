@@ -2,7 +2,7 @@ package com.roumada.swiftscore.logic.data;
 
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
-import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;
+import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -41,7 +42,7 @@ public class CompetitionService {
                 Either::left,
                 rounds -> {
                     var competition = Competition.builder()
-                            .variance(dto.variance())
+                            .simulatorValues(dto.simulatorValues())
                             .participants(footballClubs)
                             .rounds(Collections.emptyList())
                             .build();
@@ -81,9 +82,24 @@ public class CompetitionService {
     }
 
     private Competition simulateCurrentRound(Competition competition) {
-        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withVariance(competition.getVariance()));
+        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(competition.getSimulatorValues()));
         roundSimulator.simulate(competition.currentRound());
         log.info("Competition with id [{}] simulated.", competition.getId());
         return competition;
+    }
+
+    public Either<String, Competition> findCompetitionById(Long id) {
+        var optionalCompetition = competitionDataLayer.findCompetitionById(id);
+        return optionalCompetition
+                .map(Either::<String, Competition>right)
+                .orElseGet(() -> {
+                    String error = "Competition with ID [%s] not found.".formatted(id);
+                    log.info(error);
+                    return Either.left(error);
+                });
+    }
+
+    public List<Competition> findAllCompetitions() {
+        return competitionDataLayer.findAllCompetitions();
     }
 }

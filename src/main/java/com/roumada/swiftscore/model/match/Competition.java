@@ -1,6 +1,7 @@
 package com.roumada.swiftscore.model.match;
 
 import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.SimulatorValues;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -16,15 +17,15 @@ public class Competition {
     @Id
     private Long id = null;
     private int currentRoundNumber = 1;
-    private double variance;
+    private SimulatorValues simulatorValues;
     @DBRef
     private List<FootballClub> participants;
     @DBRef
     private List<CompetitionRound> rounds;
 
     @Builder
-    public Competition(double variance, List<FootballClub> participants, List<CompetitionRound> rounds) {
-        this.variance = variance;
+    public Competition(SimulatorValues simulatorValues, List<FootballClub> participants, List<CompetitionRound> rounds) {
+        this.simulatorValues = simulatorValues;
         this.participants = participants;
         this.rounds = rounds;
     }

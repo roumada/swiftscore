@@ -1,8 +1,9 @@
-package com.roumada.swiftscore.unit.logic.match.simulators;
+package com.roumada.swiftscore.unit.logic.match.simulator;
 
-import com.roumada.swiftscore.logic.match.simulators.MatchSimulator;
-import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;
+import com.roumada.swiftscore.logic.match.simulator.MatchSimulator;
+import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.SimulatorValues;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,32 @@ class SimpleVarianceMatchSimulatorTests {
     @DisplayName("Simulate match - with zero variance - should end with expected results")
     void simulateMatch_zeroVariance_shouldEndWithExpectedResults(double homeVictoryChance, double awayVictoryChance, FootballMatch.MatchResult matchResult) {
         // arrange
-        final MatchSimulator matchSimulator = SimpleVarianceMatchSimulator.withVariance(0.0);
+        final MatchSimulator matchSimulator = SimpleVarianceMatchSimulator.withValues(new SimulatorValues(0.0));
+        FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(homeVictoryChance).build();
+        FootballClub footballClub2 = FootballClub.builder().name("Football club 2").victoryChance(awayVictoryChance).build();
+
+        FootballMatch footballMatch = new FootballMatch(footballClub1, footballClub2);
+
+        // act
+        matchSimulator.simulateMatch(footballMatch);
+
+        // assert
+        assertEquals(matchResult, footballMatch.getMatchResult());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "0.6, 0.4, 0.1, HOME_SIDE_VICTORY",
+            "0.4, 0.6, 0.1, AWAY_SIDE_VICTORY",
+            "0.6, 0.5, 0.1, DRAW",
+            "0.5, 0.6, 0.1, DRAW"
+    })
+    @DisplayName("Simulate match - with 100% chance of triggering a draw for given draw trigger chance - should end with expected results")
+    void simulateMatch_withHundredPercentChanceOfDrawTriggering_shouldEndWithExpectedResults
+            (double homeVictoryChance, double awayVictoryChance, double scoreDifferenceDrawTrigger, FootballMatch.MatchResult matchResult) {
+        // arrange
+        final MatchSimulator matchSimulator
+                = SimpleVarianceMatchSimulator.withValues(new SimulatorValues(0.0, scoreDifferenceDrawTrigger, 1));
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(homeVictoryChance).build();
         FootballClub footballClub2 = FootballClub.builder().name("Football club 2").victoryChance(awayVictoryChance).build();
 
@@ -41,7 +67,7 @@ class SimpleVarianceMatchSimulatorTests {
     @DisplayName("Simulate match - with non-zero variance - should not end with a draw for identical victory chances")
     void simulateMatch_nonZeroVariance_shouldNotEndWithADraw() {
         // arrange
-        final MatchSimulator matchSimulator = SimpleVarianceMatchSimulator.withVariance(0.5f);
+        final MatchSimulator matchSimulator = SimpleVarianceMatchSimulator.withValues(new SimulatorValues(0.5));
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(0.5).build();
         FootballClub footballClub2 = FootballClub.builder().name("Football club 2").victoryChance(0.5).build();
 
