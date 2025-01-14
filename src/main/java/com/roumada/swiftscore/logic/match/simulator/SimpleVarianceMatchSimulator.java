@@ -41,6 +41,7 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
 
         if (canDrawChanceTrigger(homeSideVictoryChance, awaySideVictoryChance) && drawChanceTriggers()) {
             footballMatch.setMatchResult(FootballMatch.MatchResult.DRAW);
+            return;
         }
 
         if (homeSideVictoryChance > awaySideVictoryChance) {
@@ -52,12 +53,12 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
         }
     }
 
-    private boolean drawChanceTriggers() {
-        return simValues.drawTriggerChance() > ThreadLocalRandom.current().nextDouble();
+    private boolean canDrawChanceTrigger(double homeSideVictoryChance, double awaySideVictoryChance) {
+        return Math.abs(homeSideVictoryChance - awaySideVictoryChance) <= simValues.scoreDifferenceDrawTrigger();
     }
 
-    private boolean canDrawChanceTrigger(double homeSideVictoryChance, double awaySideVictoryChance) {
-        return Math.abs(homeSideVictoryChance - awaySideVictoryChance) < simValues.scoreDifferenceDrawTrigger();
+    private boolean drawChanceTriggers() {
+        return simValues.drawTriggerChance() > ThreadLocalRandom.current().nextDouble();
     }
 
     private double calculateVariant() {
