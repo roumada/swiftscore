@@ -40,8 +40,8 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
         }
 
         if (canDrawChanceTrigger(homeSideVictoryChance, awaySideVictoryChance) && drawChanceTriggers()) {
-                footballMatch.setMatchResult(FootballMatch.MatchResult.DRAW);
-            }
+            footballMatch.setMatchResult(FootballMatch.MatchResult.DRAW);
+        }
 
         if (homeSideVictoryChance > awaySideVictoryChance) {
             footballMatch.setMatchResult(FootballMatch.MatchResult.HOME_SIDE_VICTORY);
