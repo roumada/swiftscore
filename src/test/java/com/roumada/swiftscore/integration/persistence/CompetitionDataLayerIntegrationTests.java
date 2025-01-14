@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.integration.persistence;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
-import com.roumada.swiftscore.model.SimulatorValues;
+import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
@@ -27,7 +27,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
     void shouldSaveAndFindCompetitionToAndFromDatabase() {
         // arrange
         var fcs = footballClubDataLayer.saveAll(FootballClubTestUtils.getTwoFootballClubs());
-        var competition = new Competition(new SimulatorValues(0), fcs, Collections.emptyList());
+        var competition = new Competition(new SimulationValues(0), fcs, Collections.emptyList());
 
         // act
         var id = competitionDataLayer.saveCompetition(competition).getId();

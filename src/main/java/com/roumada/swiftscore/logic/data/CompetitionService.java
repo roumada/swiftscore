@@ -42,7 +42,7 @@ public class CompetitionService {
                 Either::left,
                 rounds -> {
                     var competition = Competition.builder()
-                            .simulatorValues(dto.simulatorValues())
+                            .simulationValues(dto.simulationValues())
                             .participants(footballClubs)
                             .rounds(Collections.emptyList())
                             .build();
@@ -82,7 +82,7 @@ public class CompetitionService {
     }
 
     private Competition simulateCurrentRound(Competition competition) {
-        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(competition.getSimulatorValues()));
+        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(competition.getSimulationValues()));
         roundSimulator.simulate(competition.currentRound());
         log.info("Competition with id [{}] simulated.", competition.getId());
         return competition;
