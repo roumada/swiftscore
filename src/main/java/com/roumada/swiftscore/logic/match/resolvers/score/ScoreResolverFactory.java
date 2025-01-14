@@ -1,12 +1,12 @@
-package com.roumada.swiftscore.logic.match.resolvers;
+package com.roumada.swiftscore.logic.match.resolvers.score;
 
 import com.roumada.swiftscore.model.match.FootballMatch;
 
-public class MatchResolverFactory {
+public class ScoreResolverFactory {
 
-    private MatchResolverFactory(){}
-    public static ScoreResolver getFor(FootballMatch footballMatch) {
-        switch (footballMatch.getMatchResult()) {
+    private ScoreResolverFactory(){}
+    public static ScoreResolver getFor(FootballMatch.MatchResult matchResult) {
+        switch (matchResult) {
             case HOME_SIDE_VICTORY -> {
                 return new HomeSideVictorScoreResolver();
             }

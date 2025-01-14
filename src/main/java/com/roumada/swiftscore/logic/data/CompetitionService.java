@@ -82,7 +82,7 @@ public class CompetitionService {
     }
 
     private Competition simulateCurrentRound(Competition competition) {
-        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withVariance(competition.getSimulatorValues().variance()));
+        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(competition.getSimulatorValues()));
         roundSimulator.simulate(competition.currentRound());
         log.info("Competition with id [{}] simulated.", competition.getId());
         return competition;
