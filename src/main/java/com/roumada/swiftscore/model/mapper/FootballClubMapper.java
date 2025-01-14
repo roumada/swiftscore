@@ -10,4 +10,5 @@ public interface FootballClubMapper {
     FootballClubMapper INSTANCE = Mappers.getMapper(FootballClubMapper.class);
 
     FootballClub footballClubDTOtoFootballClub(FootballClubDTO dto);
+    FootballClubDTO footballClubtoFootballClubDTO(FootballClub footballClub);
 }

@@ -2,7 +2,7 @@ package com.roumada.swiftscore.logic.match.simulator;
 
 import com.roumada.swiftscore.logic.match.resolver.score.ScoreResolverFactory;
 import com.roumada.swiftscore.logic.match.resolver.victor.VictorResolverFactory;
-import com.roumada.swiftscore.model.SimulatorValues;
+import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,13 +11,13 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class SimpleVarianceMatchSimulator implements MatchSimulator {
 
-    private final SimulatorValues simValues;
+    private final SimulationValues simValues;
 
-    private SimpleVarianceMatchSimulator(SimulatorValues simValues) {
+    private SimpleVarianceMatchSimulator(SimulationValues simValues) {
         this.simValues = simValues;
     }
 
-    public static SimpleVarianceMatchSimulator withValues(SimulatorValues simValues) {
+    public static SimpleVarianceMatchSimulator withValues(SimulationValues simValues) {
         return new SimpleVarianceMatchSimulator(simValues);
     }
 

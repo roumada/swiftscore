@@ -5,7 +5,7 @@ import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.logic.data.CompetitionService;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.model.SimulatorValues;
+import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
@@ -37,7 +37,7 @@ class CompetitionServiceTests extends AbstractBaseIntegrationTest {
         // arrange
         var clubs = FootballClubTestUtils.getFourFootballClubs();
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(clubs));
-        var comp = service.generateAndSave(new CompetitionRequestDTO(ids, new SimulatorValues(0))).get();
+        var comp = service.generateAndSave(new CompetitionRequestDTO(ids, new SimulationValues(0))).get();
 
         for (int i = 0; i < clubs.size(); i++) {
             // act
@@ -65,7 +65,7 @@ class CompetitionServiceTests extends AbstractBaseIntegrationTest {
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
         fc1 = fcdl.save(fc1);
         fc2 = fcdl.save(fc2);
-        var dto = new CompetitionRequestDTO(List.of(fc1.getId(), fc2.getId()), new SimulatorValues(0));
+        var dto = new CompetitionRequestDTO(List.of(fc1.getId(), fc2.getId()), new SimulationValues(0));
 
         // act
         var optionalCompId = service.generateAndSave(dto);

@@ -2,7 +2,7 @@ package com.roumada.swiftscore.integration.controller;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.SimulatorValues;
+import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
@@ -53,7 +53,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var mvcResult = mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 ids,
-                                new SimulatorValues(0)))))
+                                new SimulationValues(0)))))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -75,7 +75,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 List.of(1L, 2L, 3L, 9L),
-                                new SimulatorValues(0)))))
+                                new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -89,7 +89,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 List.of(1L, 2L, 3L),
-                                new SimulatorValues(0)))))
+                                new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -105,7 +105,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 ids,
-                                new SimulatorValues(variation, 0.0, 0.0)))))
+                                new SimulationValues(variation, 0.0, 0.0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -121,7 +121,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 ids,
-                                new SimulatorValues(0.0, 0.0, drawTriggerChance)))))
+                                new SimulationValues(0.0, 0.0, drawTriggerChance)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -137,7 +137,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 ids,
-                                new SimulatorValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
+                                new SimulationValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -148,7 +148,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var round1 = new CompetitionRound(1, Collections.emptyList());
         round1 = competitionDataLayer.saveCompetitionRound(round1);
         var saved = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        var id = competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0), saved,
+        var id = competitionDataLayer.saveCompetition(new Competition(new SimulationValues(0), saved,
                 List.of(round1))).getId();
 
         // act
@@ -170,7 +170,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var round1 = new CompetitionRound(1, Collections.emptyList());
         competitionDataLayer.saveCompetitionRound(round1);
         var saved = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0), saved,
+        competitionDataLayer.saveCompetition(new Competition(new SimulationValues(0), saved,
                 List.of(round1)));
 
         // act & assert
@@ -187,9 +187,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         competitionDataLayer.saveCompetitionRound(round1);
         competitionDataLayer.saveCompetitionRound(round2);
         var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0), savedClubs,
+        competitionDataLayer.saveCompetition(new Competition(new SimulationValues(0), savedClubs,
                 List.of(round1)));
-        competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0), savedClubs,
+        competitionDataLayer.saveCompetition(new Competition(new SimulationValues(0), savedClubs,
                 List.of(round2)));
 
         // act
@@ -217,7 +217,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 List.of(new FootballMatch(fc1, fc2)));
         competitionDataLayer.saveCompetitionRound(round);
 
-        var saved = competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0),
+        var saved = competitionDataLayer.saveCompetition(new Competition(new SimulationValues(0),
                 List.of(fc1, fc2), List.of(round)));
 
         // act
@@ -249,7 +249,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 List.of(new FootballMatch(fc1, fc2)));
         competitionDataLayer.saveCompetitionRound(round);
 
-        var saved = competitionDataLayer.saveCompetition(new Competition(new SimulatorValues(0),
+        var saved = competitionDataLayer.saveCompetition(new Competition(new SimulationValues(0),
                 List.of(fc1, fc2), List.of(round)));
 
         // act
