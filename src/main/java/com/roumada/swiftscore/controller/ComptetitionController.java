@@ -4,6 +4,7 @@ import com.roumada.swiftscore.logic.data.CompetitionService;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.CompetitionResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class ComptetitionController {
     private final CompetitionService competitionService;
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<Object> createCompetition(@RequestBody @Validated CompetitionRequestDTO dto) {
+    public ResponseEntity<Object> createCompetition(@Valid @RequestBody CompetitionRequestDTO dto) {
         log.debug(POST_ENDPOINT + " {} with request body {}", "/competition", dto);
         var result = competitionService.generateAndSave(dto);
         return result.fold(
