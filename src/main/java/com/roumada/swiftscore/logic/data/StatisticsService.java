@@ -2,8 +2,9 @@ package com.roumada.swiftscore.logic.data;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.MonoPair;
-import com.roumada.swiftscore.model.dto.FootballMatchStatisticsDTO;
+import com.roumada.swiftscore.model.dto.FootballClubStatisticsDTO;
 import com.roumada.swiftscore.model.dto.StandingsDTO;
+import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.model.mapper.FootballMatchStatisticsMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
@@ -92,7 +93,7 @@ public class StatisticsService {
         }
     }
 
-    public Either<String, List<FootballMatchStatisticsDTO>> getForClub(long clubId, int page, boolean includeUnresolved) {
+    public Either<String, FootballClubStatisticsDTO> getForClub(long clubId, int page, boolean includeUnresolved) {
         var optionalFC = footballClubDataLayer.findById(clubId);
         if (optionalFC.isEmpty()) {
             String errorMsg = "Couldn't find club with ID [%s]".formatted(clubId);
@@ -106,6 +107,7 @@ public class StatisticsService {
                 .stream()
                 .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
                 .toList();
-        return Either.right(statsDTO);
+        var fcDTO = FootballClubMapper.INSTANCE.footballClubtoFootballClubDTO(fc);
+        return Either.right(new FootballClubStatisticsDTO(fcDTO, statsDTO));
     }
 }
