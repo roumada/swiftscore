@@ -4,6 +4,7 @@ import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.logic.data.CompetitionService;
 import com.roumada.swiftscore.logic.data.StatisticsService;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.SimulatorValues;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
@@ -33,7 +34,7 @@ class StatisticsServiceTests extends AbstractBaseIntegrationTest {
     void generateCompetitionStatistics_forFullySimulatedTwoClubCompetition_shouldReturnSorted() {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getTwoFootballClubs()));
-        var comp = compService.generateAndSave(new CompetitionRequestDTO(ids, 0.0)).get();
+        var comp = compService.generateAndSave(new CompetitionRequestDTO(ids, new SimulatorValues(0))).get();
         compService.simulateRound(comp);
         compService.simulateRound(comp);
 

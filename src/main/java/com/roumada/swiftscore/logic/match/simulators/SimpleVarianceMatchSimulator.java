@@ -12,15 +12,15 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
 
     private final double variance;
 
-    public static SimpleVarianceMatchSimulator withVariance(double variance){
-        if (variance < 0 || variance > 1){
+    private SimpleVarianceMatchSimulator(double variance) {
+        this.variance = variance;
+    }
+
+    public static SimpleVarianceMatchSimulator withVariance(double variance) {
+        if (variance < 0 || variance > 1) {
             throw new IllegalArgumentException("Variance cannot be lower than 0 and higher than 1");
         }
         return new SimpleVarianceMatchSimulator(variance);
-    }
-
-    private SimpleVarianceMatchSimulator(double variance) {
-        this.variance = variance;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
         var homeSideVictoryChance = Math.max(0, footballMatch.getHomeSideVictoryChance() + calculateVariant());
         var awaySideVictoryChance = Math.max(0, footballMatch.getAwaySideVictoryChance() + calculateVariant());
 
-        if(variance != 0){
+        if (variance != 0) {
             log.info("Home side base victory chance: [{}]. New victory chance: [{}]", footballMatch.getHomeSideVictoryChance(),
                     String.format("%.3f", homeSideVictoryChance));
             log.info("Away side base victory chance: [{}]. New victory chance: [{}]", footballMatch.getAwaySideVictoryChance(),

@@ -3,6 +3,7 @@ package com.roumada.swiftscore.integration.controller;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.SimulatorValues;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -50,7 +51,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var mvcResult = mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 ids,
-                                0.0))))
+                                new SimulatorValues(0)))))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -72,7 +73,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 List.of(1L, 2L, 3L, 9L),
-                                0.0))))
+                                new SimulatorValues(0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -86,7 +87,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 List.of(1L, 2L, 3L),
-                                0.0))))
+                                new SimulatorValues(0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -100,7 +101,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         mvc.perform(post("/competition").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(
                                 List.of(1L, 2L, 3L, 9L),
-                                9.1f))))
+                                new SimulatorValues(9.1)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -111,7 +112,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var round1 = new CompetitionRound(1, Collections.emptyList());
         round1 = compdl.saveCompetitionRound(round1);
         var saved = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        var id = compdl.saveCompetition(new Competition(0.0, saved,
+        var id = compdl.saveCompetition(new Competition(new SimulatorValues(0), saved,
                 List.of(round1))).getId();
 
         // act
@@ -133,7 +134,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var round1 = new CompetitionRound(1, Collections.emptyList());
         compdl.saveCompetitionRound(round1);
         var saved = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        compdl.saveCompetition(new Competition(0.0, saved,
+        compdl.saveCompetition(new Competition(new SimulatorValues(0), saved,
                 List.of(round1)));
 
         // act
@@ -150,9 +151,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         compdl.saveCompetitionRound(round1);
         compdl.saveCompetitionRound(round2);
         var savedClubs = fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        compdl.saveCompetition(new Competition(0.0, savedClubs,
+        compdl.saveCompetition(new Competition(new SimulatorValues(0), savedClubs,
                 List.of(round1)));
-        compdl.saveCompetition(new Competition(0.0, savedClubs,
+        compdl.saveCompetition(new Competition(new SimulatorValues(0), savedClubs,
                 List.of(round2)));
 
         // act
@@ -180,7 +181,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 List.of(new FootballMatch(fc1, fc2)));
         compdl.saveCompetitionRound(round);
 
-        var saved = compdl.saveCompetition(new Competition(0,
+        var saved = compdl.saveCompetition(new Competition(new SimulatorValues(0),
                 List.of(fc1, fc2), List.of(round)));
 
         // act
@@ -212,7 +213,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 List.of(new FootballMatch(fc1, fc2)));
         compdl.saveCompetitionRound(round);
 
-        var saved = compdl.saveCompetition(new Competition(0,
+        var saved = compdl.saveCompetition(new Competition(new SimulatorValues(0),
                 List.of(fc1, fc2), List.of(round)));
 
         // act
