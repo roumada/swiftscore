@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.logic.match.resolvers.score;
+package com.roumada.swiftscore.logic.match.resolver.score;
 
 import com.roumada.swiftscore.model.match.FootballMatch;
 import lombok.extern.slf4j.Slf4j;

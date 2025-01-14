@@ -1,21 +1,20 @@
-package com.roumada.swiftscore.unit.logic.resolver.victor;
+package com.roumada.swiftscore.unit.logic.match.resolver.score;
 
 
-import com.roumada.swiftscore.logic.match.resolvers.victor.VictorResolverFactory;
+import com.roumada.swiftscore.logic.match.resolver.score.ScoreResolverFactory;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-class VictorResolverFactoryTests {
+class ScoreResolverFactoryTests {
 
     @Test
-    @DisplayName("Resolve victor - home side victory - should resolve in favor of home side")
-    void resolveVictor_homeSideVictory_shouldResolveInFavorOfHomeSide() {
+    @DisplayName("Resolve score - home side victory - should resolve in favor of home side")
+    void resolveScore_homeSideVictory_shouldResolveInFavorOfHomeSide() {
         // arrange
         FootballMatch fm = new FootballMatch(
                 new FootballClub("FC1", 1),
@@ -25,16 +24,15 @@ class VictorResolverFactoryTests {
         fm.setMatchResult(FootballMatch.MatchResult.HOME_SIDE_VICTORY);
 
         // act
-        VictorResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
+        ScoreResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
 
         // assert
-        assertEquals(FootballMatchStatistics.MatchStatisticsResult.VICTORY, fm.getHomeSideStatistics().getResult());
-        assertEquals(FootballMatchStatistics.MatchStatisticsResult.LOSS, fm.getAwaySideStatistics().getResult());
+        assertTrue(fm.getHomeSideStatistics().getGoalsScored() > fm.getAwaySideStatistics().getGoalsScored());
     }
 
     @Test
-    @DisplayName("Resolve victor - away side victory - should resolve in favor of away side")
-    void resolveVictor_awaySideVictory_shouldResolveInFavorOfAwaySide() {
+    @DisplayName("Resolve score - away side victory - should resolve in favor of away side")
+    void resolveScore_awaySideVictory_shouldResolveInFavorOfAwaySide() {
         // arrange
         FootballMatch fm = new FootballMatch(
                 new FootballClub("FC1", 0.4),
@@ -44,16 +42,15 @@ class VictorResolverFactoryTests {
         fm.setMatchResult(FootballMatch.MatchResult.AWAY_SIDE_VICTORY);
 
         // act
-        VictorResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
+        ScoreResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
 
         // assert
-        assertEquals(FootballMatchStatistics.MatchStatisticsResult.LOSS, fm.getHomeSideStatistics().getResult());
-        assertEquals(FootballMatchStatistics.MatchStatisticsResult.VICTORY, fm.getAwaySideStatistics().getResult());
+        assertTrue(fm.getHomeSideStatistics().getGoalsScored() < fm.getAwaySideStatistics().getGoalsScored());
     }
 
     @Test
-    @DisplayName("Resolve victor - draw - should resolve as a draw")
-    void resolveVictor_draw_shouldResolveAsADraw() {
+    @DisplayName("Resolve score - draw - should resolve as a draw")
+    void resolveScore_draw_shouldResolveAsADraw() {
         // arrange
         FootballMatch fm = new FootballMatch(
                 new FootballClub("FC1", 0.5),
@@ -63,16 +60,15 @@ class VictorResolverFactoryTests {
         fm.setMatchResult(FootballMatch.MatchResult.DRAW);
 
         // act
-        VictorResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
+        ScoreResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
 
         // assert
-        assertEquals(FootballMatchStatistics.MatchStatisticsResult.DRAW, fm.getHomeSideStatistics().getResult());
-        assertEquals(FootballMatchStatistics.MatchStatisticsResult.DRAW, fm.getAwaySideStatistics().getResult());
+        assertEquals(fm.getHomeSideStatistics().getGoalsScored(), fm.getAwaySideStatistics().getGoalsScored());
     }
 
     @Test
-    @DisplayName("Resolve victor - unresolved - should throw an exception")
-    void resolveVictor_unresolved_shouldThrowAnException() {
+    @DisplayName("Resolve score - unresolved - should throw an exception")
+    void resolveScore_unresolved_shouldThrowAnException() {
         // arrange
         FootballMatch fm = new FootballMatch(
                 new FootballClub("FC1", 0.5),
@@ -84,10 +80,10 @@ class VictorResolverFactoryTests {
         // act
         FootballMatch.MatchResult mr = fm.getMatchResult();
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            VictorResolverFactory.getFor(mr);
+            ScoreResolverFactory.getFor(mr);
         });
 
         // assert
-        assertEquals("A VictorResolver cannot be assigned to a FootballMatch with a non-match finished status.", exception.getMessage());
+        assertEquals("A ScoreResolver cannot be assigned to a FootballMatch with a non-match finished status.", exception.getMessage());
     }
 }

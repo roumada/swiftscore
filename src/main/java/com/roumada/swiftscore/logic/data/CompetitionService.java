@@ -2,7 +2,7 @@ package com.roumada.swiftscore.logic.data;
 
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
-import com.roumada.swiftscore.logic.match.simulators.SimpleVarianceMatchSimulator;
+import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;

@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.logic.match.resolvers.victor;
+package com.roumada.swiftscore.logic.match.resolver.victor;
 
 import com.roumada.swiftscore.model.match.FootballMatch;
 
