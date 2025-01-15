@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.logic.data.CompetitionService;
+import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.CompetitionResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;

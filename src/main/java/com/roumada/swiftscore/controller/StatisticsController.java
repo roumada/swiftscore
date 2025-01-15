@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.logic.data.StatisticsService;
+import com.roumada.swiftscore.service.StatisticsService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

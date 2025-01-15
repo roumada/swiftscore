@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.logic.data;
+package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.MonoPair;

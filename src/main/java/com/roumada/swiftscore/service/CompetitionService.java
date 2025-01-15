@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.logic.data;
+package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
