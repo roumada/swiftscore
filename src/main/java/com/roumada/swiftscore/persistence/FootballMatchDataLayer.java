@@ -50,7 +50,7 @@ public class FootballMatchDataLayer {
     }
 
     public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub, int page, boolean includeUnresolved) {
-        PageRequest pageRequest = PageRequest.of(page, 5);
+        PageRequest pageRequest = PageRequest.of(page, 10);
 
         Page<FootballMatchStatistics> pageResult = includeUnresolved ?
                 footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest) :

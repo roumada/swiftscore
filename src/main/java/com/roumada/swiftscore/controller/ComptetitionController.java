@@ -25,8 +25,7 @@ public class ComptetitionController {
     @PostMapping(consumes = "application/json")
     public ResponseEntity<Object> createCompetition(HttpServletRequest request, @Valid @RequestBody CompetitionRequestDTO dto) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
-        var result = competitionService.generateAndSave(dto);
-        return result.fold(
+        return competitionService.generateAndSave(dto).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 success -> ResponseEntity.ok(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(success)));
     }
@@ -34,8 +33,7 @@ public class ComptetitionController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCompetition(HttpServletRequest request, @PathVariable long id) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
-        var eitherCompetition = competitionService.findCompetitionById(id);
-        return eitherCompetition.fold(
+        return competitionService.findCompetitionById(id).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok);
     }
@@ -50,11 +48,10 @@ public class ComptetitionController {
     @GetMapping("/{id}/simulate")
     public ResponseEntity<Object> simulate(HttpServletRequest request, @PathVariable long id) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
-        var competition = competitionService.findCompetitionById(id);
-        if (competition.isLeft()) return ResponseEntity.badRequest().body(competition.getLeft());
+        var findResult = competitionService.findCompetitionById(id);
+        if (findResult.isLeft()) return ResponseEntity.badRequest().body(findResult.getLeft());
 
-        var simulated = competitionService.simulateRound(competition.get());
-        return simulated.fold(
+        return competitionService.simulateRound(findResult.get()).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok
         );

@@ -22,8 +22,8 @@ public class FootballMatchController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getMatch(HttpServletRequest request, @PathVariable long id) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
-        var result = dataLayer.findMatchById(id);
-        return result.<ResponseEntity<Object>>map(ResponseEntity::ok)
+        var findResult = dataLayer.findMatchById(id);
+        return findResult.<ResponseEntity<Object>>map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().body("Couldn't find football match with ID [%s]".formatted(id)));
     }
 }
