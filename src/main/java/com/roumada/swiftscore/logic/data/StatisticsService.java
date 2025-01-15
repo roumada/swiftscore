@@ -40,9 +40,9 @@ public class StatisticsService {
     public Either<String, List<StandingsDTO>> getForCompetition(Long competitionId) {
         Optional<Competition> optCompetition = competitionDataLayer.findCompetitionById(competitionId);
         if (optCompetition.isEmpty()) {
-            String errorMsg = "Couldn't find competition with ID [%s]".formatted(competitionId);
-            log.warn(errorMsg);
-            return Either.left(errorMsg);
+            String warnMsg = "Couldn't find competition with ID [%s]".formatted(competitionId);
+            log.warn(warnMsg);
+            return Either.left(warnMsg);
         }
 
 

@@ -19,9 +19,9 @@ public class CompetitionRoundsGenerator {
 
     public static Either<String, List<CompetitionRound>> generate(List<FootballClub> clubs) {
         if (clubs.size() % 2 == 1) {
-            String error = "Unable to generate competition rounds for odd amount of clubs.";
-            log.error(error);
-            return Either.left(error);
+            String errorMsg = "Unable to generate competition rounds for odd amount of clubs.";
+            log.error(errorMsg);
+            return Either.left(errorMsg);
         }
 
         List<List<MonoPair<Integer>>> numericRoundRobinMatchups = generateRoundRobinNumericMatchups(clubs.size());
