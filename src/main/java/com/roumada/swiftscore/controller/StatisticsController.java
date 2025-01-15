@@ -1,6 +1,8 @@
 package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.logic.data.StatisticsService;
+import com.roumada.swiftscore.util.LoggingMessageTemplates;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,8 @@ public class StatisticsController {
     private final StatisticsService service;
 
     @GetMapping("competition/{competitionId}")
-    public ResponseEntity<Object> getStatisticsForCompetition(@PathVariable long competitionId) {
-        log.info(GET_ENDPOINT + "/statistics/competition/{}", competitionId);
+    public ResponseEntity<Object> getStatisticsForCompetition(HttpServletRequest request, @PathVariable long competitionId) {
+        log.info(LoggingMessageTemplates.getForEndpoint(request));
 
         return service.getForCompetition(competitionId).fold(
                 error -> ResponseEntity.badRequest().body(error),
@@ -27,10 +29,11 @@ public class StatisticsController {
     }
 
     @GetMapping("club/{clubId}")
-    public ResponseEntity<Object> getStatisticsForClub(@PathVariable long clubId,
+    public ResponseEntity<Object> getStatisticsForClub(HttpServletRequest request,
+                                                       @PathVariable long clubId,
                                                        @RequestParam(required = false) Integer page,
                                                        @RequestParam(required = false) Boolean includeUnresolved) {
-        log.info(GET_ENDPOINT + "/statistics/club/{}", clubId);
+        log.info(LoggingMessageTemplates.getForEndpoint(request));
         if(includeUnresolved == null) includeUnresolved = false;
         if(page == null) page = 0;
 
