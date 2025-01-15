@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.logic.data;
+package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
@@ -33,9 +33,9 @@ public class CompetitionService {
         }
 
         if (footballClubs.contains(null)) {
-            var error = "Failed to generate competition - failed to retrieve at least one club from the database.";
-            log.error(error);
-            return Either.left(error);
+            var errorMsg = "Failed to generate competition - failed to retrieve at least one club from the database.";
+            log.error(errorMsg);
+            return Either.left(errorMsg);
         }
         var generationResult = CompetitionRoundsGenerator.generate(footballClubs);
         return generationResult.fold(
@@ -62,11 +62,11 @@ public class CompetitionService {
 
     public Either<String, CompetitionRound> simulateRound(Competition competition) {
         if (!competition.canSimulate()) {
-            String error =
+            String errorMsg =
                     "Cannot simulate competition with [%s] and current round [%s]. All of the competition's rounds have been simulated. Unable to simulate further"
                             .formatted(competition.getId(), competition.getCurrentRoundNumber());
-            log.error(error);
-            return Either.left(error);
+            log.error(errorMsg);
+            return Either.left(errorMsg);
         }
 
         var compSimulated = simulateCurrentRound(competition);
@@ -93,9 +93,9 @@ public class CompetitionService {
         return optionalCompetition
                 .map(Either::<String, Competition>right)
                 .orElseGet(() -> {
-                    String error = "Competition with ID [%s] not found.".formatted(id);
-                    log.info(error);
-                    return Either.left(error);
+                    String warnMsg = "Competition with ID [%s] not found.".formatted(id);
+                    log.warn(warnMsg);
+                    return Either.left(warnMsg);
                 });
     }
 

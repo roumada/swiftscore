@@ -1,20 +1,18 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.logic.data.CompetitionService;
+import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.CompetitionResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;
+import com.roumada.swiftscore.util.LoggingMessageTemplates;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static com.roumada.swiftscore.util.LogStringLiterals.GET_ENDPOINT;
-import static com.roumada.swiftscore.util.LogStringLiterals.POST_ENDPOINT;
 
 @Slf4j
 @RestController
@@ -25,38 +23,35 @@ public class ComptetitionController {
     private final CompetitionService competitionService;
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<Object> createCompetition(@Valid @RequestBody CompetitionRequestDTO dto) {
-        log.debug(POST_ENDPOINT + " {} with request body {}", "/competition", dto);
-        var result = competitionService.generateAndSave(dto);
-        return result.fold(
+    public ResponseEntity<Object> createCompetition(HttpServletRequest request, @Valid @RequestBody CompetitionRequestDTO dto) {
+        log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
+        return competitionService.generateAndSave(dto).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 success -> ResponseEntity.ok(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(success)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getCompetition(@PathVariable long id) {
-        log.info(GET_ENDPOINT + " /competition/{}", id);
-        var eitherCompetition = competitionService.findCompetitionById(id);
-        return eitherCompetition.fold(
+    public ResponseEntity<Object> getCompetition(HttpServletRequest request, @PathVariable long id) {
+        log.info(LoggingMessageTemplates.getForEndpoint(request));
+        return competitionService.findCompetitionById(id).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok);
     }
 
     @GetMapping("/all")
-    public List<CompetitionResponseDTO> getAllCompetitions() {
-        log.info(GET_ENDPOINT + " /competition/all");
+    public List<CompetitionResponseDTO> getAllCompetitions(HttpServletRequest request) {
+        log.info(LoggingMessageTemplates.getForEndpoint(request));
         return competitionService.findAllCompetitions().stream().map(CompetitionMapper.INSTANCE::competitionToCompetitionResponseDTO).toList();
     }
 
 
     @GetMapping("/{id}/simulate")
-    public ResponseEntity<Object> simulate(@PathVariable long id) {
-        log.info(GET_ENDPOINT + " /competition/{}/simulate", id);
-        var competition = competitionService.findCompetitionById(id);
-        if (competition.isLeft()) return ResponseEntity.badRequest().body(competition.getLeft());
+    public ResponseEntity<Object> simulate(HttpServletRequest request, @PathVariable long id) {
+        log.info(LoggingMessageTemplates.getForEndpoint(request));
+        var findResult = competitionService.findCompetitionById(id);
+        if (findResult.isLeft()) return ResponseEntity.badRequest().body(findResult.getLeft());
 
-        var simulated = competitionService.simulateRound(competition.get());
-        return simulated.fold(
+        return competitionService.simulateRound(findResult.get()).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok
         );

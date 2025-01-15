@@ -37,7 +37,7 @@ public class FootballMatchDataLayer {
 
     public void saveStatistics(FootballMatchStatistics statistics) {
         var saved = footballMatchStatisticsRepository.save(statistics);
-        log.info("Match statistics with data [{}] saved.", saved);
+        log.debug("Match statistics with data [{}] saved.", saved);
     }
 
     private void setIdsInStatistics(FootballMatchStatistics statistics, Long matchId, Long competitionId) {
@@ -50,7 +50,7 @@ public class FootballMatchDataLayer {
     }
 
     public List<FootballMatchStatistics> findMatchStatisticsForClub(FootballClub footballClub, int page, boolean includeUnresolved) {
-        PageRequest pageRequest = PageRequest.of(page, 5);
+        PageRequest pageRequest = PageRequest.of(page, 10);
 
         Page<FootballMatchStatistics> pageResult = includeUnresolved ?
                 footballMatchStatisticsRepository.findByFootballClubId(footballClub.getId(), pageRequest) :

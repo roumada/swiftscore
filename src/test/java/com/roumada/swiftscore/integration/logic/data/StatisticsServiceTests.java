@@ -1,8 +1,8 @@
 package com.roumada.swiftscore.integration.logic.data;
 
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
-import com.roumada.swiftscore.logic.data.CompetitionService;
-import com.roumada.swiftscore.logic.data.StatisticsService;
+import com.roumada.swiftscore.service.CompetitionService;
+import com.roumada.swiftscore.service.StatisticsService;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
