@@ -21,7 +21,7 @@ public class FootballClubDataLayer {
 
     public FootballClub save(FootballClub footballClub) {
         var saved = repository.save(footballClub);
-        log.info("Football club with data [{}] saved.", footballClub);
+        log.debug("Football club with data [{}] saved.", footballClub);
         return saved;
     }
 

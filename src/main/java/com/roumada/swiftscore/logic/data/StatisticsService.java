@@ -74,7 +74,7 @@ public class StatisticsService {
 
         switch (match.getMatchResult()) {
             case UNFINISHED ->
-                    log.info("Match with ID [{}] is unfinished. Not including it in standings", match.getId());
+                    log.debug("Match with ID [{}] is unfinished. Not including it in standings", match.getId());
             case HOME_SIDE_VICTORY -> {
                 addGoals(stats, standingsForHomeSide, standingsForAwaySide);
                 standingsForHomeSide.addWin();

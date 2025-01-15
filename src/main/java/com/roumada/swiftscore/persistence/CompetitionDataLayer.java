@@ -32,7 +32,7 @@ public class CompetitionDataLayer {
 
     public Competition saveCompetition(Competition competition) {
         var saved = competitionRepository.save(competition);
-        log.info("Competition with ID [{}] saved.", saved.getId());
+        log.debug("Competition with ID [{}] saved.", saved.getId());
         return saved;
     }
 
@@ -49,7 +49,7 @@ public class CompetitionDataLayer {
             saveMatch(match);
         }
         var saved = competitionRoundRepository.save(round);
-        log.info("Competition round with ID [{}] saved", saved.getId());
+        log.debug("Competition round with ID [{}] saved", saved.getId());
         return saved;
     }
 
@@ -61,7 +61,7 @@ public class CompetitionDataLayer {
 
     private void saveMatch(FootballMatch match) {
         var matchId = footballMatchDataLayer.createMatch(match).getId();
-        log.info("Match with ID [{}] saved.", matchId);
+        log.debug("Match with ID [{}] saved.", matchId);
     }
 
     public Optional<Competition> findCompetitionById(Long id) {

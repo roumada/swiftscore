@@ -33,9 +33,11 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
         var awaySideVictoryChance = Math.max(0, footballMatch.getAwaySideVictoryChance() + calculateVariant());
 
         if (simValues.variance() != 0) {
-            log.info("Home side base victory chance: [{}]. New victory chance: [{}]", footballMatch.getHomeSideVictoryChance(),
+            log.debug("Home side base victory chance: [{}]. New victory chance: [{}]",
+                    footballMatch.getHomeSideVictoryChance(),
                     String.format("%.3f", homeSideVictoryChance));
-            log.info("Away side base victory chance: [{}]. New victory chance: [{}]", footballMatch.getAwaySideVictoryChance(),
+            log.debug("Away side base victory chance: [{}]. New victory chance: [{}]",
+                    footballMatch.getAwaySideVictoryChance(),
                     String.format("%.3f", awaySideVictoryChance));
         }
 
