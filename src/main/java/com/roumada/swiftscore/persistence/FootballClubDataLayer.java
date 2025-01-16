@@ -19,14 +19,9 @@ public class FootballClubDataLayer {
 
     private final FootballClubRepository repository;
 
-    public Either<String, FootballClub> saveFromDto(FootballClubDTO dto) {
-        FootballClub footballClub;
-        try {
-            footballClub = FootballClubMapper.INSTANCE.footballClubDTOtoFootballClub(dto);
-        } catch (IllegalArgumentException iae) {
-            return Either.left(iae.getLocalizedMessage());
-        }
-        return Either.right(save(footballClub));
+    public FootballClub saveFromDto(FootballClubDTO dto) {
+        return save(FootballClubMapper.INSTANCE.footballClubDTOtoFootballClub(dto));
+
     }
 
     public FootballClub save(FootballClub footballClub) {
