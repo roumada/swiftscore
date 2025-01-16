@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Riverstone United",
+    "country": "GB",
+    "stadiumName": "Riverstone Arena",
+    "victoryChance": 0.72
+  },
+  {
+    "name": "Scarborough Rangers",
+    "country": "GB",
+    "stadiumName": "Ranger Park",
+    "victoryChance": 0.85
+  },
+  {
+    "name": "Harrowford FC",
+    "country": "GB",
+    "stadiumName": "Harrowford Stadium",
+    "victoryChance": 0.64
+  },
+  {
+    "name": "Caldwell Warriors",
+    "country": "GB",
+    "stadiumName": "Caldwell Field",
+    "victoryChance": 0.41
+  },
+  {
+    "name": "Lancashire Phoenix",
+    "country": "GB",
+    "stadiumName": "Phoenix Park",
+    "victoryChance": 0.58
+  },
+  {
+    "name": "Brighton Vale",
+    "country": "GB",
+    "stadiumName": "Vale Grounds",
+    "victoryChance": 0.77
+  },
+  {
+    "name": "Tynemouth Wanderers",
+    "country": "GB",
+    "stadiumName": "Tynemouth Arena",
+    "victoryChance": 0.68
+  },
+  {
+    "name": "Stanton City FC",
+    "country": "GB",
+    "stadiumName": "Stanton Stadium",
+    "victoryChance": 0.56
+  },
+  {
+    "name": "Elderton Hawks",
+    "country": "GB",
+    "stadiumName": "Hawks Nest",
+    "victoryChance": 0.79
+  },
+  {
+    "name": "Merrivale Rovers",
+    "country": "GB",
+    "stadiumName": "Merrivale Park",
+    "victoryChance": 0.62
+  }
+]
