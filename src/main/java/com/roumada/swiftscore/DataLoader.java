@@ -5,6 +5,7 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.FootballClubDTO;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ public class DataLoader implements CommandLineRunner {
 
     private final MongoTemplate mongoTemplate;
     private final FootballClubRepository footballClubRepository;
+    private final Validator validator;
 
     @Value("classpath:data/footballclubs.json")
     private Resource footballClubsResource;
@@ -45,17 +49,28 @@ public class DataLoader implements CommandLineRunner {
     }
 
     public List<FootballClub> loadFootballClubs() {
-        List<FootballClubDTO> clubDTOs;
+        Map<FootballClubDTO, Boolean> validClubDTOs;
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            clubDTOs = objectMapper.readValue(footballClubsResource.getInputStream(),
+            List<FootballClubDTO> clubDTOs = objectMapper.readValue(footballClubsResource.getInputStream(),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, FootballClubDTO.class));
+            validClubDTOs = clubDTOs.stream()
+                    .collect(Collectors.toMap(club -> club, club -> false));
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
             throw new RuntimeException(e);
         }
 
-        return clubDTOs.stream().map(FootballClubMapper.INSTANCE::footballClubDTOtoFootballClub).toList();
+        return validClubDTOs.entrySet()
+                .stream()
+                .map(kv -> {
+                    if(validator.validate(kv.getKey()).isEmpty()) kv.setValue(true);
+                    return kv;
+                })
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .map(FootballClubMapper.INSTANCE::footballClubDTOtoFootballClub)
+                .toList();
     }
 }
