@@ -26,6 +26,21 @@ public class CompetitionService {
     private final CompetitionDataLayer competitionDataLayer;
     private final FootballClubDataLayer fcDataLayer;
 
+    public Either<String, Competition> findCompetitionById(Long id) {
+        var optionalCompetition = competitionDataLayer.findCompetitionById(id);
+        return optionalCompetition
+                .map(Either::<String, Competition>right)
+                .orElseGet(() -> {
+                    String warnMsg = "Competition with ID [%s] not found.".formatted(id);
+                    log.warn(warnMsg);
+                    return Either.left(warnMsg);
+                });
+    }
+
+    public List<Competition> findAllCompetitions() {
+        return competitionDataLayer.findAllCompetitions();
+    }
+
     public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
         var footballClubs = new ArrayList<FootballClub>();
         for (Long id : dto.participantIds()) {
@@ -75,12 +90,6 @@ public class CompetitionService {
         return Either.right(currRound);
     }
 
-    private void persistChanges(Competition compSimulated) {
-        competitionDataLayer.saveCompetitionRound(compSimulated.currentRound());
-        compSimulated.incrementCurrentRoundNumber();
-        competitionDataLayer.saveCompetition(compSimulated);
-    }
-
     private Competition simulateCurrentRound(Competition competition) {
         var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(competition.getSimulationValues()));
         roundSimulator.simulate(competition.currentRound());
@@ -88,18 +97,9 @@ public class CompetitionService {
         return competition;
     }
 
-    public Either<String, Competition> findCompetitionById(Long id) {
-        var optionalCompetition = competitionDataLayer.findCompetitionById(id);
-        return optionalCompetition
-                .map(Either::<String, Competition>right)
-                .orElseGet(() -> {
-                    String warnMsg = "Competition with ID [%s] not found.".formatted(id);
-                    log.warn(warnMsg);
-                    return Either.left(warnMsg);
-                });
-    }
-
-    public List<Competition> findAllCompetitions() {
-        return competitionDataLayer.findAllCompetitions();
+    private void persistChanges(Competition compSimulated) {
+        competitionDataLayer.saveCompetitionRound(compSimulated.currentRound());
+        compSimulated.incrementCurrentRoundNumber();
+        competitionDataLayer.saveCompetition(compSimulated);
     }
 }
