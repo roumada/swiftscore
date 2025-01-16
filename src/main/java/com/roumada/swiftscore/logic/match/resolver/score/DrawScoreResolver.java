@@ -9,6 +9,8 @@ public class DrawScoreResolver implements ScoreResolver {
     public void resolve(FootballMatch footballMatch) {
         int goalsScored = ThreadLocalRandom.current().nextInt(6);
         footballMatch.getHomeSideStatistics().setGoalsScored(goalsScored);
+        footballMatch.getHomeSideStatistics().setOpponentGoalsScored(goalsScored);
         footballMatch.getAwaySideStatistics().setGoalsScored(goalsScored);
+        footballMatch.getAwaySideStatistics().setOpponentGoalsScored(goalsScored);
     }
 }
