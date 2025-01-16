@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.model.match;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
 import lombok.Builder;
@@ -17,6 +18,9 @@ public class Competition {
     @Id
     private Long id = null;
     private int currentRoundNumber = 1;
+    private String name;
+    private CompetitionType type;
+    private CountryCode country;
     private SimulationValues simulationValues;
     @DBRef
     private List<FootballClub> participants;
@@ -24,7 +28,16 @@ public class Competition {
     private List<CompetitionRound> rounds;
 
     @Builder
-    public Competition(SimulationValues simulationValues, List<FootballClub> participants, List<CompetitionRound> rounds) {
+    private Competition(
+            String name,
+            CompetitionType type,
+            CountryCode country,
+            SimulationValues simulationValues,
+            List<FootballClub> participants,
+            List<CompetitionRound> rounds) {
+        this.name = name;
+        this.type = type;
+        this.country = country;
         this.simulationValues = simulationValues;
         this.participants = participants;
         this.rounds = rounds;
@@ -40,5 +53,9 @@ public class Competition {
 
     public void incrementCurrentRoundNumber() {
         currentRoundNumber++;
+    }
+
+    public enum CompetitionType {
+        LEAGUE, TOURNAMENT
     }
 }

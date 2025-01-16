@@ -1,18 +1,20 @@
 package com.roumada.swiftscore.integration.logic.data;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
-import com.roumada.swiftscore.service.CompetitionService;
-import com.roumada.swiftscore.service.StatisticsService;
-import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.service.CompetitionService;
+import com.roumada.swiftscore.service.StatisticsService;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import com.roumada.swiftscore.util.PersistenceTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.roumada.swiftscore.model.match.Competition.CompetitionType.LEAGUE;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -34,7 +36,7 @@ class StatisticsServiceTests extends AbstractBaseIntegrationTest {
     void generateCompetitionStatistics_forFullySimulatedTwoClubCompetition_shouldReturnSorted() {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getTwoFootballClubs()));
-        var comp = compService.generateAndSave(new CompetitionRequestDTO(ids, new SimulationValues(0))).get();
+        var comp = compService.generateAndSave(new CompetitionRequestDTO("", LEAGUE, CountryCode.GB, ids, new SimulationValues(0))).get();
         compService.simulateRound(comp);
         compService.simulateRound(comp);
 

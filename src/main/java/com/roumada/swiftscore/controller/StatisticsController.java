@@ -17,7 +17,8 @@ public class StatisticsController {
     private final StatisticsService service;
 
     @GetMapping("competition/{competitionId}")
-    public ResponseEntity<Object> getStatisticsForCompetition(HttpServletRequest request, @PathVariable long competitionId) {
+    public ResponseEntity<Object> getStatisticsForCompetition(@PathVariable long competitionId,
+                                                              HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
 
         return service.getForCompetition(competitionId).fold(
@@ -27,13 +28,13 @@ public class StatisticsController {
     }
 
     @GetMapping("club/{clubId}")
-    public ResponseEntity<Object> getStatisticsForClub(HttpServletRequest request,
-                                                       @PathVariable long clubId,
+    public ResponseEntity<Object> getStatisticsForClub(@PathVariable long clubId,
                                                        @RequestParam(required = false) Integer page,
-                                                       @RequestParam(required = false) Boolean includeUnresolved) {
+                                                       @RequestParam(required = false) Boolean includeUnresolved,
+                                                       HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
-        if(includeUnresolved == null) includeUnresolved = false;
-        if(page == null) page = 0;
+        if (includeUnresolved == null) includeUnresolved = false;
+        if (page == null) page = 0;
 
         return service.getForClub(clubId, page, includeUnresolved).fold(
                 error -> ResponseEntity.badRequest().body(error),

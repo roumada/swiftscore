@@ -1,8 +1,8 @@
 package com.roumada.swiftscore.unit.data.mapper;
 
+import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;
-import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import org.junit.jupiter.api.DisplayName;
@@ -27,8 +27,13 @@ class CompetitionMapperTests {
         var cr2 = CompetitionRound.builder().round(2).build();
         cr1.setId(3L);
         cr2.setId(4L);
-        var object = new Competition(new SimulationValues(0), List.of(fc1, fc2),
-                List.of(cr1, cr2));
+        var object = Competition.builder()
+                .name("Competition")
+                .type(Competition.CompetitionType.LEAGUE)
+                .simulationValues(new SimulationValues(0))
+                .participants(List.of(fc1, fc2))
+                .rounds(List.of(cr1, cr2))
+                .build();
 
         // act
         var response = mapper.competitionToCompetitionResponseDTO(object);

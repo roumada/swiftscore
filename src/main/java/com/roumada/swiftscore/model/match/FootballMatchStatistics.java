@@ -15,6 +15,7 @@ public class FootballMatchStatistics {
     private Long footballClubId;
     private MatchStatisticsResult result = MatchStatisticsResult.UNFINISHED;
     private int goalsScored = 0;
+    private int opponentGoalsScored = 0;
 
     public FootballMatchStatistics(Long footballClubId) {
         this.footballClubId = footballClubId;

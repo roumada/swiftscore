@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.model;
 
+import com.neovisionaries.i18n.CountryCode;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -12,15 +13,15 @@ public class FootballClub {
     @Id
     private Long id = null;
     private String name;
+    private CountryCode country;
+    private String stadiumName;
     private double victoryChance;
 
     @Builder
-    private FootballClub(String name, double victoryChance) {
-        if (name == null || name.isEmpty()) throw new IllegalArgumentException("Club should have a name");
-        if (victoryChance > 1) throw new IllegalArgumentException("Victory chance cannot exceed 1");
-        if (victoryChance < 0) throw new IllegalArgumentException("Victory chance cannot be lower than 0");
-
+    private FootballClub(String name, CountryCode country, String stadiumName, double victoryChance) {
         this.name = name;
+        this.country = country;
+        this.stadiumName = stadiumName;
         this.victoryChance = victoryChance;
     }
 }

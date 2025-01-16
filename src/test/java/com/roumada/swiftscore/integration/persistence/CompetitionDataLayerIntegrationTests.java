@@ -27,7 +27,13 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
     void shouldSaveAndFindCompetitionToAndFromDatabase() {
         // arrange
         var fcs = footballClubDataLayer.saveAll(FootballClubTestUtils.getTwoFootballClubs());
-        var competition = new Competition(new SimulationValues(0), fcs, Collections.emptyList());
+        var competition = Competition.builder()
+                .name("Competition")
+                .type(Competition.CompetitionType.LEAGUE)
+                .simulationValues(new SimulationValues(0))
+                .participants(fcs)
+                .rounds(Collections.emptyList())
+                .build();
 
         // act
         var id = competitionDataLayer.saveCompetition(competition).getId();
