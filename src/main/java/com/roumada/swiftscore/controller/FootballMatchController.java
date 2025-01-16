@@ -20,7 +20,8 @@ public class FootballMatchController {
     private final FootballMatchDataLayer dataLayer;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getMatch(HttpServletRequest request, @PathVariable long id) {
+    public ResponseEntity<Object> getMatch( @PathVariable long id,
+                                            HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var findResult = dataLayer.findMatchById(id);
         return findResult.<ResponseEntity<Object>>map(ResponseEntity::ok)
