@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.model.dto;
+package com.roumada.swiftscore.model;
 
 import java.util.List;
 

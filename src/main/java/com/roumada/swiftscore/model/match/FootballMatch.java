@@ -18,8 +18,10 @@ public class FootballMatch {
     private Long competitionRoundId;
     @DBRef
     private FootballClub homeSideFootballClub;
+    private double homeSideCalculatedVictoryChance;
     @DBRef
     private FootballClub awaySideFootballClub;
+    private double awaySideCalculatedVictoryChance;
     @DBRef
     private FootballMatchStatistics homeSideStatistics;
     @DBRef

@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.CompetitionResponseDTO;
+import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;
 import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/competition")
 @RequiredArgsConstructor
-public class ComptetitionController {
+public class CompetitionController {
 
     private final CompetitionService service;
 
@@ -38,7 +37,8 @@ public class ComptetitionController {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         return service.findCompetitionById(id).fold(
                 error -> ResponseEntity.badRequest().body(error),
-                ResponseEntity::ok);
+                competition ->
+                        ResponseEntity.ok(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(competition)));
     }
 
     @PatchMapping("/{id}")
@@ -56,7 +56,7 @@ public class ComptetitionController {
                                                     HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var comp = service.findCompetitionById(id);
-        if(comp.isLeft()) return ResponseEntity.noContent().build();
+        if (comp.isLeft()) return ResponseEntity.noContent().build();
         service.delete(id);
         return ResponseEntity.ok("OK");
     }

@@ -26,7 +26,7 @@ class CompetitionRoundSimulatorTests {
         // arrange
         FootballClub footballClub1 = FootballClub.builder().name("Football club 1").victoryChance(0.5f).build();
         FootballClub footballClub2 = FootballClub.builder().name("Football club 2").victoryChance(0.2f).build();
-        CompetitionRound competitionRound = prepareMatchWeek(footballClub1, footballClub2);
+        CompetitionRound competitionRound = prepareRound(footballClub1, footballClub2);
 
         // act
         competitionRoundSimulator.simulate(competitionRound);
@@ -43,7 +43,7 @@ class CompetitionRoundSimulatorTests {
                 competitionRound.getMatches().get(2).getAwaySideStatistics().getGoalsScored());
     }
 
-    private static CompetitionRound prepareMatchWeek(FootballClub footballClub1, FootballClub footballClub2) {
+    private static CompetitionRound prepareRound(FootballClub footballClub1, FootballClub footballClub2) {
         FootballMatch footballMatch1 = new FootballMatch(footballClub1, footballClub2);
         FootballMatch footballMatch2 = new FootballMatch(footballClub2, footballClub1);
         FootballMatch footballMatch3 = new FootballMatch(footballClub2, footballClub2);

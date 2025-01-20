@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.controller.handler;
 
-import com.roumada.swiftscore.model.dto.ErrorResponse;
+import com.roumada.swiftscore.model.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
