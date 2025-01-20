@@ -57,6 +57,9 @@ public class CompetitionService {
                 Either::left,
                 rounds -> {
                     var competition = Competition.builder()
+                            .name(dto.name())
+                            .type(dto.type())
+                            .country(dto.country())
                             .simulationValues(dto.simulationValues())
                             .participants(footballClubs)
                             .rounds(Collections.emptyList())
