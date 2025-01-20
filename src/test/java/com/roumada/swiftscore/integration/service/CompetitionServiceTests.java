@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.integration.logic.data;
+package com.roumada.swiftscore.integration.service;
 
 
 import com.neovisionaries.i18n.CountryCode;

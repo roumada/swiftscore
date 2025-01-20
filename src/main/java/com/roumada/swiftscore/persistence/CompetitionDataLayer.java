@@ -5,6 +5,7 @@ import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
+import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ import java.util.Optional;
 public class CompetitionDataLayer {
 
     private final CompetitionRepository competitionRepository;
-    private final CompetitionRoundRepository competitionRoundRepository;
+    private final CompetitionRoundDataLayer competitionRoundDataLayer;
     private final FootballMatchDataLayer footballMatchDataLayer;
 
     public void deepSaveCompetitionMatchesWithCompIds(Competition competition) {
@@ -48,7 +49,7 @@ public class CompetitionDataLayer {
         for (FootballMatch match : round.getMatches()) {
             saveMatch(match);
         }
-        var saved = competitionRoundRepository.save(round);
+        var saved = competitionRoundDataLayer.save(round);
         log.debug("Competition round with ID [{}] saved", saved.getId());
         return saved;
     }
@@ -70,5 +71,9 @@ public class CompetitionDataLayer {
 
     public List<Competition> findAllCompetitions() {
         return competitionRepository.findAll();
+    }
+
+    public void delete(long id) {
+        competitionRepository.deleteById(id);
     }
 }

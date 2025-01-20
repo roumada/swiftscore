@@ -31,4 +31,5 @@ public interface FootballMatchStatisticsRepository extends MongoRepository<Footb
     Page<FootballMatchStatistics>
     findByFootballClubIdAndCompetitionId(Long competitionId, Long footballClubId, Pageable pageable);
 
+    void deleteByCompetitionId(long id);
 }

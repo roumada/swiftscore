@@ -69,4 +69,8 @@ public class FootballMatchDataLayer {
 
         return pageResult.getContent();
     }
+
+    public void deleteByCompetitionId(long id) {
+        footballMatchRepository.deleteByCompetitionId(id);
+    }
 }

@@ -28,8 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -51,13 +50,13 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var mvcResult = mvc.perform(post("/competition")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        new CompetitionRequestDTO("",
-                                Competition.CompetitionType.LEAGUE,
-                                CountryCode.GB,
-                                ids,
-                                new SimulationValues(0)))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new CompetitionRequestDTO("",
+                                        Competition.CompetitionType.LEAGUE,
+                                        CountryCode.GB,
+                                        ids,
+                                        new SimulationValues(0)))))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
@@ -74,13 +73,13 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         mvc.perform(post("/competition")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        new CompetitionRequestDTO("",
-                                Competition.CompetitionType.LEAGUE,
-                                CountryCode.GB,
-                                List.of(1L, 2L, 3L, 9L),
-                                new SimulationValues(0)))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new CompetitionRequestDTO("",
+                                        Competition.CompetitionType.LEAGUE,
+                                        CountryCode.GB,
+                                        List.of(1L, 2L, 3L, 9L),
+                                        new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -92,12 +91,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         mvc.perform(post("/competition")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                        Competition.CompetitionType.LEAGUE,
-                        CountryCode.GB,
-                        List.of(1L, 2L, 3L),
-                        new SimulationValues(0)))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                                Competition.CompetitionType.LEAGUE,
+                                CountryCode.GB,
+                                List.of(1L, 2L, 3L),
+                                new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -110,12 +109,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         mvc.perform(post("/competition")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                        Competition.CompetitionType.LEAGUE,
-                        CountryCode.GB,
-                        ids,
-                        new SimulationValues(variation, 0.0, 0.0)))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                                Competition.CompetitionType.LEAGUE,
+                                CountryCode.GB,
+                                ids,
+                                new SimulationValues(variation, 0.0, 0.0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -128,12 +127,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         mvc.perform(post("/competition")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                        Competition.CompetitionType.LEAGUE,
-                        CountryCode.GB,
-                        ids,
-                        new SimulationValues(0.0, 0.0, drawTriggerChance)))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                                Competition.CompetitionType.LEAGUE,
+                                CountryCode.GB,
+                                ids,
+                                new SimulationValues(0.0, 0.0, drawTriggerChance)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -146,12 +145,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         mvc.perform(post("/competition")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                        Competition.CompetitionType.LEAGUE,
-                        CountryCode.GB,
-                        ids,
-                        new SimulationValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                                Competition.CompetitionType.LEAGUE,
+                                CountryCode.GB,
+                                ids,
+                                new SimulationValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -187,6 +186,23 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 List.of(1L, 2L, 3L),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("Delete competition - exists - should return OK")
+    void deleteCompetition_exists_shouldReturnOK() throws Exception {
+        // arrange
+        var id = competitionDataLayer.saveCompetition(Competition.builder().build()).getId();
+
+        // act
+        mvc.perform(delete("/competition/%s".formatted(id))).andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Delete competition - doesn't exist - should return no content")
+    void deleteCompetition_nonExistent_shouldReturnNoContent() throws Exception {
+        // act
+        mvc.perform(delete("/competition/-1")).andExpect(status().isNoContent());
     }
 
     @Test
@@ -317,5 +333,209 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         mvc.perform(get("/competition/%s/simulate".formatted(saved.getId()))).andExpect(status().isOk());
         mvc.perform(get("/competition/%s/simulate".formatted(saved.getId()))).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("Update competition - name only - should return updated")
+    void updateCompetition_name_shouldReturnUpdated() throws Exception {
+        // arrange
+        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .type(Competition.CompetitionType.LEAGUE)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionRequestDTO("New Competition",
+                null,
+                null,
+                null,
+                null);
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseJSON = new JSONObject(response);
+
+        // assert
+        assertEquals(dto.name(), responseJSON.getString("name"));
+        assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
+        assertEquals(saved.getType(), Competition.CompetitionType.valueOf(responseJSON.getString("type")));
+        assertEquals(saved
+                        .getSimulationValues()
+                        .variance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("variance"));
+        assertEquals(saved
+                        .getSimulationValues()
+                        .drawTriggerChance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("drawTriggerChance"));
+        assertEquals(saved
+                        .getSimulationValues()
+                        .scoreDifferenceDrawTrigger(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("scoreDifferenceDrawTrigger"));
+    }
+
+    @Test
+    @DisplayName("Update competition - country only - should return updated")
+    void updateCompetition_country_shouldReturnUpdated() throws Exception {
+        // arrange
+        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .type(Competition.CompetitionType.LEAGUE)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionRequestDTO(null,
+                null,
+                CountryCode.SE,
+                null,
+                null);
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseJSON = new JSONObject(response);
+
+        // assert
+        assertEquals(saved.getName(), responseJSON.getString("name"));
+        assertEquals(dto.country(), CountryCode.valueOf(responseJSON.getString("country")));
+        assertEquals(saved.getType(), Competition.CompetitionType.valueOf(responseJSON.getString("type")));
+        assertEquals(saved
+                        .getSimulationValues()
+                        .variance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("variance"));
+        assertEquals(saved
+                        .getSimulationValues()
+                        .drawTriggerChance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("drawTriggerChance"));
+        assertEquals(saved
+                        .getSimulationValues()
+                        .scoreDifferenceDrawTrigger(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("scoreDifferenceDrawTrigger"));
+    }
+
+    @Test
+    @DisplayName("Update competition - type only - should return updated")
+    void updateCompetition_type_shouldReturnUpdated() throws Exception {
+        // arrange
+        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .type(Competition.CompetitionType.LEAGUE)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionRequestDTO(null,
+                Competition.CompetitionType.TOURNAMENT,
+                null,
+                null,
+                null);
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseJSON = new JSONObject(response);
+
+        // assert
+        assertEquals(saved.getName(), responseJSON.getString("name"));
+        assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
+        assertEquals(dto.type(), Competition.CompetitionType.valueOf(responseJSON.getString("type")));
+        assertEquals(saved
+                        .getSimulationValues()
+                        .variance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("variance"));
+        assertEquals(saved
+                        .getSimulationValues()
+                        .drawTriggerChance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("drawTriggerChance"));
+        assertEquals(saved
+                        .getSimulationValues()
+                        .scoreDifferenceDrawTrigger(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("scoreDifferenceDrawTrigger"));
+    }
+
+    @Test
+    @DisplayName("Update competition - simulation values only - should return updated")
+    void updateCompetition_simValues_shouldReturnUpdated() throws Exception {
+        // arrange
+        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .type(Competition.CompetitionType.LEAGUE)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionRequestDTO(null,
+                null,
+                null,
+                null,
+                new SimulationValues(0.1, 0.2, 0.3));
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseJSON = new JSONObject(response);
+
+        // assert
+        assertEquals(saved.getName(), responseJSON.getString("name"));
+        assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
+        assertEquals(saved.getType(), Competition.CompetitionType.valueOf(responseJSON.getString("type")));
+        assertEquals(dto
+                        .simulationValues()
+                        .variance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("variance"));
+        assertEquals(dto
+                        .simulationValues()
+                        .drawTriggerChance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("drawTriggerChance"));
+        assertEquals(dto
+                        .simulationValues()
+                        .scoreDifferenceDrawTrigger(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("scoreDifferenceDrawTrigger"));
     }
 }

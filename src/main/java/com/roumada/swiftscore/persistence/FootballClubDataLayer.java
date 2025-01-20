@@ -4,7 +4,6 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.FootballClubDTO;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
-import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,11 +17,6 @@ import java.util.Optional;
 public class FootballClubDataLayer {
 
     private final FootballClubRepository repository;
-
-    public FootballClub saveFromDto(FootballClubDTO dto) {
-        return save(FootballClubMapper.INSTANCE.footballClubDTOtoFootballClub(dto));
-
-    }
 
     public FootballClub save(FootballClub footballClub) {
         var saved = repository.save(footballClub);
