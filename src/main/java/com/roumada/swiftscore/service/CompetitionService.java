@@ -137,4 +137,8 @@ public class CompetitionService {
 
         return Either.right(competitionDataLayer.saveCompetition(competition));
     }
+
+    public void delete(long id) {
+        competitionDataLayer.delete(id);
+    }
 }

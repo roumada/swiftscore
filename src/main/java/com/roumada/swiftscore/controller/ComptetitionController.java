@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,10 +45,20 @@ public class ComptetitionController {
     public ResponseEntity<Object> updateCompetition(@PathVariable long id,
                                                     @RequestBody CompetitionRequestDTO dto,
                                                     HttpServletRequest request) {
-        log.info(LoggingMessageTemplates.getForEndpoint(request));
+        log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.update(id, dto).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteCompetition(@PathVariable long id,
+                                                    HttpServletRequest request) {
+        log.info(LoggingMessageTemplates.getForEndpoint(request));
+        var comp = service.findCompetitionById(id);
+        if(comp.isLeft()) return ResponseEntity.noContent().build();
+        service.delete(id);
+        return ResponseEntity.ok("OK");
     }
 
     @GetMapping("/all")

@@ -5,6 +5,7 @@ import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
+import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -70,5 +71,9 @@ public class CompetitionDataLayer {
 
     public List<Competition> findAllCompetitions() {
         return competitionRepository.findAll();
+    }
+
+    public void delete(long id) {
+        competitionRepository.deleteById(id);
     }
 }
