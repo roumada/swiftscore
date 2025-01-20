@@ -53,29 +53,35 @@ public class CompetitionService {
             return Either.left(errorMsg);
         }
         var generationResult = CompetitionRoundsGenerator.generate(footballClubs);
-        return generationResult.fold(
-                Either::left,
-                rounds -> {
-                    var competition = Competition.builder()
-                            .name(dto.name())
-                            .type(dto.type())
-                            .country(dto.country())
-                            .simulationValues(dto.simulationValues())
-                            .participants(footballClubs)
-                            .rounds(Collections.emptyList())
-                            .build();
-                    competition = competitionDataLayer.saveCompetition(competition);
+        if (generationResult.isLeft()) {
+            return Either.left(generationResult.getLeft());
+        }
 
-                    for (CompetitionRound round : rounds) {
-                        round.setCompetitionId(competition.getId());
-                    }
-                    var savedRounds = competitionDataLayer.saveRounds(rounds);
-                    competition.setRounds(savedRounds);
-                    competition = competitionDataLayer.saveCompetition(competition);
-                    competitionDataLayer.deepSaveCompetitionMatchesWithCompIds(competition);
+        var rounds = generationResult.get();
+        // initial save to get competition ID
+        var competition = competitionDataLayer.saveCompetition(Competition.builder()
+                .name(dto.name())
+                .type(dto.type())
+                .country(dto.country())
+                .simulationValues(dto.simulationValues())
+                .participants(footballClubs)
+                .rounds(Collections.emptyList())
+                .build());
 
-                    return Either.right(competition);
-                });
+        // set comp ID to all rounds
+        for (CompetitionRound round : rounds) {
+            round.setCompetitionId(competition.getId());
+        }
+
+        // save rounds with comp ID
+        var savedRounds = competitionDataLayer.saveRounds(rounds);
+        competition.setRounds(savedRounds);
+        // save comp with underlying rounds with comp ID
+        competition = competitionDataLayer.saveCompetition(competition);
+        // save matches within rounds with comp IDs
+        competitionDataLayer.deepSaveCompetitionMatchesWithCompIds(competition);
+
+        return Either.right(competition);
     }
 
     public Either<String, CompetitionRound> simulateRound(Competition competition) {
