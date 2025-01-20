@@ -20,7 +20,7 @@ import java.util.Optional;
 public class CompetitionDataLayer {
 
     private final CompetitionRepository competitionRepository;
-    private final CompetitionRoundRepository competitionRoundRepository;
+    private final CompetitionRoundDataLayer competitionRoundDataLayer;
     private final FootballMatchDataLayer footballMatchDataLayer;
 
     public void deepSaveCompetitionMatchesWithCompIds(Competition competition) {
@@ -49,7 +49,7 @@ public class CompetitionDataLayer {
         for (FootballMatch match : round.getMatches()) {
             saveMatch(match);
         }
-        var saved = competitionRoundRepository.save(round);
+        var saved = competitionRoundDataLayer.save(round);
         log.debug("Competition round with ID [{}] saved", saved.getId());
         return saved;
     }
