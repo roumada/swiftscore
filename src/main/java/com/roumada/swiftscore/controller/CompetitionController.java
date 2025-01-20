@@ -68,7 +68,7 @@ public class CompetitionController {
     }
 
 
-    @GetMapping("/{id}/simulate")
+    @PostMapping("/{id}/simulate")
     public ResponseEntity<Object> simulate(@PathVariable long id,
                                            HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
