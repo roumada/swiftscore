@@ -4,12 +4,15 @@ import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import io.vavr.control.Either;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -25,6 +29,7 @@ public class CompetitionService {
 
     private final CompetitionDataLayer competitionDataLayer;
     private final FootballClubDataLayer fcDataLayer;
+    private final Validator validator;
 
     public Either<String, Competition> findCompetitionById(Long id) {
         var optionalCompetition = competitionDataLayer.findCompetitionById(id);
@@ -110,5 +115,26 @@ public class CompetitionService {
         competitionDataLayer.saveCompetitionRound(compSimulated.currentRound());
         compSimulated.incrementCurrentRoundNumber();
         competitionDataLayer.saveCompetition(compSimulated);
+    }
+
+    public Either<String, Competition> update(long id, CompetitionRequestDTO dto) {
+        var findResult = competitionDataLayer.findCompetitionById(id);
+        if(findResult.isEmpty()){
+            String warnMsg = "Competition with ID [%s] not found.".formatted(id);
+            log.warn(warnMsg);
+            return Either.left(warnMsg);
+        }
+
+        Competition competition = findResult.get();
+
+        if(dto.name() != null) competition.setName(dto.name());
+        if(dto.country() != null) competition.setCountry(dto.country());
+        if(dto.type() != null) competition.setType(dto.type());
+        if(dto.simulationValues() != null) {
+                var violations = validator.validate(dto.simulationValues());
+                if(violations.isEmpty()) competition.setSimulationValues(dto.simulationValues());
+        }
+
+        return Either.right(competitionDataLayer.saveCompetition(competition));
     }
 }
