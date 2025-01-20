@@ -1,10 +1,20 @@
 package com.roumada.swiftscore.util;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
 
 import java.util.List;
 
 public class FootballClubTestUtils {
+    public static FootballClub getClub() {
+        return FootballClub.builder()
+                .name("FC1")
+                .country(CountryCode.GB)
+                .stadiumName("FC1 Stadium")
+                .victoryChance(0.5)
+                .build();
+    }
+
     public static List<FootballClub> getTwoFootballClubs() {
         return List.of(
                 FootballClub.builder().name("FC1").victoryChance(1).build(),

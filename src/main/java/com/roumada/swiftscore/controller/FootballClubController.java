@@ -23,7 +23,9 @@ public class FootballClubController {
                                                   HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var findResult = service.findById(id);
-        return null;
+        return findResult.fold(
+                error -> ResponseEntity.badRequest().body(error),
+                ResponseEntity::ok);
     }
 
     @GetMapping("/all")
@@ -39,11 +41,13 @@ public class FootballClubController {
         return ResponseEntity.ok(service.save(dto));
     }
 
-    @PostMapping(value = "/{id}", consumes = "application/json")
+    @PatchMapping(value = "/{id}", consumes = "application/json")
     public ResponseEntity<Object> updateFootballClub(@PathVariable long id,
-                                                     @Valid @RequestBody FootballClubDTO dto,
+                                                     @RequestBody FootballClubDTO dto,
                                                      HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
-        return ResponseEntity.ok(service.update(id, dto));
+        return service.update(id, dto).fold(
+                error -> ResponseEntity.badRequest().body(error),
+                ResponseEntity::ok);
     }
 }

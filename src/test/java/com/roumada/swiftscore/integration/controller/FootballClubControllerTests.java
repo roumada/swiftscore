@@ -5,6 +5,7 @@ import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.FootballClubDTO;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -18,8 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -131,5 +131,135 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         assertEquals(2, responseJSON.length());
+    }
+
+    @Test
+    @DisplayName("Patch football club - change name -  should return patched")
+    void patchFC_name_shouldReturn() throws Exception {
+        // arrange
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var dto = new FootballClubDTO(
+                "FC2",
+                null,
+                null,
+                0.0);
+
+        // act
+        var response = mvc.perform(patch("/footballclub/%s".formatted(fc.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseFC = new JSONObject(response);
+
+        // assert
+        assertEquals(fc.getId(), responseFC.getLong("id"));
+        assertEquals(dto.name(), responseFC.getString("name"));
+        assertEquals(fc.getCountry(), CountryCode.valueOf(responseFC.getString("country")));
+        assertEquals(fc.getStadiumName(), responseFC.getString("stadiumName"));
+        assertEquals(fc.getVictoryChance(), responseFC.getDouble("victoryChance"));
+    }
+
+    @Test
+    @DisplayName("Patch football club - change country -  should return patched")
+    void patchFC_country_shouldReturn() throws Exception {
+        // arrange
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var dto = new FootballClubDTO(
+                null,
+                CountryCode.PL,
+                null,
+                0.0);
+
+        // act
+        var response = mvc.perform(patch("/footballclub/%s".formatted(fc.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseFC = new JSONObject(response);
+
+        // assert
+        assertEquals(fc.getId(), responseFC.getLong("id"));
+        assertEquals(fc.getName(), responseFC.getString("name"));
+        assertEquals(dto.country(), CountryCode.valueOf(responseFC.getString("country")));
+        assertEquals(fc.getStadiumName(), responseFC.getString("stadiumName"));
+        assertEquals(fc.getVictoryChance(), responseFC.getDouble("victoryChance"));
+    }
+
+    @Test
+    @DisplayName("Patch football club - change stadium name - should return patched")
+    void patchFC_stadiumName_shouldReturn() throws Exception {
+        // arrange
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var dto = new FootballClubDTO(
+                null,
+                null,
+                "FC Park",
+                0.0);
+
+        // act
+        var response = mvc.perform(patch("/footballclub/%s".formatted(fc.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseFC = new JSONObject(response);
+
+        // assert
+        assertEquals(fc.getId(), responseFC.getLong("id"));
+        assertEquals(fc.getName(), responseFC.getString("name"));
+        assertEquals(fc.getCountry(), CountryCode.valueOf(responseFC.getString("country")));
+        assertEquals(dto.stadiumName(), responseFC.getString("stadiumName"));
+        assertEquals(fc.getVictoryChance(), responseFC.getDouble("victoryChance"));
+    }
+
+    @Test
+    @DisplayName("Patch football club - change victory chance - should return patched")
+    void patchFC_victoryChance_shouldReturn() throws Exception {
+        // arrange
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var dto = new FootballClubDTO(
+                null,
+                null,
+                null,
+                0.7);
+
+        // act
+        var response = mvc.perform(patch("/footballclub/%s".formatted(fc.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseFC = new JSONObject(response);
+
+        // assert
+        assertEquals(fc.getId(), responseFC.getLong("id"));
+        assertEquals(fc.getName(), responseFC.getString("name"));
+        assertEquals(fc.getCountry(), CountryCode.valueOf(responseFC.getString("country")));
+        assertEquals(fc.getStadiumName(), responseFC.getString("stadiumName"));
+        assertEquals(dto.victoryChance(), responseFC.getDouble("victoryChance"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {-0.1, 1.1})
+    @DisplayName("Patch football club - with invalid victory chance - should return error")
+    void patchFC_invalidVictoryChance_shouldReturnError(double victoryChance) throws Exception {
+        // arrange
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var dto = new FootballClubDTO(
+                null,
+                null,
+                null, victoryChance);
+
+        // act
+        mvc.perform(patch("/footballclub/%s".formatted(fc.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError());
     }
 }
