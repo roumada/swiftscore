@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.model.dto.FootballClubDTO;
+import com.roumada.swiftscore.model.dto.request.FootballClubRequestDTO;
 import com.roumada.swiftscore.service.FootballClubService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +35,7 @@ public class FootballClubController {
     }
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<Object> createFootballClub(@Valid @RequestBody FootballClubDTO dto,
+    public ResponseEntity<Object> createFootballClub(@Valid @RequestBody FootballClubRequestDTO dto,
                                                      HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return ResponseEntity.ok(service.save(dto));
@@ -43,7 +43,7 @@ public class FootballClubController {
 
     @PatchMapping(value = "/{id}", consumes = "application/json")
     public ResponseEntity<Object> updateFootballClub(@PathVariable long id,
-                                                     @RequestBody FootballClubDTO dto,
+                                                     @RequestBody FootballClubRequestDTO dto,
                                                      HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.update(id, dto).fold(

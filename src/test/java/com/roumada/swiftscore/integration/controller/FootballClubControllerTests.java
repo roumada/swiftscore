@@ -3,7 +3,7 @@ package com.roumada.swiftscore.integration.controller;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.FootballClubDTO;
+import com.roumada.swiftscore.model.dto.request.FootballClubRequestDTO;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.json.JSONArray;
@@ -36,7 +36,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create football club - with valid data - should save")
     void createFootballClub_validData_shouldSave() throws Exception {
         // arrange
-        var dto = new FootballClubDTO("FC1", CountryCode.GB, "", 0.5f);
+        var dto = new FootballClubRequestDTO("FC1", CountryCode.GB, "", 0.5f);
         // act & assert
         mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -48,7 +48,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create football club - with invalid victory chance - should return error code")
     void createFootballClub_invalidVictoryChance_shouldReturnErrorCode(double victoryChance) throws Exception {
         // arrange
-        var dto = new FootballClubDTO("FC1", CountryCode.GB, "", victoryChance);
+        var dto = new FootballClubRequestDTO("FC1", CountryCode.GB, "", victoryChance);
         // act & assert
         mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -59,7 +59,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create football club - with null name - should return error code")
     void createFootballClub_nullName_shouldReturnErrorCode() throws Exception {
         // arrange
-        var dto = new FootballClubDTO(null, CountryCode.GB, "", 0.5);
+        var dto = new FootballClubRequestDTO(null, CountryCode.GB, "", 0.5);
         // act & assert
         mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -70,7 +70,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create football club - with null country code - should return error code")
     void createFootballClub_nullCountryCode_shouldReturnErrorCode() throws Exception {
         // arrange
-        var dto = new FootballClubDTO("", null, "", 0.5);
+        var dto = new FootballClubRequestDTO("", null, "", 0.5);
         // act & assert
         mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -81,7 +81,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create football club - with null stadium name - should return error code")
     void createFootballClub_nullStadiumName_shouldReturnErrorCode() throws Exception {
         // arrange
-        var dto = new FootballClubDTO("", CountryCode.GB, null, 0.5);
+        var dto = new FootballClubRequestDTO("", CountryCode.GB, null, 0.5);
         // act & assert
         mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -138,7 +138,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_name_shouldReturn() throws Exception {
         // arrange
         var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
-        var dto = new FootballClubDTO(
+        var dto = new FootballClubRequestDTO(
                 "FC2",
                 null,
                 null,
@@ -166,7 +166,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_country_shouldReturn() throws Exception {
         // arrange
         var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
-        var dto = new FootballClubDTO(
+        var dto = new FootballClubRequestDTO(
                 null,
                 CountryCode.PL,
                 null,
@@ -194,7 +194,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_stadiumName_shouldReturn() throws Exception {
         // arrange
         var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
-        var dto = new FootballClubDTO(
+        var dto = new FootballClubRequestDTO(
                 null,
                 null,
                 "FC Park",
@@ -222,7 +222,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_victoryChance_shouldReturn() throws Exception {
         // arrange
         var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
-        var dto = new FootballClubDTO(
+        var dto = new FootballClubRequestDTO(
                 null,
                 null,
                 null,
@@ -251,7 +251,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_invalidVictoryChance_shouldReturnError(double victoryChance) throws Exception {
         // arrange
         var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
-        var dto = new FootballClubDTO(
+        var dto = new FootballClubRequestDTO(
                 null,
                 null,
                 null, victoryChance);

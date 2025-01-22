@@ -3,7 +3,7 @@ package com.roumada.swiftscore.integration.service;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
@@ -36,7 +36,15 @@ class StatisticsServiceTests extends AbstractBaseIntegrationTest {
     void generateCompetitionStatistics_forFullySimulatedTwoClubCompetition_shouldReturnSorted() {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getTwoFootballClubs()));
-        var comp = compService.generateAndSave(new CompetitionRequestDTO("", LEAGUE, CountryCode.GB, ids, new SimulationValues(0))).get();
+        var comp = compService.generateAndSave(new CompetitionRequestDTO(
+                        "",
+                        LEAGUE,
+                        CountryCode.GB,
+                        "2025-01-01",
+                        "2025-12-30",
+                        ids,
+                        new SimulationValues(0)))
+                .get();
         compService.simulateRound(comp);
         compService.simulateRound(comp);
 

@@ -4,7 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -55,6 +56,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 new CompetitionRequestDTO("",
                                         Competition.CompetitionType.LEAGUE,
                                         CountryCode.GB,
+                                        "2025-01-01",
+                                        "2025-10-01",
                                         ids,
                                         new SimulationValues(0)))))
                 .andExpect(status().isOk()).andReturn();
@@ -78,6 +81,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 new CompetitionRequestDTO("",
                                         Competition.CompetitionType.LEAGUE,
                                         CountryCode.GB,
+                                        "2025-01-01",
+                                        "2025-12-30",
                                         List.of(1L, 2L, 3L, 9L),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
@@ -95,6 +100,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 List.of(1L, 2L, 3L),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
@@ -113,6 +120,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 ids,
                                 new SimulationValues(variation, 0.0, 0.0)))))
                 .andExpect(status().is4xxClientError());
@@ -131,6 +140,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 ids,
                                 new SimulationValues(0.0, 0.0, drawTriggerChance)))))
                 .andExpect(status().is4xxClientError());
@@ -149,8 +160,37 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 ids,
                                 new SimulationValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'2025-01-01', ''",
+            "'', 2025-01-01",
+            "'', ''",
+            "'2025-01-01', '2025-01-02'",
+            "'2025-02-01', '2025-01-01'",
+            "'2020-01-01', '2025-01-01'"
+    })
+    @DisplayName("Create competition  - with invalid dates - should return error code")
+    void createCompetition_invalidDates_shouldReturnErrorCode(String startDate, String endDate) throws Exception {
+        // arrange
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+
+        // act
+        mvc.perform(post("/competition")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                                Competition.CompetitionType.LEAGUE,
+                                CountryCode.GB,
+                                startDate,
+                                endDate,
+                                ids,
+                                new SimulationValues(0.0)))))
                 .andExpect(status().is4xxClientError());
     }
 
@@ -166,6 +206,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(null,
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 List.of(1L, 2L, 3L),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
@@ -183,6 +225,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 null,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 List.of(1L, 2L, 3L),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
@@ -228,7 +272,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get a competitions - with invalid ID - should return error code")
+    @DisplayName("Get a competition - with invalid ID - should return error code")
     void getCompetition_withInvalidID_shouldReturnErrorCode() throws Exception {
         // arrange
         var round1 = new CompetitionRound(1, Collections.emptyList());
@@ -353,6 +397,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 null,
                 null,
                 null,
+                null,
+                null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -403,6 +449,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var dto = new CompetitionRequestDTO(null,
                 null,
                 CountryCode.SE,
+                null,
+                null,
                 null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -455,6 +503,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 Competition.CompetitionType.TOURNAMENT,
                 null,
                 null,
+                null,
+                null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -503,6 +553,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new CompetitionRequestDTO(null,
+                null,
+                null,
                 null,
                 null,
                 null,

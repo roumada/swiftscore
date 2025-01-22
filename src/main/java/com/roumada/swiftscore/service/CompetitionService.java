@@ -1,14 +1,16 @@
 package com.roumada.swiftscore.service;
 
+import com.roumada.swiftscore.logic.CompetitionDatesProvider;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.*;
 import io.vavr.control.Either;
 import jakarta.validation.Validator;
@@ -16,6 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +36,15 @@ public class CompetitionService {
     private final FootballMatchDataLayer footballMatchDataLayer;
     private final FootballClubDataLayer footballClubDataLayer;
     private final Validator validator;
+
+    private static CompetitionDatesProvider createProvider(CompetitionRequestDTO dto) {
+        var provider = new CompetitionDatesProvider(
+                LocalDate.parse(dto.startDate()),
+                LocalDate.parse(dto.endDate()),
+                dto.participantIds().size());
+        log.info("Created date provider with start date [{}] and step [{}]", provider.getStart(), provider.getStep());
+        return provider;
+    }
 
     public Either<String, Competition> findCompetitionById(Long id) {
         var optionalCompetition = competitionDataLayer.findCompetitionById(id);
@@ -48,6 +62,7 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
+
         var footballClubs = new ArrayList<FootballClub>();
         for (Long id : dto.participantIds()) {
             footballClubs.add(footballClubDataLayer.findById(id).orElse(null));
@@ -64,6 +79,8 @@ public class CompetitionService {
         }
 
         var rounds = generationResult.get();
+        CompetitionDatesProvider provider = createProvider(dto);
+        setDatesForMatchesInRounds(provider, rounds);
         // initial save to get competition ID
         var competition = competitionDataLayer.saveCompetition(Competition.builder()
                 .name(dto.name())
@@ -88,6 +105,18 @@ public class CompetitionService {
         competitionDataLayer.deepSaveCompetitionMatchesWithCompIds(competition);
 
         return Either.right(competition);
+    }
+
+    private void setDatesForMatchesInRounds(CompetitionDatesProvider provider, List<CompetitionRound> rounds) {
+        for (CompetitionRound round : rounds) {
+            LocalDate date = provider.next();
+            for (FootballMatch match : round.getMatches()) {
+                var datetime = LocalDateTime.of(date, LocalTime.of(21, 0));
+                match.setDate(datetime);
+                match.getHomeSideStatistics().setDate(datetime);
+                match.getAwaySideStatistics().setDate(datetime);
+            }
+        }
     }
 
     public Either<String, CompetitionRoundResponseDTO> simulateRound(Competition competition) {

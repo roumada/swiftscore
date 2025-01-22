@@ -2,7 +2,7 @@ package com.roumada.swiftscore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.FootballClubDTO;
+import com.roumada.swiftscore.model.dto.request.FootballClubRequestDTO;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import jakarta.validation.Validator;
@@ -49,12 +49,12 @@ public class DataLoader implements CommandLineRunner {
     }
 
     public List<FootballClub> loadFootballClubs() {
-        Map<FootballClubDTO, Boolean> validClubDTOs;
+        Map<FootballClubRequestDTO, Boolean> validClubDTOs;
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            List<FootballClubDTO> clubDTOs = objectMapper.readValue(footballClubsResource.getInputStream(),
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, FootballClubDTO.class));
+            List<FootballClubRequestDTO> clubDTOs = objectMapper.readValue(footballClubsResource.getInputStream(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, FootballClubRequestDTO.class));
             validClubDTOs = clubDTOs.stream()
                     .collect(Collectors.toMap(club -> club, club -> false));
         } catch (IOException e) {
@@ -70,7 +70,7 @@ public class DataLoader implements CommandLineRunner {
                 })
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
-                .map(FootballClubMapper.INSTANCE::footballClubDTOtoFootballClub)
+                .map(FootballClubMapper.INSTANCE::requestToObject)
                 .toList();
     }
 }

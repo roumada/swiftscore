@@ -5,7 +5,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -42,6 +42,8 @@ class CompetitionServiceTests extends AbstractBaseIntegrationTest {
         var comp = service.generateAndSave(new CompetitionRequestDTO("",
                 Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,
+                "2025-01-01",
+                "2025-12-30",
                 ids,
                 new SimulationValues(0))).get();
 
@@ -70,8 +72,13 @@ class CompetitionServiceTests extends AbstractBaseIntegrationTest {
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
         fc1 = fcdl.save(fc1);
         fc2 = fcdl.save(fc2);
-        var dto = new CompetitionRequestDTO("", Competition.CompetitionType.LEAGUE, CountryCode.GB,
-                List.of(fc1.getId(), fc2.getId()), new SimulationValues(0));
+        var dto = new CompetitionRequestDTO("",
+                Competition.CompetitionType.LEAGUE,
+                CountryCode.GB,
+                "2025-01-01",
+                "2025-12-30",
+                List.of(fc1.getId(), fc2.getId()),
+                new SimulationValues(0));
 
         // act
         var optionalCompId = service.generateAndSave(dto);

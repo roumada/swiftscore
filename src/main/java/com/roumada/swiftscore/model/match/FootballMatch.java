@@ -4,16 +4,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.MonoPair;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Data
 @Document("football_match")
+@NoArgsConstructor
 public class FootballMatch {
 
     @Id
     private Long id = null;
+    private LocalDateTime date;
     private Long competitionId;
     private Long competitionRoundId;
     @DBRef
@@ -28,11 +33,16 @@ public class FootballMatch {
     private FootballMatchStatistics awaySideStatistics;
     private MatchResult matchResult = MatchResult.UNFINISHED;
 
-    public FootballMatch(FootballClub homeSideFootballClub, FootballClub awaySideFootballClub) {
+    public FootballMatch(LocalDateTime date, FootballClub homeSideFootballClub, FootballClub awaySideFootballClub) {
+        this.date = date;
         this.homeSideFootballClub = homeSideFootballClub;
         this.awaySideFootballClub = awaySideFootballClub;
-        homeSideStatistics = new FootballMatchStatistics(homeSideFootballClub.getId());
-        awaySideStatistics = new FootballMatchStatistics(awaySideFootballClub.getId());
+        homeSideStatistics = new FootballMatchStatistics(homeSideFootballClub.getId(), date);
+        awaySideStatistics = new FootballMatchStatistics(awaySideFootballClub.getId(), date);
+    }
+
+    public FootballMatch(FootballClub homeSideFootballClub, FootballClub awaySideFootballClub) {
+        this(null, homeSideFootballClub, awaySideFootballClub);
     }
 
     public double getHomeSideVictoryChance() {

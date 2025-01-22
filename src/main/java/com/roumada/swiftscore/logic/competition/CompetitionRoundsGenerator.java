@@ -39,7 +39,7 @@ public class CompetitionRoundsGenerator {
             for (MonoPair<Integer> numericMatch : numericCompRound) {
                 compRoundMatches.add(new FootballMatch(clubs.get(numericMatch.getLeft()), clubs.get(numericMatch.getRight())));
             }
-            competitionRounds.add(new CompetitionRound(null, roundCounter++, compRoundMatches));
+            competitionRounds.add(new CompetitionRound(roundCounter++, compRoundMatches));
         }
 
         return competitionRounds;
