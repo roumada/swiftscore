@@ -111,7 +111,10 @@ public class CompetitionService {
         for (CompetitionRound round : rounds) {
             LocalDate date = provider.next();
             for (FootballMatch match : round.getMatches()) {
-                match.setDate(LocalDateTime.of(date, LocalTime.of(21, 0)));
+                var datetime = LocalDateTime.of(date, LocalTime.of(21, 0));
+                match.setDate(datetime);
+                match.getHomeSideStatistics().setDate(datetime);
+                match.getAwaySideStatistics().setDate(datetime);
             }
         }
     }

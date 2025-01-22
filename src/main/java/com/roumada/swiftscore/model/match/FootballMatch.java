@@ -37,8 +37,8 @@ public class FootballMatch {
         this.date = date;
         this.homeSideFootballClub = homeSideFootballClub;
         this.awaySideFootballClub = awaySideFootballClub;
-        homeSideStatistics = new FootballMatchStatistics(homeSideFootballClub.getId());
-        awaySideStatistics = new FootballMatchStatistics(awaySideFootballClub.getId());
+        homeSideStatistics = new FootballMatchStatistics(homeSideFootballClub.getId(), date);
+        awaySideStatistics = new FootballMatchStatistics(awaySideFootballClub.getId(), date);
     }
 
     public FootballMatch(FootballClub homeSideFootballClub, FootballClub awaySideFootballClub) {
