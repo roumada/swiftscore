@@ -47,9 +47,10 @@ public class CompetitionRequestDTOValidator implements ConstraintValidator<Valid
                     .addConstraintViolation();
             return false;
         }
-        if (ChronoUnit.DAYS.between(start, end) < dto.participantIds().size()) {
+        if (ChronoUnit.DAYS.between(start, end) + 1 < dto.participantIds().size() * 2L - 2) {
             context
-                    .buildConstraintViolationWithTemplate("The amount of days for a competition has exceed participant amount")
+                    .buildConstraintViolationWithTemplate("Competition needs at least %s days for a competition with %s clubs."
+                            .formatted(dto.participantIds().size() * 2L - 2, dto.participantIds().size()))
                     .addConstraintViolation();
             return false;
         }

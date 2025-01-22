@@ -14,7 +14,7 @@ public class CompetitionDatesProvider {
 
     public CompetitionDatesProvider(LocalDate start, LocalDate end, int clubsAmount) {
         this.start = start;
-        step = (ChronoUnit.DAYS.between(start, end) / clubsAmount);
+        step = Math.max(1, (ChronoUnit.DAYS.between(start, end) / clubsAmount));
     }
 
     public LocalDate next() {
