@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +36,15 @@ public class CompetitionService {
     private final FootballMatchDataLayer footballMatchDataLayer;
     private final FootballClubDataLayer footballClubDataLayer;
     private final Validator validator;
+
+    private static CompetitionDatesProvider createProvider(CompetitionRequestDTO dto) {
+        var provider = new CompetitionDatesProvider(
+                LocalDate.parse(dto.startDate()),
+                LocalDate.parse(dto.endDate()),
+                dto.participantIds().size());
+        log.info("Created date provider with start date [{}] and step [{}]", provider.getStart(), provider.getStep());
+        return provider;
+    }
 
     public Either<String, Competition> findCompetitionById(Long id) {
         var optionalCompetition = competitionDataLayer.findCompetitionById(id);
@@ -54,7 +62,6 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
-        if (isCompetitionDurationInvalid(dto)) return Either.left("Competition season duration cannot exceed one year");
 
         var footballClubs = new ArrayList<FootballClub>();
         for (Long id : dto.participantIds()) {
@@ -99,8 +106,6 @@ public class CompetitionService {
 
         return Either.right(competition);
     }
-
-
 
     private void setDatesForMatchesInRounds(CompetitionDatesProvider provider, List<CompetitionRound> rounds) {
         for (CompetitionRound round : rounds) {
@@ -166,20 +171,5 @@ public class CompetitionService {
         footballMatchDataLayer.deleteByCompetitionId(id);
         competitionRoundDataLayer.deleteByCompetitionId(id);
         competitionDataLayer.delete(id);
-    }
-
-    private static CompetitionDatesProvider createProvider(CompetitionRequestDTO dto) {
-        var provider = new CompetitionDatesProvider(
-                LocalDate.parse(dto.startDate()),
-                LocalDate.parse(dto.endDate()),
-                dto.participantIds().size());
-        log.info("Created date provider with start date [{}] and step [{}]", provider.getStart(), provider.getStep());
-        return provider;
-    }
-
-    private boolean isCompetitionDurationInvalid(CompetitionRequestDTO dto) {
-        return ChronoUnit.DAYS.between(
-                LocalDate.parse(dto.startDate()),
-                LocalDate.parse(dto.endDate())) > 365;
     }
 }

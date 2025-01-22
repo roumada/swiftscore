@@ -1,7 +1,6 @@
 package com.roumada.swiftscore.validation.annotation;
 
-
-import com.roumada.swiftscore.validation.validator.LocalDateValidator;
+import com.roumada.swiftscore.validation.validator.CompetitionRequestDTOValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -10,11 +9,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = LocalDateValidator.class)
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@Constraint(validatedBy = CompetitionRequestDTOValidator.class)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidLocalDate {
-    String message() default "Invalid LocalDate format";
+public @interface ValidCompetitionRequestDTO {
+    String message() default "Invalid object";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -56,7 +57,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         Competition.CompetitionType.LEAGUE,
                                         CountryCode.GB,
                                         "2025-01-01",
-                                        "2025-12-30",
+                                        "2025-10-01",
                                         ids,
                                         new SimulationValues(0)))))
                 .andExpect(status().isOk()).andReturn();
@@ -166,6 +167,33 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "'2025-01-01', ''",
+            "'', 2025-01-01",
+            "'', ''",
+            "'2025-01-01', '2025-01-02'",
+            "'2025-02-01', '2025-01-01'",
+            "'2020-01-01', '2025-01-01'"
+    })
+    @DisplayName("Create competition  - with invalid dates - should return error code")
+    void createCompetition_invalidDates_shouldReturnErrorCode(String startDate, String endDate) throws Exception {
+        // arrange
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+
+        // act
+        mvc.perform(post("/competition")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                                Competition.CompetitionType.LEAGUE,
+                                CountryCode.GB,
+                                startDate,
+                                endDate,
+                                ids,
+                                new SimulationValues(0.0)))))
+                .andExpect(status().is4xxClientError());
+    }
+
     @Test
     @DisplayName("Create competition  - with null name - should return error code")
     void createCompetition_withNullName_shouldReturnErrorCode() throws Exception {
@@ -244,7 +272,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get a competitions - with invalid ID - should return error code")
+    @DisplayName("Get a competition - with invalid ID - should return error code")
     void getCompetition_withInvalidID_shouldReturnErrorCode() throws Exception {
         // arrange
         var round1 = new CompetitionRound(1, Collections.emptyList());
