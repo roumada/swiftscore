@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.validation.annotation.ValidLocalDate;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
@@ -19,8 +20,10 @@ public record CompetitionRequestDTO(
         Competition.CompetitionType type,
         CountryCode country,
         @NotNull(message = "Start date cannot be null")
+        @ValidLocalDate(message = "Please provide a valid date in the format YYYY-MM-DD")
         String startDate,
         @NotNull(message = "End date cannot be null")
+        @ValidLocalDate(message = "Please provide a valid date in the format YYYY-MM-DD")
         String endDate,
         @NotNull(message = "Participant IDs list cannot be null")
         List<Long> participantIds,
