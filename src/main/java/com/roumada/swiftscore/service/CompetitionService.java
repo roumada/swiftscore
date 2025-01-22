@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.service;
 
+import com.roumada.swiftscore.logic.CompetitionDatesProvider;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
@@ -7,6 +8,7 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.*;
 import io.vavr.control.Either;
 import jakarta.validation.Validator;
@@ -14,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +52,8 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
+        if (isCompetitionDurationInvalid(dto)) return Either.left("Competition season duration cannot exceed one year");
+
         var footballClubs = new ArrayList<FootballClub>();
         for (Long id : dto.participantIds()) {
             footballClubs.add(footballClubDataLayer.findById(id).orElse(null));
@@ -62,6 +70,11 @@ public class CompetitionService {
         }
 
         var rounds = generationResult.get();
+        CompetitionDatesProvider provider = new CompetitionDatesProvider(
+                LocalDate.parse(dto.startDate()),
+                LocalDate.parse(dto.endDate()),
+                dto.participantIds().size());
+        setDatesForMatchesInRounds(provider, rounds);
         // initial save to get competition ID
         var competition = competitionDataLayer.saveCompetition(Competition.builder()
                 .name(dto.name())
@@ -86,6 +99,15 @@ public class CompetitionService {
         competitionDataLayer.deepSaveCompetitionMatchesWithCompIds(competition);
 
         return Either.right(competition);
+    }
+
+    private void setDatesForMatchesInRounds(CompetitionDatesProvider provider, List<CompetitionRound> rounds) {
+        for (CompetitionRound round : rounds) {
+            for (FootballMatch match : round.getMatches()) {
+                LocalDate date = provider.next();
+                match.setDate(LocalDateTime.of(date, LocalTime.of(21, 0)));
+            }
+        }
     }
 
     public Either<String, CompetitionRound> simulateRound(Competition competition) {
@@ -142,5 +164,11 @@ public class CompetitionService {
         footballMatchDataLayer.deleteByCompetitionId(id);
         competitionRoundDataLayer.deleteByCompetitionId(id);
         competitionDataLayer.delete(id);
+    }
+
+    private boolean isCompetitionDurationInvalid(CompetitionRequestDTO dto) {
+        return ChronoUnit.DAYS.between(
+                LocalDate.parse(dto.startDate()),
+                LocalDate.parse(dto.endDate())) > 365;
     }
 }
