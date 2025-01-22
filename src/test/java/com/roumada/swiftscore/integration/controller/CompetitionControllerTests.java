@@ -299,7 +299,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var response = mvc.perform(get("/competition/%s/simulate".formatted(saved.getId())))
+        var response = mvc.perform(post("/competition/%s/simulate".formatted(saved.getId())))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         mvc.perform(get("/competition/-1/simulate")).andExpect(status().is4xxClientError());
@@ -331,8 +331,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        mvc.perform(get("/competition/%s/simulate".formatted(saved.getId()))).andExpect(status().isOk());
-        mvc.perform(get("/competition/%s/simulate".formatted(saved.getId()))).andExpect(status().is4xxClientError());
+        mvc.perform(post("/competition/%s/simulate".formatted(saved.getId()))).andExpect(status().isOk());
+        mvc.perform(post("/competition/%s/simulate".formatted(saved.getId()))).andExpect(status().is4xxClientError());
     }
 
     @Test
