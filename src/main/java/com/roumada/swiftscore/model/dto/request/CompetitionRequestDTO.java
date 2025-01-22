@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.model.dto;
+package com.roumada.swiftscore.model.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

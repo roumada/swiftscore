@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.FootballClubDTO;
+import com.roumada.swiftscore.model.dto.request.FootballClubRequestDTO;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import io.vavr.control.Either;
@@ -31,11 +31,11 @@ public class FootballClubService {
         return repository.findAll();
     }
 
-    public FootballClub save(FootballClubDTO dto) {
-        return repository.save(FootballClubMapper.INSTANCE.footballClubDTOtoFootballClub(dto));
+    public FootballClub save(FootballClubRequestDTO dto) {
+        return repository.save(FootballClubMapper.INSTANCE.requestToObject(dto));
     }
 
-    public Either<String, FootballClub> update(Long id, FootballClubDTO dto) {
+    public Either<String, FootballClub> update(Long id, FootballClubRequestDTO dto) {
         var findResult = repository.findById(id);
         if (findResult.isEmpty()) {
             String errorMsg = "Unable to find football club with given id [%s]".formatted(id);
@@ -55,7 +55,7 @@ public class FootballClubService {
         return Either.right(repository.save(footballClub));
     }
 
-    private void updateFields(FootballClubDTO dto, FootballClub footballClub) {
+    private void updateFields(FootballClubRequestDTO dto, FootballClub footballClub) {
         if (dto.name() != null) {
             footballClub.setName(dto.name());
         }

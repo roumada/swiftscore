@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.model.dto;
+package com.roumada.swiftscore.model.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
-public record FootballClubDTO(
+public record FootballClubRequestDTO(
         @NotNull(message = "Name cannot be null")
         String name,
         @NotNull(message = "Country cannot be null")

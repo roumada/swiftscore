@@ -5,7 +5,7 @@ import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
@@ -72,10 +72,7 @@ public class CompetitionService {
         }
 
         var rounds = generationResult.get();
-        CompetitionDatesProvider provider = new CompetitionDatesProvider(
-                LocalDate.parse(dto.startDate()),
-                LocalDate.parse(dto.endDate()),
-                dto.participantIds().size());
+        CompetitionDatesProvider provider = createProvider(dto);
         setDatesForMatchesInRounds(provider, rounds);
         // initial save to get competition ID
         var competition = competitionDataLayer.saveCompetition(Competition.builder()
@@ -103,10 +100,12 @@ public class CompetitionService {
         return Either.right(competition);
     }
 
+
+
     private void setDatesForMatchesInRounds(CompetitionDatesProvider provider, List<CompetitionRound> rounds) {
         for (CompetitionRound round : rounds) {
+            LocalDate date = provider.next();
             for (FootballMatch match : round.getMatches()) {
-                LocalDate date = provider.next();
                 match.setDate(LocalDateTime.of(date, LocalTime.of(21, 0)));
             }
         }
@@ -167,6 +166,15 @@ public class CompetitionService {
         footballMatchDataLayer.deleteByCompetitionId(id);
         competitionRoundDataLayer.deleteByCompetitionId(id);
         competitionDataLayer.delete(id);
+    }
+
+    private static CompetitionDatesProvider createProvider(CompetitionRequestDTO dto) {
+        var provider = new CompetitionDatesProvider(
+                LocalDate.parse(dto.startDate()),
+                LocalDate.parse(dto.endDate()),
+                dto.participantIds().size());
+        log.info("Created date provider with start date [{}] and step [{}]", provider.getStart(), provider.getStep());
+        return provider;
     }
 
     private boolean isCompetitionDurationInvalid(CompetitionRequestDTO dto) {

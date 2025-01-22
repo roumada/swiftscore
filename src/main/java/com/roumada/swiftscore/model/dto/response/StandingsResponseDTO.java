@@ -1,11 +1,11 @@
-package com.roumada.swiftscore.model.dto;
+package com.roumada.swiftscore.model.dto.response;
 
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-public class StandingsDTO {
+public class StandingsResponseDTO {
     private final String footballClubName;
     private int wins = 0;
     private int draws = 0;
@@ -13,9 +13,9 @@ public class StandingsDTO {
     private int goalsScored = 0;
     private int goalsConceded = 0;
     private int points = 0;
-    private List<FootballMatchStatisticsDTO> lastMatchesStatistics;
+    private List<FootballMatchStatisticsResponseDTO> lastMatchesStatistics;
 
-    public StandingsDTO(String footballClubName) {
+    public StandingsResponseDTO(String footballClubName) {
         this.footballClubName = footballClubName;
     }
 
@@ -45,7 +45,7 @@ public class StandingsDTO {
         this.points += points;
     }
 
-    public void setStatistics(List<FootballMatchStatisticsDTO> statistics){
+    public void setStatistics(List<FootballMatchStatisticsResponseDTO> statistics){
         this.lastMatchesStatistics = statistics;
     }
 }
