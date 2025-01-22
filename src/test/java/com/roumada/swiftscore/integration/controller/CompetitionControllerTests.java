@@ -55,6 +55,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 new CompetitionRequestDTO("",
                                         Competition.CompetitionType.LEAGUE,
                                         CountryCode.GB,
+                                        "2025-01-01",
+                                        "2025-12-30",
                                         ids,
                                         new SimulationValues(0)))))
                 .andExpect(status().isOk()).andReturn();
@@ -78,6 +80,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 new CompetitionRequestDTO("",
                                         Competition.CompetitionType.LEAGUE,
                                         CountryCode.GB,
+                                        "2025-01-01",
+                                        "2025-12-30",
                                         List.of(1L, 2L, 3L, 9L),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
@@ -95,6 +99,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 List.of(1L, 2L, 3L),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
@@ -113,6 +119,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 ids,
                                 new SimulationValues(variation, 0.0, 0.0)))))
                 .andExpect(status().is4xxClientError());
@@ -131,6 +139,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 ids,
                                 new SimulationValues(0.0, 0.0, drawTriggerChance)))))
                 .andExpect(status().is4xxClientError());
@@ -149,6 +159,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 ids,
                                 new SimulationValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
                 .andExpect(status().is4xxClientError());
@@ -166,6 +178,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(null,
                                 Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 List.of(1L, 2L, 3L),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
@@ -183,6 +197,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
                                 null,
                                 CountryCode.GB,
+                                "2025-01-01",
+                                "2025-12-30",
                                 List.of(1L, 2L, 3L),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError());
@@ -353,6 +369,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 null,
                 null,
                 null,
+                null,
+                null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -403,6 +421,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var dto = new CompetitionRequestDTO(null,
                 null,
                 CountryCode.SE,
+                null,
+                null,
                 null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -455,6 +475,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 Competition.CompetitionType.TOURNAMENT,
                 null,
                 null,
+                null,
+                null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -503,6 +525,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new CompetitionRequestDTO(null,
+                null,
+                null,
                 null,
                 null,
                 null,

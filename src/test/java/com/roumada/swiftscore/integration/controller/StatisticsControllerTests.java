@@ -37,8 +37,14 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     void getCompetitionStatistics_validCompetitionId_shouldReturn() throws Exception {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs()));
-        var comp = compService.generateAndSave(new CompetitionRequestDTO("", Competition.CompetitionType.LEAGUE,
-                CountryCode.GB, ids, new SimulationValues(0.0))).get();
+        var comp = compService.generateAndSave(new CompetitionRequestDTO("",
+                        Competition.CompetitionType.LEAGUE,
+                        CountryCode.GB,
+                        "2025-01-01",
+                        "2025-12-30",
+                        ids,
+                        new SimulationValues(0.0)))
+                .get();
         var compId = compdl.saveCompetition(comp).getId();
 
         // act & assert
