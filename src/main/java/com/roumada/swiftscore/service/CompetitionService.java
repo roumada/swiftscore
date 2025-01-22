@@ -6,6 +6,8 @@ import com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponseDTO;
+import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -110,7 +112,7 @@ public class CompetitionService {
         }
     }
 
-    public Either<String, CompetitionRound> simulateRound(Competition competition) {
+    public Either<String, CompetitionRoundResponseDTO> simulateRound(Competition competition) {
         if (!competition.canSimulate()) {
             String errorMsg =
                     "Cannot simulate competition with [%s] and current round [%s]. All of the competition's rounds have been simulated. Unable to simulate further"
@@ -122,7 +124,8 @@ public class CompetitionService {
         var compSimulated = simulateCurrentRound(competition);
         var currRound = competition.currentRound();
         persistChanges(compSimulated);
-        return Either.right(currRound);
+
+        return Either.right(CompetitionRoundMapper.INSTANCE.roundToResponseDTO(currRound));
     }
 
     private Competition simulateCurrentRound(Competition competition) {

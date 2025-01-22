@@ -56,11 +56,10 @@ class CompetitionServiceTests extends AbstractBaseIntegrationTest {
 
             var simulatedRound = eitherSimulatedRound.get();
             assertNotNull(simulatedRound);
-            assertEquals(i + 1, simulatedRound.getRound());
-            assertEquals(comp.getId(), simulatedRound.getCompetitionId());
+            assertEquals(i + 1, simulatedRound.round());
 
             for (int a = 0; a < clubs.size() / 2; a++) {
-                assertNotEquals(FootballMatch.MatchResult.UNFINISHED, simulatedRound.getMatches().get(a).getMatchResult());
+                assertNotEquals(FootballMatch.MatchResult.UNFINISHED, simulatedRound.matches().get(a).matchResult());
             }
         }
     }
