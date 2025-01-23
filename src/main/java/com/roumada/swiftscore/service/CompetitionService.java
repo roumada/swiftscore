@@ -29,7 +29,6 @@ public class CompetitionService {
     private final CompetitionDataLayer competitionDataLayer;
     private final CompetitionRoundDataLayer competitionRoundDataLayer;
     private final FootballMatchDataLayer footballMatchDataLayer;
-    private final CompetitionCreator competitionCreator;
     private final FootballClubDataLayer footballClubDataLayer;
     private final Validator validator;
 
@@ -49,7 +48,15 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
-        var creationResult = competitionCreator.createFromRequest(dto);
+        var footballClubs = footballClubDataLayer.findAllById(dto.participantIds());
+
+        if (footballClubs.size() != dto.participantIds().size()) {
+            var errorMsg = "Failed to generate competition - failed to retrieve at least one club from the database.";
+            log.error(errorMsg);
+            return Either.left(errorMsg);
+        }
+
+        var creationResult = CompetitionCreator.createFromRequest(dto, footballClubs);
         if (creationResult.isLeft()) {
             return Either.left(creationResult.getLeft());
         }
