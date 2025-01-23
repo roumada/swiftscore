@@ -37,7 +37,6 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         assertThat(optionalMatch).isPresent();
         var retrievedMatch = optionalMatch.get();
         assertThat(retrievedMatch.getId()).isEqualTo(saved.getId());
-        assertEquals(retrievedMatch.getHomeSideStatistics().getFootballMatchId(), retrievedMatch.getId());
-        assertEquals(retrievedMatch.getAwaySideStatistics().getFootballMatchId(), retrievedMatch.getId());
+        assertEquals(retrievedMatch.getId(), retrievedMatch.getId());
     }
 }

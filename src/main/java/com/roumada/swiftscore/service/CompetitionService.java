@@ -112,8 +112,6 @@ public class CompetitionService {
             for (FootballMatch match : round.getMatches()) {
                 var datetime = LocalDateTime.of(date, LocalTime.of(21, 0));
                 match.setDate(datetime);
-                match.getHomeSideStatistics().setDate(datetime);
-                match.getAwaySideStatistics().setDate(datetime);
             }
         }
     }

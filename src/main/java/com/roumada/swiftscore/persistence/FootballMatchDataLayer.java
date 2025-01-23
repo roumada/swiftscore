@@ -19,14 +19,7 @@ public class FootballMatchDataLayer {
     private FootballMatchRepository footballMatchRepository;
 
     public FootballMatch createMatch(FootballMatch match) {
-        setIdsInStatistics(match.getHomeSideStatistics(), match.getId(), match.getCompetitionId());
-        setIdsInStatistics(match.getAwaySideStatistics(), match.getId(), match.getCompetitionId());
         return footballMatchRepository.save(match);
-    }
-
-    private void setIdsInStatistics(FootballMatchStatistics statistics, Long matchId, Long competitionId) {
-        statistics.setFootballMatchId(matchId);
-        statistics.setCompetitionId(competitionId);
     }
 
     public Optional<FootballMatch> findMatchById(long id) {

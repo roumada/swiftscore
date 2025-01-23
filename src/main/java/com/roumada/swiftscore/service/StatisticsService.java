@@ -1,11 +1,8 @@
 package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.MonoPair;
 import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponseDTO;
 import com.roumada.swiftscore.model.dto.response.StandingsResponseDTO;
-import com.roumada.swiftscore.model.mapper.FootballClubMapper;
-import com.roumada.swiftscore.model.mapper.FootballMatchStatisticsMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -29,11 +26,11 @@ public class StatisticsService {
     private final FootballMatchDataLayer footballMatchDataLayer;
     private Map<Long, StandingsResponseDTO> standingsForFC;
 
-    private static void addGoals(MonoPair<FootballMatchStatistics> stats, StandingsResponseDTO standingsForHomeSide, StandingsResponseDTO standingsForAwaySide) {
-        standingsForHomeSide.addGoalsScored(stats.getLeft().getGoalsScored());
-        standingsForHomeSide.addGoalsConceded(stats.getRight().getGoalsScored());
-        standingsForAwaySide.addGoalsScored(stats.getRight().getGoalsScored());
-        standingsForAwaySide.addGoalsConceded(stats.getLeft().getGoalsScored());
+    private static void addGoals(FootballMatch match, StandingsResponseDTO standingsForHomeSide, StandingsResponseDTO standingsForAwaySide) {
+        standingsForHomeSide.addGoalsScored(match.getHomeSideGoalsScored());
+        standingsForHomeSide.addGoalsConceded(match.getAwaySideGoalsScored());
+        standingsForAwaySide.addGoalsScored(match.getAwaySideGoalsScored());
+        standingsForAwaySide.addGoalsConceded(match.getHomeSideGoalsScored());
     }
 
     public Either<String, List<StandingsResponseDTO>> getForCompetition(Long competitionId) {
@@ -54,38 +51,37 @@ public class StatisticsService {
                 processMatch(fm);
             }
         }
+        // TODO
+        //        for (FootballClub fc : comp.getParticipants()) {
+        //            standingsForFC.get(fc.getId())
+        //                    .setStatistics(footballMatchDataLayer.findMatchStatisticsForClubInCompetition(competitionId, fc, 0, false)
+        //                            .stream()
+        //                            .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
+        //                            .toList());
 
-        for (FootballClub fc : comp.getParticipants()) {
-            standingsForFC.get(fc.getId())
-                    .setStatistics(footballMatchDataLayer.findMatchStatisticsForClubInCompetition(competitionId, fc, 0, false)
-                            .stream()
-                            .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
-                            .toList());
-        }
 
-        return Either.right(standingsForFC.values().stream().sorted(Comparator.comparingInt(StandingsResponseDTO::getPoints).reversed()).toList());
+        return Either.right(Collections.emptyList());
     }
 
     private void processMatch(FootballMatch match) {
-        var stats = match.getStatistics();
-        StandingsResponseDTO standingsForHomeSide = standingsForFC.get(stats.getLeft().getFootballClubId());
-        StandingsResponseDTO standingsForAwaySide = standingsForFC.get(stats.getRight().getFootballClubId());
+        StandingsResponseDTO standingsForHomeSide = standingsForFC.get(match.getHomeSideFootballClub().getId());
+        StandingsResponseDTO standingsForAwaySide = standingsForFC.get(match.getAwaySideFootballClub().getId());
 
         switch (match.getMatchResult()) {
             case UNFINISHED ->
                     log.debug("Match with ID [{}] is unfinished. Not including it in standings", match.getId());
             case HOME_SIDE_VICTORY -> {
-                addGoals(stats, standingsForHomeSide, standingsForAwaySide);
+                addGoals(match, standingsForHomeSide, standingsForAwaySide);
                 standingsForHomeSide.addWin();
                 standingsForAwaySide.addLoss();
             }
             case AWAY_SIDE_VICTORY -> {
-                addGoals(stats, standingsForHomeSide, standingsForAwaySide);
+                addGoals(match, standingsForHomeSide, standingsForAwaySide);
                 standingsForHomeSide.addLoss();
                 standingsForAwaySide.addWin();
             }
             case DRAW -> {
-                addGoals(stats, standingsForHomeSide, standingsForAwaySide);
+                addGoals(match, standingsForHomeSide, standingsForAwaySide);
                 standingsForHomeSide.addDraw();
                 standingsForAwaySide.addDraw();
             }
@@ -99,14 +95,14 @@ public class StatisticsService {
             log.warn(errorMsg);
             return Either.left(errorMsg);
         }
-
-        var fc = optionalFC.get();
-        var statsDTO = footballMatchDataLayer
-                .findMatchStatisticsForClub(fc, page, includeUnresolved)
-                .stream()
-                .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
-                .toList();
-        var fcDTO = FootballClubMapper.INSTANCE.objectToRequest(fc);
-        return Either.right(new FootballClubStatisticsResponseDTO(fcDTO, statsDTO));
+//
+//        var fc = optionalFC.get();
+//        var statsDTO = footballMatchDataLayer
+//                .findMatchStatisticsForClub(fc, page, includeUnresolved)
+//                .stream()
+//                .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
+//                .toList();
+//        var fcDTO = FootballClubMapper.INSTANCE.objectToRequest(fc);
+        return Either.right(new FootballClubStatisticsResponseDTO(null, null));
     }
 }

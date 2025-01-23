@@ -30,8 +30,6 @@ public abstract class AbstractBaseIntegrationTest {
     FootballClubRepository footballClubRepository;
     @Autowired
     FootballMatchRepository footballMatchRepository;
-    @Autowired
-    FootballMatchStatisticsRepository footballMatchStatisticsRepository;
 
     @DynamicPropertySource
     static void containersProperties(DynamicPropertyRegistry registry) {
@@ -44,6 +42,5 @@ public abstract class AbstractBaseIntegrationTest {
         competitionRoundRepository.deleteAll();
         footballClubRepository.deleteAll();
         footballMatchRepository.deleteAll();
-        footballMatchStatisticsRepository.deleteAll();
     }
 }
