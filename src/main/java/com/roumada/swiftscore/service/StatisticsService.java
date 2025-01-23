@@ -44,7 +44,6 @@ public class StatisticsService {
             return Either.left(warnMsg);
         }
 
-
         var comp = optCompetition.get();
         standingsForFC = new HashMap<>();
         for (FootballClub fc : comp.getParticipants())

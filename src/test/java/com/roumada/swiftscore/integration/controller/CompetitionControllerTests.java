@@ -9,7 +9,9 @@ import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
+import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import com.roumada.swiftscore.util.PersistenceTestUtils;
 import org.json.JSONArray;
@@ -41,7 +43,11 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @Autowired
     private CompetitionDataLayer competitionDataLayer;
     @Autowired
+    private CompetitionRoundDataLayer competitionRoundDataLayer;
+    @Autowired
     private FootballClubDataLayer footballClubDataLayer;
+    @Autowired
+    private FootballMatchDataLayer footballMatchDataLayer;
 
     @Test
     @DisplayName("Create competition - with valid football club IDs - should create")
@@ -236,7 +242,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Delete competition - exists - should return OK")
     void deleteCompetition_exists_shouldReturnOK() throws Exception {
         // arrange
-        var id = competitionDataLayer.saveCompetition(Competition.builder().build()).getId();
+        var id = competitionDataLayer.save(Competition.builder().build()).getId();
 
         // act
         mvc.perform(delete("/competition/%s".formatted(id))).andExpect(status().isOk());
@@ -254,9 +260,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     void getCompetition_withValidID_shouldReturn() throws Exception {
         // arrange
         var round1 = new CompetitionRound(1, Collections.emptyList());
-        round1 = competitionDataLayer.saveCompetitionRound(round1);
+        round1 = competitionRoundDataLayer.save(round1);
         var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        var id = competitionDataLayer.saveCompetition(Competition.builder()
+        var id = competitionDataLayer.save(Competition.builder()
                 .name("Competition").type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(savedClubs)
@@ -274,18 +280,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @Test
     @DisplayName("Get a competition - with invalid ID - should return error code")
     void getCompetition_withInvalidID_shouldReturnErrorCode() throws Exception {
-        // arrange
-        var round1 = new CompetitionRound(1, Collections.emptyList());
-        competitionDataLayer.saveCompetitionRound(round1);
-        var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        competitionDataLayer.saveCompetition(Competition.builder()
-                .name("Competition")
-                .type(Competition.CompetitionType.LEAGUE)
-                .simulationValues(new SimulationValues(0))
-                .participants(savedClubs)
-                .rounds(List.of(round1))
-                .build());
-
         // act & assert
         mvc.perform(get("/competition/999")).andExpect(status().is4xxClientError());
     }
@@ -296,17 +290,17 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // arrange
         var round1 = new CompetitionRound(1, Collections.emptyList());
         var round2 = new CompetitionRound(1, Collections.emptyList());
-        competitionDataLayer.saveCompetitionRound(round1);
-        competitionDataLayer.saveCompetitionRound(round2);
+        competitionRoundDataLayer.save(round1);
+        competitionRoundDataLayer.save(round2);
         var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
-        competitionDataLayer.saveCompetition(Competition.builder()
+        competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(savedClubs)
                 .rounds(List.of(round1))
                 .build());
-        competitionDataLayer.saveCompetition(Competition.builder()
+        competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
@@ -330,11 +324,13 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
         footballClubDataLayer.save(fc1);
         footballClubDataLayer.save(fc2);
+        var fm = new FootballMatch(fc1, fc2);
+        fm = footballMatchDataLayer.save(fm);
 
-        var round = new CompetitionRound(null, 1, List.of(new FootballMatch(fc1, fc2)));
-        competitionDataLayer.saveCompetitionRound(round);
+        var round = new CompetitionRound(null, 1, List.of(fm));
+        competitionRoundDataLayer.save(round);
 
-        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+        var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
@@ -355,18 +351,21 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Simulate competition  - is originally simulable - should return error code when no longer simulable")
-    void simulateCompetitionRound_isOriginallySimulable_shouldReturnErrorCodeWhenNoLongerSimulable() throws Exception {
+    @DisplayName("Simulate competition  - can be simulated - should return error code when no longer can")
+    void simulateCompetitionRound_canBeSimulated_shouldReturnErrorCodeWhenNoLongerCan() throws Exception {
         // arrange
         var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
         footballClubDataLayer.save(fc1);
         footballClubDataLayer.save(fc2);
 
-        var round = new CompetitionRound(1, List.of(new FootballMatch(fc1, fc2)));
-        competitionDataLayer.saveCompetitionRound(round);
+        FootballMatch fm = new FootballMatch(fc1, fc2);
+        fm = footballMatchDataLayer.save(fm);
 
-        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+        var round = new CompetitionRound(1, List.of(fm));
+        competitionRoundDataLayer.save(round);
+
+        var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
@@ -383,7 +382,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - name only - should return updated")
     void updateCompetition_name_shouldReturnUpdated() throws Exception {
         // arrange
-        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+        var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
                 .type(Competition.CompetitionType.LEAGUE)
@@ -436,7 +435,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - country only - should return updated")
     void updateCompetition_country_shouldReturnUpdated() throws Exception {
         // arrange
-        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+        var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
                 .type(Competition.CompetitionType.LEAGUE)
@@ -489,7 +488,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - type only - should return updated")
     void updateCompetition_type_shouldReturnUpdated() throws Exception {
         // arrange
-        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+        var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
                 .type(Competition.CompetitionType.LEAGUE)
@@ -542,7 +541,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - simulation values only - should return updated")
     void updateCompetition_simValues_shouldReturnUpdated() throws Exception {
         // arrange
-        var saved = competitionDataLayer.saveCompetition(Competition.builder()
+        var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
                 .type(Competition.CompetitionType.LEAGUE)

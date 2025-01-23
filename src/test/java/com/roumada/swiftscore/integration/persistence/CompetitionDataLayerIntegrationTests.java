@@ -36,7 +36,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
                 .build();
 
         // act
-        var id = competitionDataLayer.saveCompetition(competition).getId();
+        var id = competitionDataLayer.save(competition).getId();
 
         // assert
         assertTrue(competitionDataLayer.findCompetitionById(id).isPresent());
