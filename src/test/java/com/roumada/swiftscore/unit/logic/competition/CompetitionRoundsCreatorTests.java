@@ -3,22 +3,22 @@ package com.roumada.swiftscore.unit.logic.competition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.roumada.swiftscore.logic.competition.CompetitionRoundsGenerator.generate;
+import static com.roumada.swiftscore.logic.creator.CompetitionRoundsCreator.create;
 import static com.roumada.swiftscore.util.FootballClubTestUtils.getTenFootballClubs;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CompetitionRoundsGeneratorTests {
+class CompetitionRoundsCreatorTests {
 
     @Test
     @DisplayName("Should correctly generate matchups for a league in round-robin system")
-    void shouldCorrectlyGenerateRoundRobinLeague() {
+    void shouldCorrectlyCreateRoundRobinLeague() {
         // arrange
         var clubs = getTenFootballClubs();
 
         // act
-        var roundsEither = generate(clubs);
+        var roundsEither = create(clubs);
 
         // assert
         assertTrue(roundsEither.isRight());
@@ -29,12 +29,12 @@ class CompetitionRoundsGeneratorTests {
 
     @Test
     @DisplayName("Generate clubs - incorrect clubs amount - should return left Either with error message")
-    void generateClubs_incorrectClubAmount_shouldReturnErrorMessage() {
+    void createClubs_incorrectClubAmount_shouldReturnErrorMessage() {
         // arrange
         var clubs = getTenFootballClubs().subList(0, 5);
 
         // act
-        var rounds = generate(clubs);
+        var rounds = create(clubs);
 
         // assert
         assertTrue(rounds.isLeft());

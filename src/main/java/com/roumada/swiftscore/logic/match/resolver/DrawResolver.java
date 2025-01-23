@@ -1,10 +1,10 @@
-package com.roumada.swiftscore.logic.match.resolver.score;
+package com.roumada.swiftscore.logic.match.resolver;
 
 import com.roumada.swiftscore.model.match.FootballMatch;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class DrawScoreResolver implements ScoreResolver {
+public class DrawResolver implements Resolver {
     @Override
     public void resolve(FootballMatch footballMatch) {
         int goalsScored = ThreadLocalRandom.current().nextInt(6);

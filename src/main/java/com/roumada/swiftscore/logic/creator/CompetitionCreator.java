@@ -1,0 +1,62 @@
+package com.roumada.swiftscore.logic.creator;
+
+import com.roumada.swiftscore.logic.CompetitionDatesProvider;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
+import io.vavr.control.Either;
+import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
+@Slf4j
+public class CompetitionCreator {
+
+    private CompetitionCreator() {
+    }
+
+    public static Either<String, Competition> createFromRequest(CompetitionRequestDTO dto, List<FootballClub> footballClubs) {
+        var generationResult = CompetitionRoundsCreator.create(footballClubs);
+        if (generationResult.isLeft()) {
+            return Either.left(generationResult.getLeft());
+        }
+
+        var rounds = generationResult.get();
+        CompetitionDatesProvider provider = createProvider(dto);
+        setDatesForMatchesInRounds(provider, rounds);
+        return Either.right(Competition.builder()
+                .name(dto.name())
+                .type(dto.type())
+                .country(dto.country())
+                .startDate(LocalDate.parse(dto.startDate()))
+                .endDate(LocalDate.parse(dto.endDate()))
+                .simulationValues(dto.simulationValues())
+                .participants(footballClubs)
+                .rounds(rounds)
+                .build());
+    }
+
+    private static CompetitionDatesProvider createProvider(CompetitionRequestDTO dto) {
+        var provider = new CompetitionDatesProvider(
+                LocalDate.parse(dto.startDate()),
+                LocalDate.parse(dto.endDate()),
+                dto.participantIds().size());
+        log.info("Created date provider with start date [{}] and step [{}]", provider.getStart(), provider.getStep());
+        return provider;
+    }
+
+    private static void setDatesForMatchesInRounds(CompetitionDatesProvider provider, List<CompetitionRound> rounds) {
+        for (CompetitionRound round : rounds) {
+            LocalDate date = provider.next();
+            for (FootballMatch match : round.getMatches()) {
+                var datetime = LocalDateTime.of(date, LocalTime.of(21, 0));
+                match.setDate(datetime);
+            }
+        }
+    }
+}
