@@ -13,7 +13,7 @@ public class StandingsResponseDTO {
     private int goalsScored = 0;
     private int goalsConceded = 0;
     private int points = 0;
-    private List<FootballMatchStatisticsResponseDTO> lastMatchesStatistics;
+    private List<FootballMatchResponseDTO> lastMatchesStatistics;
 
     public StandingsResponseDTO(String footballClubName) {
         this.footballClubName = footballClubName;
@@ -45,7 +45,7 @@ public class StandingsResponseDTO {
         this.points += points;
     }
 
-    public void setStatistics(List<FootballMatchStatisticsResponseDTO> statistics){
+    public void setStatistics(List<FootballMatchResponseDTO> statistics){
         this.lastMatchesStatistics = statistics;
     }
 }

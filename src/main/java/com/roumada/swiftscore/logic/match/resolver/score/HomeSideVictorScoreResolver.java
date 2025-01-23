@@ -11,9 +11,7 @@ public class HomeSideVictorScoreResolver implements ScoreResolver {
     public void resolve(FootballMatch footballMatch) {
         int homeSideGoalsScored = ThreadLocalRandom.current().nextInt(6) + 1;
         int awaySideGoalsScored = ThreadLocalRandom.current().nextInt(homeSideGoalsScored);
-        footballMatch.getHomeSideStatistics().setGoalsScored(homeSideGoalsScored);
-        footballMatch.getHomeSideStatistics().setOpponentGoalsScored(awaySideGoalsScored);
-        footballMatch.getAwaySideStatistics().setGoalsScored(awaySideGoalsScored);
-        footballMatch.getAwaySideStatistics().setOpponentGoalsScored(homeSideGoalsScored);
+        footballMatch.setHomeSideGoalsScored(homeSideGoalsScored);
+        footballMatch.setAwaySideGoalsScored(awaySideGoalsScored);
     }
 }

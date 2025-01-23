@@ -5,5 +5,5 @@ import com.roumada.swiftscore.model.dto.request.FootballClubRequestDTO;
 import java.util.List;
 
 public record FootballClubStatisticsResponseDTO(FootballClubRequestDTO footballClub,
-                                                List<FootballMatchStatisticsResponseDTO> statistics) {
+                                                List<FootballMatchResponseDTO> statistics) {
 }

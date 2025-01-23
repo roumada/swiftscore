@@ -12,7 +12,5 @@ public interface FootballMatchMapper {
 
     @Mapping(source = "homeSideFootballClub", target = "homeSide")
     @Mapping(source = "awaySideFootballClub", target = "awaySide")
-    @Mapping(source = "homeSideStatistics.goalsScored", target = "homeSideGoalsScored")
-    @Mapping(source = "awaySideStatistics.goalsScored", target = "awaySideGoalsScored")
     FootballMatchResponseDTO matchToMatchResponse(FootballMatch match);
 }

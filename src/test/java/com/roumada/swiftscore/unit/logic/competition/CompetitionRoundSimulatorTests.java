@@ -33,14 +33,14 @@ class CompetitionRoundSimulatorTests {
 
         // assert
         assertEquals(HOME_SIDE_VICTORY, competitionRound.getMatches().get(0).getMatchResult());
-        assertTrue(competitionRound.getMatches().get(0).getHomeSideStatistics().getGoalsScored() >
-                competitionRound.getMatches().get(0).getAwaySideStatistics().getGoalsScored());
+        assertTrue(competitionRound.getMatches().get(0).getHomeSideGoalsScored() >
+                competitionRound.getMatches().get(0).getAwaySideGoalsScored());
         assertEquals(AWAY_SIDE_VICTORY, competitionRound.getMatches().get(1).getMatchResult());
-        assertTrue(competitionRound.getMatches().get(1).getHomeSideStatistics().getGoalsScored() <
-                competitionRound.getMatches().get(1).getAwaySideStatistics().getGoalsScored());
+        assertTrue(competitionRound.getMatches().get(1).getHomeSideGoalsScored() <
+                competitionRound.getMatches().get(1).getAwaySideGoalsScored());
         assertEquals(DRAW, competitionRound.getMatches().get(2).getMatchResult());
-        assertEquals(competitionRound.getMatches().get(2).getHomeSideStatistics().getGoalsScored(),
-                competitionRound.getMatches().get(2).getAwaySideStatistics().getGoalsScored());
+        assertTrue(competitionRound.getMatches().get(2).getHomeSideGoalsScored() ==
+                competitionRound.getMatches().get(2).getAwaySideGoalsScored());
     }
 
     private static CompetitionRound prepareRound(FootballClub footballClub1, FootballClub footballClub2) {

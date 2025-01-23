@@ -4,7 +4,6 @@ package com.roumada.swiftscore.unit.logic.match.resolver.score;
 import com.roumada.swiftscore.logic.match.resolver.score.ScoreResolverFactory;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,15 +18,13 @@ class ScoreResolverFactoryTests {
         FootballMatch fm = new FootballMatch(
                 FootballClub.builder().name("FC1").victoryChance(1).build(),
                 FootballClub.builder().name("FC2").victoryChance(0.5).build());
-        fm.setHomeSideStatistics(new FootballMatchStatistics(1L));
-        fm.setAwaySideStatistics(new FootballMatchStatistics(2L));
         fm.setMatchResult(FootballMatch.MatchResult.HOME_SIDE_VICTORY);
 
         // act
         ScoreResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
 
         // assert
-        assertTrue(fm.getHomeSideStatistics().getGoalsScored() > fm.getAwaySideStatistics().getGoalsScored());
+        assertTrue(fm.getHomeSideGoalsScored() > fm.getAwaySideGoalsScored());
     }
 
     @Test
@@ -37,15 +34,13 @@ class ScoreResolverFactoryTests {
         FootballMatch fm = new FootballMatch(
                 FootballClub.builder().name("FC1").victoryChance(0.4).build(),
                 FootballClub.builder().name("FC2").victoryChance(0.5).build());
-        fm.setHomeSideStatistics(new FootballMatchStatistics(1L));
-        fm.setAwaySideStatistics(new FootballMatchStatistics(2L));
         fm.setMatchResult(FootballMatch.MatchResult.AWAY_SIDE_VICTORY);
 
         // act
         ScoreResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
 
         // assert
-        assertTrue(fm.getHomeSideStatistics().getGoalsScored() < fm.getAwaySideStatistics().getGoalsScored());
+        assertTrue(fm.getHomeSideGoalsScored() < fm.getAwaySideGoalsScored());
     }
 
     @Test
@@ -55,15 +50,13 @@ class ScoreResolverFactoryTests {
         FootballMatch fm = new FootballMatch(
                 FootballClub.builder().name("FC1").victoryChance(0.5).build(),
                 FootballClub.builder().name("FC2").victoryChance(0.5).build());
-        fm.setHomeSideStatistics(new FootballMatchStatistics(1L));
-        fm.setAwaySideStatistics(new FootballMatchStatistics(2L));
         fm.setMatchResult(FootballMatch.MatchResult.DRAW);
 
         // act
         ScoreResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
 
         // assert
-        assertEquals(fm.getHomeSideStatistics().getGoalsScored(), fm.getAwaySideStatistics().getGoalsScored());
+        assertEquals(fm.getHomeSideGoalsScored(), fm.getAwaySideGoalsScored());
     }
 
     @Test
@@ -73,8 +66,6 @@ class ScoreResolverFactoryTests {
         FootballMatch fm = new FootballMatch(
                 FootballClub.builder().name("FC1").victoryChance(0.5).build(),
                 FootballClub.builder().name("FC2").victoryChance(0.5).build());
-        fm.setHomeSideStatistics(new FootballMatchStatistics(1L));
-        fm.setAwaySideStatistics(new FootballMatchStatistics(2L));
         fm.setMatchResult(FootballMatch.MatchResult.UNFINISHED);
 
         // act

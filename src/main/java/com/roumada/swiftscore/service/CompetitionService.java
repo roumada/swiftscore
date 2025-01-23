@@ -11,7 +11,10 @@ import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.persistence.*;
+import com.roumada.swiftscore.persistence.CompetitionDataLayer;
+import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
+import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import io.vavr.control.Either;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +34,6 @@ import java.util.List;
 public class CompetitionService {
 
     private final CompetitionDataLayer competitionDataLayer;
-    private final FootballMatchStatisticsDataLayer statisticsDataLayer;
     private final CompetitionRoundDataLayer competitionRoundDataLayer;
     private final FootballMatchDataLayer footballMatchDataLayer;
     private final FootballClubDataLayer footballClubDataLayer;
@@ -86,6 +88,8 @@ public class CompetitionService {
                 .name(dto.name())
                 .type(dto.type())
                 .country(dto.country())
+                .startDate(LocalDate.parse(dto.startDate()))
+                .endDate(LocalDate.parse(dto.endDate()))
                 .simulationValues(dto.simulationValues())
                 .participants(footballClubs)
                 .rounds(Collections.emptyList())
@@ -113,8 +117,6 @@ public class CompetitionService {
             for (FootballMatch match : round.getMatches()) {
                 var datetime = LocalDateTime.of(date, LocalTime.of(21, 0));
                 match.setDate(datetime);
-                match.getHomeSideStatistics().setDate(datetime);
-                match.getAwaySideStatistics().setDate(datetime);
             }
         }
     }
@@ -170,7 +172,6 @@ public class CompetitionService {
     }
 
     public void delete(long id) {
-        statisticsDataLayer.deleteAllByCompetitionId(id);
         footballMatchDataLayer.deleteByCompetitionId(id);
         competitionRoundDataLayer.deleteByCompetitionId(id);
         competitionDataLayer.delete(id);
