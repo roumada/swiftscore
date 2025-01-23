@@ -9,7 +9,6 @@ import com.roumada.swiftscore.model.mapper.FootballMatchStatisticsMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;

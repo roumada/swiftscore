@@ -31,7 +31,6 @@ import java.util.List;
 public class CompetitionService {
 
     private final CompetitionDataLayer competitionDataLayer;
-    private final FootballMatchStatisticsDataLayer statisticsDataLayer;
     private final CompetitionRoundDataLayer competitionRoundDataLayer;
     private final FootballMatchDataLayer footballMatchDataLayer;
     private final FootballClubDataLayer footballClubDataLayer;
@@ -170,7 +169,6 @@ public class CompetitionService {
     }
 
     public void delete(long id) {
-        statisticsDataLayer.deleteAllByCompetitionId(id);
         footballMatchDataLayer.deleteByCompetitionId(id);
         competitionRoundDataLayer.deleteByCompetitionId(id);
         competitionDataLayer.delete(id);

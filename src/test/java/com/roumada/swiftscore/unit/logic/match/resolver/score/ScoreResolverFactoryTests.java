@@ -4,7 +4,6 @@ package com.roumada.swiftscore.unit.logic.match.resolver.score;
 import com.roumada.swiftscore.logic.match.resolver.score.ScoreResolverFactory;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.model.match.FootballMatchStatistics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
