@@ -11,7 +11,10 @@ import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.persistence.*;
+import com.roumada.swiftscore.persistence.CompetitionDataLayer;
+import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
+import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import io.vavr.control.Either;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -85,6 +88,8 @@ public class CompetitionService {
                 .name(dto.name())
                 .type(dto.type())
                 .country(dto.country())
+                .startDate(LocalDate.parse(dto.startDate()))
+                .endDate(LocalDate.parse(dto.endDate()))
                 .simulationValues(dto.simulationValues())
                 .participants(footballClubs)
                 .rounds(Collections.emptyList())

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
 public record FootballMatchResponseDTO(long id,
+                                       long competitionId,
                                        LocalDateTime date,
                                        FootballClub homeSide,
                                        FootballClub awaySide,

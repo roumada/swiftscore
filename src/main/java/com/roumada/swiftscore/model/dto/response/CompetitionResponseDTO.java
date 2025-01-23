@@ -6,6 +6,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.match.Competition;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -14,6 +15,8 @@ public record CompetitionResponseDTO(
         Long id,
         int currentRound,
         String name,
+        LocalDate startDate,
+        LocalDate endDate,
         Competition.CompetitionType type,
         CountryCode country,
         SimulationValues simulationValues,
