@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.logic.competition;
+package com.roumada.swiftscore.logic.creator;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.MonoPair;
@@ -12,12 +12,12 @@ import java.util.List;
 
 
 @Slf4j
-public class CompetitionRoundsGenerator {
+public class CompetitionRoundsCreator {
 
-    private CompetitionRoundsGenerator() {
+    private CompetitionRoundsCreator() {
     }
 
-    public static Either<String, List<CompetitionRound>> generate(List<FootballClub> clubs) {
+    public static Either<String, List<CompetitionRound>> create(List<FootballClub> clubs) {
         if (clubs.size() % 2 == 1) {
             String errorMsg = "Unable to generate competition rounds for odd amount of clubs.";
             log.error(errorMsg);

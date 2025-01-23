@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.logic.match.simulator;
 
-import com.roumada.swiftscore.logic.match.resolver.score.ScoreResolverFactory;
+import com.roumada.swiftscore.logic.match.resolver.ScoreResolverFactory;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import lombok.extern.slf4j.Slf4j;

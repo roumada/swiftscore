@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.unit.logic.competition;
 
-import com.roumada.swiftscore.logic.competition.CompetitionRoundSimulator;
+import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
@@ -39,7 +39,7 @@ class CompetitionRoundSimulatorTests {
         assertTrue(competitionRound.getMatches().get(1).getHomeSideGoalsScored() <
                 competitionRound.getMatches().get(1).getAwaySideGoalsScored());
         assertEquals(DRAW, competitionRound.getMatches().get(2).getMatchResult());
-        assertTrue(competitionRound.getMatches().get(2).getHomeSideGoalsScored() ==
+        assertEquals(competitionRound.getMatches().get(2).getHomeSideGoalsScored(),
                 competitionRound.getMatches().get(2).getAwaySideGoalsScored());
     }
 
