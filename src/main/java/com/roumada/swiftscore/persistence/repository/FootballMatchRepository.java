@@ -8,27 +8,51 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 public interface FootballMatchRepository extends MongoRepository<FootballMatch, Long> {
-    Page<FootballMatch> findByHomeSideFootballClub_id(long id, Pageable pageable);
+
 
     @Query("""
               {'$and': [
-              { 'homeSideFootballClub.id': ?0 },
-              { 'result': {$ne: 'UNFINISHED'} }
+              { '$or': [
+                  { 'homeSideFootballClub.id': ?0 },
+                  { 'awaySideFootballClub.id': ?0 }
+                ]},
             ]}
             """)
-    Page<FootballMatch> findByHomeSideFootballClub_idExcludeUnfinished(long id, Pageable pageable);
+    Page<FootballMatch> findByFootballClubId(long footballClubId, Pageable pageable);
 
-    Page<FootballMatch> findByHomeSideFootballClub_idAndCompetitionId(long competitionId, long footballClubId, PageRequest pageRequest);
+    @Query("""
+            {'$and': [
+            { '$or': [
+                { 'homeSideFootballClub.id': ?0 },
+                { 'awaySideFootballClub.id': ?0 }
+              ]},
+                { 'matchResult': {$ne: 'UNFINISHED'} }
+              ]}
+            """)
+    Page<FootballMatch> findByFootballClubIdExcludeUnfinished(long footballClubId, Pageable pageable);
 
     @Query("""
               {'$and': [
               { 'competitionId': ?0 },
-              { 'homeSideFootballClub.id': ?1 },
-              { 'result': {$ne: 'UNFINISHED'} }
+              { '$or': [
+                  { 'homeSideFootballClub.id': ?1 },
+                  { 'awaySideFootballClub.id': ?1 }
+                ]},
             ]}
             """)
-    Page<FootballMatch> findByHomeSideFootballClub_idAndCompetitionIdExcludeUnfinished(long competitionId, long footballClubId, PageRequest pageRequest);
+    Page<FootballMatch> findByCompetitionIdAndFootballClubId(long competitionId, long footballClubId, PageRequest pageRequest);
 
+    @Query("""
+              {'$and': [
+              { 'competitionId': ?0 },
+              { '$or': [
+                  { 'homeSideFootballClub.id': ?1 },
+                  { 'awaySideFootballClub.id': ?1 }
+                ]},
+              { 'matchResult': {$ne: 'UNFINISHED'} }
+            ]}
+            """)
+    Page<FootballMatch> findByCompetitionIdAndFootballClubIdExcludeUnfinished(long competitionId, long footballClubId, PageRequest pageRequest);
 
 
     void deleteByCompetitionId(long id);

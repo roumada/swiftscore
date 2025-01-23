@@ -32,8 +32,8 @@ public class FootballMatchDataLayer {
 
         Page<FootballMatch> pageResult = includeUnresolved ?
                 footballMatchRepository
-                        .findByHomeSideFootballClub_id(footballClubId, pageRequest) :
-                footballMatchRepository.findByHomeSideFootballClub_idExcludeUnfinished(footballClubId, pageRequest);
+                        .findByFootballClubId(footballClubId, pageRequest) :
+                footballMatchRepository.findByFootballClubIdExcludeUnfinished(footballClubId, pageRequest);
 
         return pageResult.getContent();
     }
@@ -44,8 +44,8 @@ public class FootballMatchDataLayer {
 
         Page<FootballMatch> pageResult = includeUnresolved ?
                 footballMatchRepository
-                        .findByHomeSideFootballClub_idAndCompetitionId(competitionId, footballClubId, pageRequest) :
-                footballMatchRepository.findByHomeSideFootballClub_idAndCompetitionIdExcludeUnfinished(competitionId, footballClubId, pageRequest);
+                        .findByCompetitionIdAndFootballClubId(competitionId, footballClubId, pageRequest) :
+                footballMatchRepository.findByCompetitionIdAndFootballClubIdExcludeUnfinished(competitionId, footballClubId, pageRequest);
 
         return pageResult.getContent();
     }
