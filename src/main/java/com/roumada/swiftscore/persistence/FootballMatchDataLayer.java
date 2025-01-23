@@ -1,13 +1,13 @@
 package com.roumada.swiftscore.persistence;
 
-import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,21 +26,28 @@ public class FootballMatchDataLayer {
         return footballMatchRepository.findById(id);
     }
 
-    public List<Object> findMatchStatisticsForClub(FootballClub footballClub, int page, boolean includeUnresolved) {
-        // TODO
-        return Collections.emptyList();
+    public List<FootballMatch> findAllMatchesForClub(long footballClubId, int page, boolean includeUnresolved) {
+
+        PageRequest pageRequest = PageRequest.of(page, 5);
+
+        Page<FootballMatch> pageResult = includeUnresolved ?
+                footballMatchRepository
+                        .findByHomeSideFootballClub_id(footballClubId, pageRequest) :
+                footballMatchRepository.findByHomeSideFootballClub_idExcludeUnfinished(footballClubId, pageRequest);
+
+        return pageResult.getContent();
     }
 
-    public List<Object> findMatchStatisticsForClubInCompetition(Long competitionId, FootballClub footballClub, int page, boolean includeUnresolved) {
-        // TODO
-        //        PageRequest pageRequest = PageRequest.of(page, 5);
-        //
-        //        Page<FootballMatchStatistics> pageResult = includeUnresolved ?
-        //                footballMatchStatisticsRepository
-        //                        .findByFootballClubIdAndCompetitionId(competitionId, footballClub.getId(), pageRequest) :
-        //                footballMatchStatisticsRepository.findByFootballClubIdAndCompetitionIdExcludeUnfinished(competitionId, footballClub.getId(), pageRequest);
+    public List<FootballMatch> findAllMatchesForClubInCompetition(long competitionId, long footballClubId, int page, boolean includeUnresolved) {
 
-        return Collections.emptyList();
+        PageRequest pageRequest = PageRequest.of(page, 5);
+
+        Page<FootballMatch> pageResult = includeUnresolved ?
+                footballMatchRepository
+                        .findByHomeSideFootballClub_idAndCompetitionId(competitionId, footballClubId, pageRequest) :
+                footballMatchRepository.findByHomeSideFootballClub_idAndCompetitionIdExcludeUnfinished(competitionId, footballClubId, pageRequest);
+
+        return pageResult.getContent();
     }
 
     public void deleteByCompetitionId(long id) {

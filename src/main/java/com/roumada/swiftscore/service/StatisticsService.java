@@ -2,7 +2,10 @@ package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponseDTO;
+import com.roumada.swiftscore.model.dto.response.FootballMatchResponseDTO;
 import com.roumada.swiftscore.model.dto.response.StandingsResponseDTO;
+import com.roumada.swiftscore.model.mapper.FootballClubMapper;
+import com.roumada.swiftscore.model.mapper.FootballMatchMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -44,23 +47,25 @@ public class StatisticsService {
 
         var comp = optCompetition.get();
         standingsForFC = new HashMap<>();
-        for (FootballClub fc : comp.getParticipants()) standingsForFC.put(fc.getId(), new StandingsResponseDTO(fc.getName()));
+        for (FootballClub fc : comp.getParticipants())
+            standingsForFC.put(fc.getId(), new StandingsResponseDTO(fc.getName()));
 
         for (CompetitionRound cr : comp.getRounds()) {
             for (FootballMatch fm : cr.getMatches()) {
                 processMatch(fm);
             }
         }
-        // TODO
-        //        for (FootballClub fc : comp.getParticipants()) {
-        //            standingsForFC.get(fc.getId())
-        //                    .setStatistics(footballMatchDataLayer.findMatchStatisticsForClubInCompetition(competitionId, fc, 0, false)
-        //                            .stream()
-        //                            .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
-        //                            .toList());
 
+        for (FootballClub fc : comp.getParticipants()) {
+            standingsForFC.get(fc.getId())
+                    .setStatistics(footballMatchDataLayer
+                            .findAllMatchesForClubInCompetition(competitionId, fc.getId(), 0, false)
+                            .stream()
+                            .map(FootballMatchMapper.INSTANCE::matchToMatchResponse)
+                            .toList());
+        }
 
-        return Either.right(Collections.emptyList());
+        return Either.right(standingsForFC.values().stream().toList());
     }
 
     private void processMatch(FootballMatch match) {
@@ -88,21 +93,22 @@ public class StatisticsService {
         }
     }
 
-    public Either<String, FootballClubStatisticsResponseDTO> getForClub(long clubId, int page, boolean includeUnresolved) {
+    public Either<String, FootballClubStatisticsResponseDTO> getForClub(long clubId, int page,
+                                                                        boolean includeUnresolved) {
         var optionalFC = footballClubDataLayer.findById(clubId);
         if (optionalFC.isEmpty()) {
             String errorMsg = "Couldn't find club with ID [%s]".formatted(clubId);
             log.warn(errorMsg);
             return Either.left(errorMsg);
         }
-//
-//        var fc = optionalFC.get();
-//        var statsDTO = footballMatchDataLayer
-//                .findMatchStatisticsForClub(fc, page, includeUnresolved)
-//                .stream()
-//                .map(FootballMatchStatisticsMapper.INSTANCE::statisticsToStatisticsDTO)
-//                .toList();
-//        var fcDTO = FootballClubMapper.INSTANCE.objectToRequest(fc);
-        return Either.right(new FootballClubStatisticsResponseDTO(null, null));
+
+        var fc = optionalFC.get();
+        var statsDTO = footballMatchDataLayer
+                .findAllMatchesForClub(fc.getId(), page, includeUnresolved)
+                .stream()
+                .map(FootballMatchMapper.INSTANCE::matchToMatchResponse)
+                .toList();
+        var fcDTO = FootballClubMapper.INSTANCE.objectToRequest(fc);
+        return Either.right(new FootballClubStatisticsResponseDTO(fcDTO, statsDTO));
     }
 }
