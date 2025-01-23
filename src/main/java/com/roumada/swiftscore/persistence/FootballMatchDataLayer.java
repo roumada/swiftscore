@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class FootballMatchDataLayer {
 
     public List<FootballMatch> findAllMatchesForClub(long footballClubId, int page, boolean includeUnresolved) {
 
-        PageRequest pageRequest = PageRequest.of(page, 5);
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Order.desc("date")));
 
         Page<FootballMatch> pageResult = includeUnresolved ?
                 footballMatchRepository
@@ -40,7 +41,7 @@ public class FootballMatchDataLayer {
 
     public List<FootballMatch> findAllMatchesForClubInCompetition(long competitionId, long footballClubId, int page, boolean includeUnresolved) {
 
-        PageRequest pageRequest = PageRequest.of(page, 5);
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Order.desc("date")));
 
         Page<FootballMatch> pageResult = includeUnresolved ?
                 footballMatchRepository
