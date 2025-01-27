@@ -1,24 +1,25 @@
 package com.roumada.swiftscore.service;
 
-import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
+import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
+import com.roumada.swiftscore.persistence.sequence.PrimarySequenceService;
 import io.vavr.control.Either;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -26,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CompetitionService {
 
+    private final PrimarySequenceService sequenceService;
     private final CompetitionDataLayer competitionDataLayer;
     private final CompetitionRoundDataLayer competitionRoundDataLayer;
     private final FootballMatchDataLayer footballMatchDataLayer;
@@ -60,23 +62,22 @@ public class CompetitionService {
         if (creationResult.isLeft()) {
             return Either.left(creationResult.getLeft());
         }
+        Long compId = sequenceService.getNextValue();
         Competition competition = creationResult.get();
-        var rounds = competition.getRounds();
-        competition.setRounds(Collections.emptyList());
-        competitionDataLayer.saveCompetition(competition);
+        competition.setId(compId);
 
-        // set comp ID to all rounds
-        for (CompetitionRound round : rounds) {
-            round.setCompetitionId(competition.getId());
+        for (CompetitionRound round : competition.getRounds()) {
+            Long roundId = sequenceService.getNextValue();
+            for (FootballMatch match : round.getMatches()) {
+                match.setCompetitionId(compId);
+                match.setCompetitionRoundId(roundId);
+                footballMatchDataLayer.save(match);
+            }
+            round.setCompetitionId(compId);
+            round.setId(roundId);
+            competitionRoundDataLayer.save(round);
         }
-
-        // save rounds with comp ID
-        var savedRounds = competitionDataLayer.saveRounds(rounds);
-        competition.setRounds(savedRounds);
-        // save comp with underlying rounds with comp ID
-        competition = competitionDataLayer.saveCompetition(competition);
-        // save matches within rounds with comp IDs
-        competitionDataLayer.deepSaveCompetitionMatchesWithCompIds(competition);
+        competitionDataLayer.save(competition);
 
         return Either.right(competition);
     }
@@ -106,9 +107,12 @@ public class CompetitionService {
     }
 
     private void persistChanges(Competition compSimulated) {
-        competitionDataLayer.saveCompetitionRound(compSimulated.currentRound());
+        for (FootballMatch match : compSimulated.currentRound().getMatches()) {
+            footballMatchDataLayer.save(match);
+        }
+        competitionRoundDataLayer.save(compSimulated.currentRound());
         compSimulated.incrementCurrentRoundNumber();
-        competitionDataLayer.saveCompetition(compSimulated);
+        competitionDataLayer.save(compSimulated);
     }
 
     public Either<String, Competition> update(long id, CompetitionRequestDTO dto) {
@@ -129,7 +133,7 @@ public class CompetitionService {
             if (violations.isEmpty()) competition.setSimulationValues(dto.simulationValues());
         }
 
-        return Either.right(competitionDataLayer.saveCompetition(competition));
+        return Either.right(competitionDataLayer.save(competition));
     }
 
     public void delete(long id) {

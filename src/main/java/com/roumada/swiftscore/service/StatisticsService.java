@@ -44,7 +44,6 @@ public class StatisticsService {
             return Either.left(warnMsg);
         }
 
-
         var comp = optCompetition.get();
         standingsForFC = new HashMap<>();
         for (FootballClub fc : comp.getParticipants())
@@ -65,7 +64,15 @@ public class StatisticsService {
                             .toList());
         }
 
-        return Either.right(standingsForFC.values().stream().toList());
+        return Either.right(standingsForFC.values()
+                .stream()
+                .sorted(Comparator
+                        .comparingInt(StandingsResponseDTO::getPoints)
+                        .thenComparing(StandingsResponseDTO::getWins)
+                        .thenComparing(StandingsResponseDTO::getDraws)
+                        .thenComparing(StandingsResponseDTO::getGoalsScored)
+                        .reversed())
+                .toList());
     }
 
     private void processMatch(FootballMatch match) {

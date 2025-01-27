@@ -30,7 +30,7 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         var match = new FootballMatch(fc1, fc2);
 
         // act
-        var saved = dataLayer.createMatch(match);
+        var saved = dataLayer.save(match);
         var optionalMatch = dataLayer.findMatchById(saved.getId());
 
         // assert

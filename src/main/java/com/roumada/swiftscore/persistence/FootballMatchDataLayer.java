@@ -19,7 +19,7 @@ public class FootballMatchDataLayer {
 
     private FootballMatchRepository footballMatchRepository;
 
-    public FootballMatch createMatch(FootballMatch match) {
+    public FootballMatch save(FootballMatch match) {
         return footballMatchRepository.save(match);
     }
 

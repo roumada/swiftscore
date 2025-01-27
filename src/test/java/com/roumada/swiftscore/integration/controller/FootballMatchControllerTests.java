@@ -31,7 +31,7 @@ class FootballMatchControllerTests extends AbstractBaseIntegrationTest {
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
         fcdl.save(fc1);
         fcdl.save(fc2);
-        var matchId = fmdl.createMatch(new FootballMatch(fc1, fc2)).getId();
+        var matchId = fmdl.save(new FootballMatch(fc1, fc2)).getId();
 
         // act & assert
         mvc.perform(get("/match/" + matchId))
@@ -46,7 +46,7 @@ class FootballMatchControllerTests extends AbstractBaseIntegrationTest {
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
         fcdl.save(fc1);
         fcdl.save(fc2);
-        fmdl.createMatch(new FootballMatch(fc1, fc2));
+        fmdl.save(new FootballMatch(fc1, fc2));
 
         // act & assert
         mvc.perform(get("/match/" + 999))

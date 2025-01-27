@@ -45,7 +45,7 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
                         ids,
                         new SimulationValues(0.0)))
                 .get();
-        var compId = compdl.saveCompetition(comp).getId();
+        var compId = compdl.save(comp).getId();
 
         // act & assert
         mvc.perform(get("/statistics/competition/" + compId)).andExpect(status().isOk());
