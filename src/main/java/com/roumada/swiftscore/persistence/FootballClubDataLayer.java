@@ -31,6 +31,6 @@ public class FootballClubDataLayer {
     }
 
     public List<FootballClub> findAllById(List<Long> ids) {
-        return repository.findAllByIdIn(ids);
+        return repository.findAllById(ids);
     }
 }

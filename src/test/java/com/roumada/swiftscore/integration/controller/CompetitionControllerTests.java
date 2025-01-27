@@ -53,7 +53,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with valid football club IDs - should create")
     void createCompetition_validData_isCreated() throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         var mvcResult = mvc.perform(post("/competition")
@@ -78,7 +78,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with invalid football club IDs - should return error code")
     void createCompetition_invalidIds_shouldReturnErrorCode() throws Exception {
         // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
 
         // act
         mvc.perform(post("/competition")
@@ -98,7 +98,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with uneven football club ID count - should return error code")
     void createCompetition_invalidIdCount_shouldReturnErrorCode() throws Exception {
         // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
 
         // act
         mvc.perform(post("/competition")
@@ -118,7 +118,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with invalid variance value - should return error code")
     void createCompetition_invalidVarianceNumber_shouldReturnErrorCode(double variation) throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         mvc.perform(post("/competition")
@@ -138,7 +138,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with invalid draw trigger chance value - should return error code")
     void createCompetition_invalidDrawTriggerChanceValue_shouldReturnErrorCode(double drawTriggerChance) throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         mvc.perform(post("/competition")
@@ -158,7 +158,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with invalid score diff draw trigger value - should return error code")
     void createCompetition_invalidScoreDiffDrawTriggerValue_shouldReturnErrorCode(double scoreDifferenceDrawTrigger) throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         mvc.perform(post("/competition")
@@ -185,7 +185,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with invalid dates - should return error code")
     void createCompetition_invalidDates_shouldReturnErrorCode(String startDate, String endDate) throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         mvc.perform(post("/competition")
@@ -204,7 +204,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with null name - should return error code")
     void createCompetition_withNullName_shouldReturnErrorCode() throws Exception {
         // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
 
         // act
         mvc.perform(post("/competition")
@@ -223,7 +223,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with null competition type - should return error code")
     void createCompetition_withNullCompetitionType_shouldReturnErrorCode() throws Exception {
         // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
 
         // act
         mvc.perform(post("/competition")
@@ -261,7 +261,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // arrange
         var round1 = new CompetitionRound(1, Collections.emptyList());
         round1 = competitionRoundDataLayer.save(round1);
-        var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
         var id = competitionDataLayer.save(Competition.builder()
                 .name("Competition").type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
@@ -292,7 +292,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var round2 = new CompetitionRound(1, Collections.emptyList());
         competitionRoundDataLayer.save(round1);
         competitionRoundDataLayer.save(round2);
-        var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs());
+        var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
         competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .type(Competition.CompetitionType.LEAGUE)

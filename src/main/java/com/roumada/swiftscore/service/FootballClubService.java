@@ -31,6 +31,10 @@ public class FootballClubService {
         return repository.findAll();
     }
 
+    public List<FootballClub> findAllByIds(Iterable<Long> ids) {
+        return repository.findAllById(ids);
+    }
+
     public FootballClub save(FootballClubRequestDTO dto) {
         return repository.save(FootballClubMapper.INSTANCE.requestToObject(dto));
     }

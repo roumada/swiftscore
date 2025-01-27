@@ -137,7 +137,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Patch football club - change name -  should return patched")
     void patchFC_name_shouldReturn() throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
         var dto = new FootballClubRequestDTO(
                 "FC2",
                 null,
@@ -165,7 +165,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Patch football club - change country -  should return patched")
     void patchFC_country_shouldReturn() throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
         var dto = new FootballClubRequestDTO(
                 null,
                 CountryCode.PL,
@@ -193,7 +193,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Patch football club - change stadium name - should return patched")
     void patchFC_stadiumName_shouldReturn() throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
         var dto = new FootballClubRequestDTO(
                 null,
                 null,
@@ -221,7 +221,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Patch football club - change victory chance - should return patched")
     void patchFC_victoryChance_shouldReturn() throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
         var dto = new FootballClubRequestDTO(
                 null,
                 null,
@@ -250,7 +250,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Patch football club - with invalid victory chance - should return error")
     void patchFC_invalidVictoryChance_shouldReturnError(double victoryChance) throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub());
+        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
         var dto = new FootballClubRequestDTO(
                 null,
                 null,

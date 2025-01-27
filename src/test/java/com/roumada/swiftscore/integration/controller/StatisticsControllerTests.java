@@ -36,7 +36,7 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get competition statistics - with valid competition ID - should return")
     void getCompetitionStatistics_validCompetitionId_shouldReturn() throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs()));
+        var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
         var comp = compService.generateAndSave(new CompetitionRequestDTO("",
                         Competition.CompetitionType.LEAGUE,
                         CountryCode.GB,
