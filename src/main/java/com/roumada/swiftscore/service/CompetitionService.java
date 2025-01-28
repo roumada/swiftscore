@@ -4,6 +4,7 @@ import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
@@ -50,6 +51,12 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
+        if(dto.participantIds().size() % 2 == 1){
+            var errorMsg = "Failed to generate competition - the amount of clubs participating must be even.";
+            log.error(errorMsg);
+            return Either.left(errorMsg);
+        }
+
         var footballClubs = footballClubDataLayer.findAllById(dto.participantIds());
 
         if (footballClubs.size() != dto.participantIds().size()) {
@@ -107,15 +114,13 @@ public class CompetitionService {
     }
 
     private void persistChanges(Competition compSimulated) {
-        for (FootballMatch match : compSimulated.currentRound().getMatches()) {
-            footballMatchDataLayer.save(match);
-        }
+        footballMatchDataLayer.saveAll(compSimulated.currentRound().getMatches());
         competitionRoundDataLayer.save(compSimulated.currentRound());
         compSimulated.incrementCurrentRoundNumber();
         competitionDataLayer.save(compSimulated);
     }
 
-    public Either<String, Competition> update(long id, CompetitionRequestDTO dto) {
+    public Either<String, Competition> update(long id, CompetitionUpdateRequestDTO dto) {
         var findResult = competitionDataLayer.findCompetitionById(id);
         if (findResult.isEmpty()) {
             String warnMsg = "Competition with ID [%s] not found.".formatted(id);
@@ -128,10 +133,7 @@ public class CompetitionService {
         if (dto.name() != null) competition.setName(dto.name());
         if (dto.country() != null) competition.setCountry(dto.country());
         if (dto.type() != null) competition.setType(dto.type());
-        if (dto.simulationValues() != null) {
-            var violations = validator.validate(dto.simulationValues());
-            if (violations.isEmpty()) competition.setSimulationValues(dto.simulationValues());
-        }
+        if (dto.simulationValues() != null) competition.setSimulationValues(dto.simulationValues());
 
         return Either.right(competitionDataLayer.save(competition));
     }

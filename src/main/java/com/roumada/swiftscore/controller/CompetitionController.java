@@ -1,6 +1,7 @@
 package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;
 import com.roumada.swiftscore.service.CompetitionService;
@@ -43,7 +44,7 @@ public class CompetitionController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateCompetition(@PathVariable long id,
-                                                    @RequestBody CompetitionRequestDTO dto,
+                                                    @Valid @RequestBody CompetitionUpdateRequestDTO dto,
                                                     HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.update(id, dto).fold(

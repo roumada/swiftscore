@@ -23,12 +23,15 @@ public class FootballMatchDataLayer {
         return footballMatchRepository.save(match);
     }
 
+    public void saveAll(Iterable<FootballMatch> matches) {
+        footballMatchRepository.saveAll(matches);
+    }
+
     public Optional<FootballMatch> findMatchById(long id) {
         return footballMatchRepository.findById(id);
     }
 
     public List<FootballMatch> findAllMatchesForClub(long footballClubId, int page, boolean includeUnresolved) {
-
         PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Order.desc("date")));
 
         Page<FootballMatch> pageResult = includeUnresolved ?
@@ -40,7 +43,6 @@ public class FootballMatchDataLayer {
     }
 
     public List<FootballMatch> findAllMatchesForClubInCompetition(long competitionId, long footballClubId, int page, boolean includeUnresolved) {
-
         PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Order.desc("date")));
 
         Page<FootballMatch> pageResult = includeUnresolved ?
