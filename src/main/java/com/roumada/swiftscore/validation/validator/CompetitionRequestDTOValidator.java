@@ -4,6 +4,7 @@ import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequestDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -11,7 +12,8 @@ import java.time.temporal.ChronoUnit;
 
 public class CompetitionRequestDTOValidator implements ConstraintValidator<ValidCompetitionRequestDTO, CompetitionRequestDTO> {
 
-    private static final int MAXIMUM_COMPETITION_DURATION = 320;
+    @Value("${application.maximum_competition_duration}")
+    private int MAXIMUM_COMPETITION_DURATION;
 
     @Override
     public boolean isValid(CompetitionRequestDTO dto, ConstraintValidatorContext context) {
