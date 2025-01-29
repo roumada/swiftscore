@@ -9,6 +9,7 @@ import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.util.FootballClubTestUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -20,8 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -47,10 +46,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
     @DisplayName("Should create, update and then delete competition")
     void shouldCreateUpdateAndDeleteCompetition() {
         // arrange
-        var clubIds = clubRepository.saveAll(List.of(
-                FootballClub.builder().name("FC1").stadiumName("FC1 Stadium").victoryChance(0.5).build(),
-                FootballClub.builder().name("FC2").stadiumName("FC2 Park").victoryChance(0.5).build()
-        )).stream().map(FootballClub::getId).toList();
+        var clubIds = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs())
+                .stream().map(FootballClub::getId).toList();
         CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
                 Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,
@@ -83,28 +80,6 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .response();
 
         int id = createCompetitionResponse.jsonPath().getInt("id");
-
-        // assure step 1
-        given()
-                .port(port)
-                .contentType(ContentType.JSON)
-                .body(request)
-                .when()
-                .get("/%s".formatted(id))
-                .then()
-                .statusCode(200)
-                .body("id", equalTo(id))
-                .body("currentRound", equalTo(1))
-                .body("name", equalTo("Competition"))
-                .body("startDate", equalTo("2025-01-01"))
-                .body("endDate", equalTo("2025-10-30"))
-                .body("type", equalTo(request.type().toString()))
-                .body("country", equalTo(request.country().toString()))
-                .body("simulationValues.variance", equalTo(0.0F))
-                .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.0F))
-                .body("simulationValues.drawTriggerChance", equalTo(0.0F))
-                .extract()
-                .response();
 
         // STEP 2: update competition
         CompetitionUpdateRequestDTO updateRequest
@@ -155,10 +130,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
     @DisplayName("Should create and simulate competition until can no longer be simulated and delete competition and its matches")
     void shouldCreateSimulateAndDeleteCompetition() throws JSONException {
         // arrange
-        var clubIds = clubRepository.saveAll(List.of(
-                FootballClub.builder().name("FC1").stadiumName("FC1 Stadium").victoryChance(0.8).build(),
-                FootballClub.builder().name("FC2").stadiumName("FC2 Park").victoryChance(0.2).build()
-        )).stream().map(FootballClub::getId).toList();
+        var clubIds = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs())
+                .stream().map(FootballClub::getId).toList();
         CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
                 Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,

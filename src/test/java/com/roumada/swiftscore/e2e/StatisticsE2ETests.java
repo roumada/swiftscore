@@ -7,6 +7,7 @@ import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.util.FootballClubTestUtils;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.json.JSONArray;
@@ -17,8 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,12 +35,8 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
     @DisplayName("Should correctly generate statistics for a competition")
     void shouldCorrectlyGenerateStatisticsForCompetition() throws JSONException {
         // arrange
-        var fc1 = FootballClub.builder().name("FC1").stadiumName("FC1 Park").victoryChance(1).build();
-        var fc2 = FootballClub.builder().name("FC2").stadiumName("FC2 Park").victoryChance(0.8).build();
-        var fc3 = FootballClub.builder().name("FC3").stadiumName("FC3 Park").victoryChance(0.5).build();
-        var fc4 = FootballClub.builder().name("FC4").stadiumName("FC4 Park").victoryChance(0.3).build();
-        var clubIds
-                = clubRepository.saveAll(List.of(fc1, fc2, fc3, fc4)).stream().map(FootballClub::getId).toList();
+        var clubIds = clubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false))
+                .stream().map(FootballClub::getId).toList();
         CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
                 Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,
@@ -107,10 +102,9 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
     @DisplayName("Should either include on exclude unresolved matches depending on query")
     void shouldIncludeOrExcludeUnresolvedMatches() throws JSONException {
         // arrange
-        var fc1 = FootballClub.builder().name("FC1").stadiumName("FC1 Park").victoryChance(1).build();
-        var fc2 = FootballClub.builder().name("FC2").stadiumName("FC2 Park").victoryChance(0.8).build();
+        var fc1 = FootballClubTestUtils.getTenFootballClubs().get(0);
         var clubIds
-                = clubRepository.saveAll(List.of(fc1, fc2)).stream().map(FootballClub::getId).toList();
+                = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs()).stream().map(FootballClub::getId).toList();
         CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
                 Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,
