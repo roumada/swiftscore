@@ -1,6 +1,9 @@
 package com.roumada.swiftscore.integration;
 
-import com.roumada.swiftscore.persistence.repository.*;
+import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
+import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
+import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
