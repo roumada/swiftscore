@@ -223,6 +223,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
             "'2025-01-01', '',  'End date must be present'",
             "'', 2025-01-01, 'Start date must be present'",
             "'', '', 'Start date must be present  + End date must be present'",
+            "2025--01-01, '2025-02-02', 'Unparsable data format for one of the dates'",
             "'2025-01-01', '2025-01-02', 'Competition needs at least 6 days for a competition with 4 clubs.'",
             "'2025-02-01', '2025-01-01', 'Start date cannot be ahead of end date'",
             "'2020-01-01', '2025-01-01', 'The amount of days for a competition has exceed maximum duration [320]'"

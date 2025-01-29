@@ -100,6 +100,22 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("Update football club - invalid ID - should return error code")
+    void updateFC_invalidID_shouldReturnErrorCode() {
+        // arrange
+        when(footballClubRepository.findById(0L)).thenReturn(Optional.empty());
+
+        // act
+        var updateResult = service.update(0L,
+                new FootballClubRequestDTO("FC2", null, null, 0.0));
+
+        // assert
+        assertTrue(updateResult.isLeft());
+        var error = updateResult.getLeft();
+        assertEquals("Unable to find football club with given id [0]", error);
+    }
+
+    @Test
     @DisplayName("Update football club - update name - should return")
     void updateFC_updateName_shouldReturn() {
         // arrange
