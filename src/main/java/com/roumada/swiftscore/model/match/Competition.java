@@ -62,6 +62,6 @@ public class Competition {
     }
 
     public enum CompetitionType {
-        LEAGUE, TOURNAMENT
+        LEAGUE
     }
 }
