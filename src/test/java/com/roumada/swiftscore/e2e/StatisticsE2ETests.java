@@ -102,7 +102,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
     @DisplayName("Should either include on exclude unresolved matches depending on query")
     void shouldIncludeOrExcludeUnresolvedMatches() throws JSONException {
         // arrange
-        var fc1 = FootballClubTestUtils.getTenFootballClubs().get(0);
+        var fc1 = FootballClubTestUtils.getTwoFootballClubs().get(0);
         var clubIds
                 = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs()).stream().map(FootballClub::getId).toList();
         CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
