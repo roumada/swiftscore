@@ -132,7 +132,6 @@ public class CompetitionService {
 
         if (dto.name() != null) competition.setName(dto.name());
         if (dto.country() != null) competition.setCountry(dto.country());
-        if (dto.type() != null) competition.setType(dto.type());
         if (dto.simulationValues() != null) competition.setSimulationValues(dto.simulationValues());
 
         return Either.right(competitionDataLayer.save(competition));
