@@ -2,7 +2,6 @@ package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponseDTO;
-import com.roumada.swiftscore.model.dto.response.FootballMatchResponseDTO;
 import com.roumada.swiftscore.model.dto.response.StandingsResponseDTO;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.model.mapper.FootballMatchMapper;

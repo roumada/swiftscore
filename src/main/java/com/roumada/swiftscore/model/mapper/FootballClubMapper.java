@@ -10,5 +10,6 @@ public interface FootballClubMapper {
     FootballClubMapper INSTANCE = Mappers.getMapper(FootballClubMapper.class);
 
     FootballClub requestToObject(FootballClubRequestDTO dto);
+
     FootballClubRequestDTO objectToRequest(FootballClub footballClub);
 }

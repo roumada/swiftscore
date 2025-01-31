@@ -4,7 +4,9 @@ import com.roumada.swiftscore.model.match.FootballMatch;
 
 public class ScoreResolverFactory {
 
-    private ScoreResolverFactory(){}
+    private ScoreResolverFactory() {
+    }
+
     public static Resolver getFor(FootballMatch.MatchResult matchResult) {
         switch (matchResult) {
             case HOME_SIDE_VICTORY -> {
@@ -16,7 +18,8 @@ public class ScoreResolverFactory {
             case DRAW -> {
                 return new DrawResolver();
             }
-            default -> throw new IllegalArgumentException("A ScoreResolver cannot be assigned to a FootballMatch with a non-match finished status.");
+            default ->
+                    throw new IllegalArgumentException("A ScoreResolver cannot be assigned to a FootballMatch with a non-match finished status.");
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.service.CompetitionRoundService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;

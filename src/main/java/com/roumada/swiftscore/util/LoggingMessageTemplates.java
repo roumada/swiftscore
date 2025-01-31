@@ -4,7 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public final class LoggingMessageTemplates {
 
-    private LoggingMessageTemplates() {}
+    private LoggingMessageTemplates() {
+    }
 
     public static String getForEndpoint(HttpServletRequest request) {
         return "Request URL: %s Method: %s".formatted(

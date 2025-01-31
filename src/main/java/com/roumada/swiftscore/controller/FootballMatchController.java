@@ -1,6 +1,5 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
@@ -34,8 +33,8 @@ public class FootballMatchController {
             @ApiResponse(responseCode = "400", description = "Football match not found",
                     content = @Content)})
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getMatch( @PathVariable long id,
-                                            HttpServletRequest request) {
+    public ResponseEntity<Object> getMatch(@PathVariable long id,
+                                           HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var findResult = dataLayer.findMatchById(id);
         return findResult.<ResponseEntity<Object>>map(ResponseEntity::ok)

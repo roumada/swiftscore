@@ -5,8 +5,6 @@ import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
-import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponseDTO;
-import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -51,7 +49,7 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
-        if(dto.participantIds().size() % 2 == 1){
+        if (dto.participantIds().size() % 2 == 1) {
             var errorMsg = "Failed to generate competition - the amount of clubs participating must be even.";
             log.error(errorMsg);
             return Either.left(errorMsg);

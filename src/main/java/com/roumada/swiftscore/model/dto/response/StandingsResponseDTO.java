@@ -45,7 +45,7 @@ public class StandingsResponseDTO {
         this.points += points;
     }
 
-    public void setStatistics(List<FootballMatchResponseDTO> statistics){
+    public void setStatistics(List<FootballMatchResponseDTO> statistics) {
         this.lastMatchesStatistics = statistics;
     }
 }

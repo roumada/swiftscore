@@ -70,7 +70,7 @@ public class DataLoader implements CommandLineRunner {
         return validClubDTOs.entrySet()
                 .stream()
                 .map(kv -> {
-                    if(validator.validate(kv.getKey()).isEmpty()) kv.setValue(true);
+                    if (validator.validate(kv.getKey()).isEmpty()) kv.setValue(true);
                     return kv;
                 })
                 .filter(Map.Entry::getValue)
