@@ -21,7 +21,7 @@ git clone https://github.com/roumada/swiftscore/
 cd swiftscore
 ```
 
-# Running the Application Directly
+### Running the Application Directly
 
 To run the application manually without Docker, ensure MongoDB is running locally, then follow these steps:
 
@@ -42,14 +42,14 @@ Applications endpoints are accessed at http://localhost:8080
 
 Swagger UI is also accessible at http://localhost:8080/swagger-ui/index.html#/
 
-# Running with Docker Compose
+### Running with Docker Compose
 
 Ensure Docker is running.
 
 Run the following command to start the application:
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 This command will build and start the containers in detached mode (-d).
