@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.match.Competition;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,7 +16,6 @@ public record CompetitionResponseDTO(
         String name,
         LocalDate startDate,
         LocalDate endDate,
-        Competition.CompetitionType type,
         CountryCode country,
         SimulationValues simulationValues,
         List<Long> participantIds,

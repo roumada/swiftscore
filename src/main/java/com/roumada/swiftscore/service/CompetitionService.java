@@ -90,7 +90,7 @@ public class CompetitionService {
     }
 
 
-    public Either<String, CompetitionRoundResponseDTO> simulateRound(Competition competition) {
+    public Either<String, CompetitionRound> simulateRound(Competition competition) {
         if (!competition.canSimulate()) {
             String errorMsg =
                     "Cannot simulate competition with [%s] and current round [%s]. All of the competition's rounds have been simulated. Unable to simulate further"
@@ -103,7 +103,7 @@ public class CompetitionService {
         var currRound = competition.currentRound();
         persistChanges(compSimulated);
 
-        return Either.right(CompetitionRoundMapper.INSTANCE.roundToResponseDTO(currRound));
+        return Either.right(currRound);
     }
 
     private Competition simulateCurrentRound(Competition competition) {
