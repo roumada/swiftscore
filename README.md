@@ -6,8 +6,9 @@ Currently only one-cycle league type is supported where each club plays another 
 ## Prerequisites
 
 - Java 17+
+- Docker (if running the application with the database via Docker Compose or running non-unit tests)
 - MongoDB (running locally if launching the application directly)
-- Docker (if running the application with the database via Docker Compose)
+
 
 The application uses MongoDB as its database.
 You either need to have it running locally while launching the application directly (available at `localhost:27017`) or use a included Docker Compose file which comes with application and database definition for convenient deployment.
