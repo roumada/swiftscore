@@ -57,8 +57,4 @@ public class Competition {
     public void incrementCurrentRoundNumber() {
         currentRoundNumber++;
     }
-
-    public enum CompetitionType {
-        LEAGUE
-    }
 }

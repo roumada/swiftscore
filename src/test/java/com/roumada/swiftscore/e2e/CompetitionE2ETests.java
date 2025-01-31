@@ -6,7 +6,6 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
-import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
@@ -49,7 +48,6 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         var clubIds = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs())
                 .stream().map(FootballClub::getId).toList();
         CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
-                Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
@@ -71,7 +69,6 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .body("name", equalTo(request.name()))
                         .body("startDate", equalTo(request.startDate()))
                         .body("endDate", equalTo(request.endDate()))
-                        .body("type", equalTo(request.type().toString()))
                         .body("country", equalTo(request.country().toString()))
                         .body("simulationValues.variance", equalTo(0.0F))
                         .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.0F))
@@ -133,7 +130,6 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         var clubIds = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs())
                 .stream().map(FootballClub::getId).toList();
         CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
-                Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
@@ -155,7 +151,6 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .body("name", equalTo(request.name()))
                         .body("startDate", equalTo(request.startDate()))
                         .body("endDate", equalTo(request.endDate()))
-                        .body("type", equalTo(request.type().toString()))
                         .body("country", equalTo(request.country().toString()))
                         .body("simulationValues.variance", equalTo(0.0F))
                         .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.0F))
