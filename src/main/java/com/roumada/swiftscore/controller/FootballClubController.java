@@ -1,8 +1,14 @@
 package com.roumada.swiftscore.controller;
 
+import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.request.FootballClubRequestDTO;
 import com.roumada.swiftscore.service.FootballClubService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,6 +24,13 @@ public class FootballClubController {
 
     private final FootballClubService service;
 
+    @Operation(summary = "Find a football club")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Football club returned",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FootballClub.class))}),
+            @ApiResponse(responseCode = "400", description = "Football club not found",
+                    content = @Content)})
     @GetMapping("/{id}")
     public ResponseEntity<Object> getFootballClub(@PathVariable long id,
                                                   HttpServletRequest request) {
@@ -28,12 +41,18 @@ public class FootballClubController {
                 ResponseEntity::ok);
     }
 
+    @Operation(summary = "Find all football clubs")
+    @ApiResponse(responseCode = "200", description = "Football clubs returned",
+            content = {@Content(mediaType = "application/json")})
     @GetMapping("/all")
     public ResponseEntity<Object> getAllClubs(HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         return ResponseEntity.ok(service.findAll());
     }
 
+    @Operation(summary = "Create a football club")
+    @ApiResponse(responseCode = "200", description = "Football club created",
+            content = {@Content(mediaType = "application/json")})
     @PostMapping(consumes = "application/json")
     public ResponseEntity<Object> createFootballClub(@Valid @RequestBody FootballClubRequestDTO dto,
                                                      HttpServletRequest request) {
@@ -41,6 +60,13 @@ public class FootballClubController {
         return ResponseEntity.ok(service.save(dto));
     }
 
+    @Operation(summary = "Update a football club")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Football club updated",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FootballClub.class))}),
+            @ApiResponse(responseCode = "400", description = "Football club not found",
+                    content = @Content)})
     @PatchMapping(value = "/{id}", consumes = "application/json")
     public ResponseEntity<Object> updateFootballClub(@PathVariable long id,
                                                      @RequestBody FootballClubRequestDTO dto,

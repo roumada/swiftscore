@@ -31,7 +31,6 @@ public class CompetitionCreator {
         setDatesForMatchesInRounds(provider, rounds);
         return Either.right(Competition.builder()
                 .name(dto.name())
-                .type(dto.type())
                 .country(dto.country())
                 .startDate(LocalDate.parse(dto.startDate()))
                 .endDate(LocalDate.parse(dto.endDate()))

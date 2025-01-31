@@ -5,7 +5,6 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
-import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
@@ -58,7 +57,6 @@ class CompetitionServiceTests {
         fc2.setId(2L);
         when(fcdl.findAllById(ids)).thenReturn(List.of(fc1, fc2));
         var dto = new CompetitionRequestDTO("",
-                Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-12-30",
@@ -95,7 +93,6 @@ class CompetitionServiceTests {
         fc1.setId(1L);
         when(fcdl.findAllById(ids)).thenReturn(List.of(fc1));
         var dto = new CompetitionRequestDTO("",
-                Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-12-30",
@@ -119,7 +116,6 @@ class CompetitionServiceTests {
         var ids = List.of(0L, 1L, 2L, 3L);
         when(fcdl.findAllById(ids)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true));
         var comp = service.generateAndSave(new CompetitionRequestDTO("",
-                Competition.CompetitionType.LEAGUE,
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-12-30",
@@ -135,10 +131,10 @@ class CompetitionServiceTests {
 
             var simulatedRound = eitherSimulatedRound.get();
             assertNotNull(simulatedRound);
-            assertEquals(i + 1, simulatedRound.round());
+            assertEquals(i + 1, simulatedRound.getRound());
 
             for (int a = 0; a < comp.getParticipants().size() / 2; a++) {
-                assertNotEquals(FootballMatch.MatchResult.UNFINISHED, simulatedRound.matches().get(a).matchResult());
+                assertNotEquals(FootballMatch.MatchResult.UNFINISHED, simulatedRound.getMatches().get(a).getMatchResult());
             }
         }
     }

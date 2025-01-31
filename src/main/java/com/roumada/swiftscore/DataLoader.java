@@ -15,6 +15,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,14 +46,16 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void saveFCs() {
-        footballClubRepository.saveAll(loadFootballClubs());
-        log.info("Football clubs saved");
+        var clubs = loadFootballClubs();
+        if (!clubs.isEmpty()) {
+            footballClubRepository.saveAll(clubs);
+            log.info("Football clubs saved");
+        }
     }
 
     public List<FootballClub> loadFootballClubs() {
-        Map<FootballClubRequestDTO, Boolean> validClubDTOs;
+        Map<FootballClubRequestDTO, Boolean> validClubDTOs = new HashMap<>();
         ObjectMapper objectMapper = new ObjectMapper();
-
         try {
             List<FootballClubRequestDTO> clubDTOs = objectMapper.readValue(footballClubsResource.getInputStream(),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, FootballClubRequestDTO.class));
@@ -59,13 +63,14 @@ public class DataLoader implements CommandLineRunner {
                     .collect(Collectors.toMap(club -> club, club -> false));
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
-            throw new RuntimeException(e);
         }
+
+        if (validClubDTOs.isEmpty()) return Collections.emptyList();
 
         return validClubDTOs.entrySet()
                 .stream()
                 .map(kv -> {
-                    if(validator.validate(kv.getKey()).isEmpty()) kv.setValue(true);
+                    if (validator.validate(kv.getKey()).isEmpty()) kv.setValue(true);
                     return kv;
                 })
                 .filter(Map.Entry::getValue)

@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: "mongodb://localhost:27017/test"
+      uri: "mongodb://localhost:27017/swiftscore"
 
 application:
   maximum_competition_duration: 320

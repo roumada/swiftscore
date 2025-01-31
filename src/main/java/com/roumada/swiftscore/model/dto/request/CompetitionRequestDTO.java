@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequestDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -17,8 +16,6 @@ import java.util.List;
 public record CompetitionRequestDTO(
         @NotNull(message = "Name cannot be null")
         String name,
-        @NotNull(message = "Competition type cannot be null")
-        Competition.CompetitionType type,
         CountryCode country,
         @Valid
         @NotNull(message = "Start date cannot be null")

@@ -20,7 +20,6 @@ public class Competition {
     private Long id = null;
     private int currentRoundNumber = 1;
     private String name;
-    private CompetitionType type;
     private CountryCode country;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -32,7 +31,6 @@ public class Competition {
 
     @Builder
     private Competition(String name,
-                        CompetitionType type,
                         CountryCode country,
                         LocalDate startDate,
                         LocalDate endDate,
@@ -40,7 +38,6 @@ public class Competition {
                         List<FootballClub> participants,
                         List<CompetitionRound> rounds) {
         this.name = name;
-        this.type = type;
         this.country = country;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -59,9 +56,5 @@ public class Competition {
 
     public void incrementCurrentRoundNumber() {
         currentRoundNumber++;
-    }
-
-    public enum CompetitionType {
-        LEAGUE
     }
 }

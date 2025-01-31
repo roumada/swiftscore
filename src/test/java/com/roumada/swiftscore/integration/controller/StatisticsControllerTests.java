@@ -5,7 +5,6 @@ import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
-import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
@@ -38,7 +37,6 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
         var comp = compService.generateAndSave(new CompetitionRequestDTO("",
-                        Competition.CompetitionType.LEAGUE,
                         CountryCode.GB,
                         "2025-01-01",
                         "2025-12-30",

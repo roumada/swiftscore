@@ -62,7 +62,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 new CompetitionRequestDTO("",
-                                        Competition.CompetitionType.LEAGUE,
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
@@ -87,7 +86,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 new CompetitionRequestDTO("",
-                                        Competition.CompetitionType.LEAGUE,
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-30",
@@ -110,7 +108,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var errorMsg = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                                Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
@@ -136,7 +133,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                                Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
@@ -167,7 +163,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                                Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-11-10",
@@ -198,7 +193,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                                Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
@@ -223,7 +217,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
             "'2025-01-01', '',  'End date must be present'",
             "'', 2025-01-01, 'Start date must be present'",
             "'', '', 'Start date must be present  + End date must be present'",
-            "2025--01-01, '2025-02-02', 'Unparsable data format for one of the dates'",
+            "2025--01-01, '2025-02-02', 'Unparsable data format for one of the dates (must be YYYY-MM-DD)'",
             "'2025-01-01', '2025-01-02', 'Competition needs at least 6 days for a competition with 4 clubs.'",
             "'2025-02-01', '2025-01-01', 'Start date cannot be ahead of end date'",
             "'2020-01-01', '2025-01-01', 'The amount of days for a competition has exceed maximum duration [320]'"
@@ -239,7 +233,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                                Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
                                 startDate,
                                 endDate,
@@ -263,7 +256,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(null,
-                                Competition.CompetitionType.LEAGUE,
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
@@ -275,30 +267,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // assert
         JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
         assertEquals("Name cannot be null", validationErrors.get(0));
-    }
-
-    @Test
-    @DisplayName("Create competition  - with null competition type - should return error code")
-    void createCompetition_withNullCompetitionType_shouldReturnErrorCode() throws Exception {
-        // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
-
-        // act
-        var response = mvc.perform(post("/competition")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
-                                null,
-                                CountryCode.GB,
-                                "2025-01-01",
-                                "2025-10-30",
-                                List.of(1L, 2L, 3L),
-                                new SimulationValues(0)))))
-                .andExpect(status().is4xxClientError())
-                .andReturn().getResponse().getContentAsString();
-
-        // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
-        assertEquals("Competition type cannot be null", validationErrors.get(0));
     }
 
     @Test
@@ -326,7 +294,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         round1 = competitionRoundDataLayer.save(round1);
         var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
         var id = competitionDataLayer.save(Competition.builder()
-                .name("Competition").type(Competition.CompetitionType.LEAGUE)
+                .name("Competition")
                 .simulationValues(new SimulationValues(0))
                 .participants(savedClubs)
                 .rounds(List.of(round1))
@@ -358,14 +326,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
         competitionDataLayer.save(Competition.builder()
                 .name("Competition")
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(savedClubs)
                 .rounds(List.of(round1))
                 .build());
         competitionDataLayer.save(Competition.builder()
                 .name("Competition")
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(savedClubs)
                 .rounds(List.of(round2))
@@ -395,7 +361,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(round))
@@ -430,7 +395,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(round))
@@ -448,7 +412,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
@@ -469,7 +432,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // assert
         assertEquals(dto.name(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
-        assertEquals(saved.getType(), Competition.CompetitionType.valueOf(responseJSON.getString("type")));
         assertEquals(saved
                         .getSimulationValues()
                         .variance(),
@@ -497,7 +459,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
@@ -518,7 +479,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // assert
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(dto.country(), CountryCode.valueOf(responseJSON.getString("country")));
-        assertEquals(saved.getType(), Competition.CompetitionType.valueOf(responseJSON.getString("type")));
         assertEquals(saved
                         .getSimulationValues()
                         .variance(),
@@ -547,7 +507,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
@@ -568,7 +527,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // assert
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
-        assertEquals(saved.getType(), Competition.CompetitionType.valueOf(responseJSON.getString("type")));
         assertEquals(dto
                         .simulationValues()
                         .variance(),
@@ -625,7 +583,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())

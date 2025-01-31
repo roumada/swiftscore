@@ -5,8 +5,6 @@ import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
-import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponseDTO;
-import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -51,7 +49,7 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
-        if(dto.participantIds().size() % 2 == 1){
+        if (dto.participantIds().size() % 2 == 1) {
             var errorMsg = "Failed to generate competition - the amount of clubs participating must be even.";
             log.error(errorMsg);
             return Either.left(errorMsg);
@@ -90,7 +88,7 @@ public class CompetitionService {
     }
 
 
-    public Either<String, CompetitionRoundResponseDTO> simulateRound(Competition competition) {
+    public Either<String, CompetitionRound> simulateRound(Competition competition) {
         if (!competition.canSimulate()) {
             String errorMsg =
                     "Cannot simulate competition with [%s] and current round [%s]. All of the competition's rounds have been simulated. Unable to simulate further"
@@ -103,7 +101,7 @@ public class CompetitionService {
         var currRound = competition.currentRound();
         persistChanges(compSimulated);
 
-        return Either.right(CompetitionRoundMapper.INSTANCE.roundToResponseDTO(currRound));
+        return Either.right(currRound);
     }
 
     private Competition simulateCurrentRound(Competition competition) {

@@ -39,7 +39,8 @@ public class CompetitionRequestDTOValidator implements ConstraintValidator<Valid
             end = LocalDate.parse(dto.endDate());
         } catch (DateTimeParseException e) {
             context
-                    .buildConstraintViolationWithTemplate("Unparsable data format for one of the dates")
+                    .buildConstraintViolationWithTemplate(
+                            "Unparsable data format for one of the dates (must be YYYY-MM-DD)")
                     .addConstraintViolation();
             return false;
         }

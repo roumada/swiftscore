@@ -14,6 +14,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidCompetitionRequestDTO {
     String message() default "Invalid object";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

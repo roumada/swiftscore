@@ -29,7 +29,6 @@ class CompetitionMapperTests {
         cr2.setId(4L);
         var object = Competition.builder()
                 .name("Competition")
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(cr1, cr2))

@@ -34,7 +34,6 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
         var fcs = fcr.saveAll(FootballClubTestUtils.getTwoFootballClubs());
         var competition = Competition.builder()
                 .name("Competition")
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(fcs)
                 .rounds(Collections.emptyList())
@@ -54,7 +53,6 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
         var fcs = fcr.saveAll(FootballClubTestUtils.getTwoFootballClubs());
         var saved = cr.save(Competition.builder()
                 .name("Competition")
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(fcs)
                 .rounds(Collections.emptyList())
@@ -76,13 +74,11 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
         var fcs = fcr.saveAll(FootballClubTestUtils.getTwoFootballClubs());
         var ids = cr.saveAll(List.of(Competition.builder()
                 .name("Competition")
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(fcs)
                 .rounds(Collections.emptyList())
                 .build(), Competition.builder()
                 .name("Competition 2")
-                .type(Competition.CompetitionType.LEAGUE)
                 .simulationValues(new SimulationValues(0))
                 .participants(fcs)
                 .rounds(Collections.emptyList())
