@@ -12,7 +12,7 @@ import java.util.List;
 @JsonSerialize
 public record CompetitionResponseDTO(
         Long id,
-        int currentRound,
+        int lastSimulatedRound,
         String name,
         LocalDate startDate,
         LocalDate endDate,

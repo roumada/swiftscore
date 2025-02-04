@@ -18,7 +18,6 @@ public interface CompetitionMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "participants", target = "participantIds", qualifiedByName = "participantsToIds")
     @Mapping(source = "rounds", target = "roundIds", qualifiedByName = "roundsToIds")
-    @Mapping(source = "currentRoundNumber", target = "currentRound")
     CompetitionResponseDTO competitionToCompetitionResponseDTO(Competition competition);
 
     @Named(value = "participantsToIds")

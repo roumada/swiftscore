@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,7 +32,6 @@ public class CompetitionService {
     private final CompetitionRoundDataLayer competitionRoundDataLayer;
     private final FootballMatchDataLayer footballMatchDataLayer;
     private final FootballClubDataLayer footballClubDataLayer;
-    private final Validator validator;
 
     public Either<String, Competition> findCompetitionById(Long id) {
         var optionalCompetition = competitionDataLayer.findCompetitionById(id);
@@ -88,20 +88,25 @@ public class CompetitionService {
     }
 
 
-    public Either<String, CompetitionRound> simulateRound(Competition competition) {
-        if (!competition.canSimulate()) {
+    public Either<String, List<CompetitionRound>> simulate(Competition competition, int times) {
+        if (!competition.canSimulate(times)) {
             String errorMsg =
-                    "Cannot simulate competition with [%s] and current round [%s]. All of the competition's rounds have been simulated. Unable to simulate further"
-                            .formatted(competition.getId(), competition.getCurrentRoundNumber());
+                    "Cannot simulate competition with [%s] and last simulated round [%s] [%s] times."
+                            .formatted(competition.getId(), competition.getLastSimulatedRound(), times);
             log.error(errorMsg);
             return Either.left(errorMsg);
         }
 
-        var compSimulated = simulateCurrentRound(competition);
-        var currRound = competition.currentRound();
-        persistChanges(compSimulated);
+        List<CompetitionRound> simulatedRounds = new ArrayList<>();
+        do {
+            Competition compSimulated = simulateCurrentRound(competition);
+            CompetitionRound currRound = competition.currentRound();
+            persistChanges(compSimulated);
+            simulatedRounds.add(currRound);
+            times--;
+        } while (times > 0);
 
-        return Either.right(currRound);
+        return Either.right(simulatedRounds);
     }
 
     private Competition simulateCurrentRound(Competition competition) {

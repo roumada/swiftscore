@@ -18,7 +18,7 @@ public class Competition {
 
     @Id
     private Long id = null;
-    private int currentRoundNumber = 1;
+    private int lastSimulatedRound = 0;
     private String name;
     private CountryCode country;
     private LocalDate startDate;
@@ -46,15 +46,15 @@ public class Competition {
         this.rounds = rounds;
     }
 
-    public boolean canSimulate() {
-        return rounds.size() + 1 > currentRoundNumber;
+    public boolean canSimulate(int times) {
+        return rounds.size() >= (lastSimulatedRound + times);
     }
 
     public CompetitionRound currentRound() {
-        return rounds.get(currentRoundNumber - 1);
+        return rounds.get(lastSimulatedRound);
     }
 
     public void incrementCurrentRoundNumber() {
-        currentRoundNumber++;
+        lastSimulatedRound++;
     }
 }

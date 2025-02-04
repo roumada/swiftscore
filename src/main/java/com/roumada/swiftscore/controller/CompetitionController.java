@@ -3,13 +3,16 @@ package com.roumada.swiftscore.controller;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
-import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponseDTO;
+import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponseDTO;
+import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;
 import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -129,23 +133,38 @@ public class CompetitionController {
     }
 
 
-    @Operation(summary = "Simulate a competition with given ID")
+    @Operation(summary = "Simulate a competition with given ID x times")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competition simulated",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CompetitionRoundResponseDTO.class))}),
+                            schema = @Schema(oneOf = {
+                                    CompetitionSimulationSimpleResponseDTO.class,
+                                    CompetitionSimulationResponseDTO.class}))}),
             @ApiResponse(responseCode = "400", description = "Competition not found",
                     content = @Content)})
     @PostMapping("/{id}/simulate")
     public ResponseEntity<Object> simulate(@PathVariable long id,
+                                           @Parameter(description = "Amount of rounds to be simulated", example = "1")
+                                           @RequestParam @Min(1) Integer times,
+                                           @Parameter(description = "Simplify the result")
+                                           @RequestParam(required = false, defaultValue = "false") boolean simplify,
                                            HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var findResult = service.findCompetitionById(id);
         if (findResult.isLeft()) return ResponseEntity.badRequest().body(findResult.getLeft());
 
-        return service.simulateRound(findResult.get()).fold(
+        return service.simulate(findResult.get(), times).fold(
                 error -> ResponseEntity.badRequest().body(error),
-                success -> ResponseEntity.ok(CompetitionRoundMapper.INSTANCE.roundToResponseDTO(success))
+                success -> {
+                    if (simplify) {
+                        return ResponseEntity.ok(new CompetitionSimulationSimpleResponseDTO(findResult.get().getId(), times,
+                                success.stream().map(CompetitionRound::getId).toList()));
+                    } else {
+                        return ResponseEntity.ok(new CompetitionSimulationResponseDTO(findResult.get().getId(), times,
+                                CompetitionRoundMapper.INSTANCE.roundsToResponseDTOs(success)));
+                    }
+                }
         );
     }
+
 }
