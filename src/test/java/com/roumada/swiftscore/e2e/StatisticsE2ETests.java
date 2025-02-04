@@ -61,6 +61,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
         for (int i = 0; i < 6; i++) {
             given()
                     .port(port)
+                    .param("times", "1")
                     .when()
                     .post("/competition/%s/simulate".formatted(compId))
                     .then()
@@ -175,15 +176,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
         // STEP 5: simulate comp twice to resolve its matches
         given()
                 .port(port)
-                .when()
-                .post("/competition/%s/simulate".formatted(secondCompId))
-                .then()
-                .statusCode(200)
-                .extract()
-                .response();
-
-        given()
-                .port(port)
+                .param("times", "2")
                 .when()
                 .post("/competition/%s/simulate".formatted(secondCompId))
                 .then()

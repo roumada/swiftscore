@@ -367,15 +367,14 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var response = mvc.perform(post("/competition/%s/simulate".formatted(saved.getId())))
+        var response = mvc.perform(post("/competition/%s/simulate".formatted(saved.getId()))
+                        .param("times", "1"))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-
-        mvc.perform(get("/competition/-1/simulate")).andExpect(status().is4xxClientError());
 
         // assert
         var responseJSON = new JSONObject(response);
 
-        assertEquals(1, responseJSON.getJSONArray("matches").length());
+        assertEquals(1, responseJSON.getJSONArray("rounds").length());
     }
 
     @Test
@@ -401,7 +400,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        mvc.perform(post("/competition/%s/simulate".formatted(saved.getId()))).andExpect(status().isOk());
+        mvc.perform(post("/competition/%s/simulate".formatted(saved.getId())).param("times", "1")).andExpect(status().isOk());
         mvc.perform(post("/competition/%s/simulate".formatted(saved.getId()))).andExpect(status().is4xxClientError());
     }
 

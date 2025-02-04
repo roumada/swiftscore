@@ -124,17 +124,17 @@ class CompetitionServiceTests {
 
         for (int i = 0; i < comp.getParticipants().size() * 2 - 2; i++) {
             // act
-            var eitherSimulatedRound = service.simulateRound(comp);
+            var eitherSimulatedRounds = service.simulate(comp, 1);
 
             // assert
-            assert (eitherSimulatedRound).isRight();
+            assert (eitherSimulatedRounds).isRight();
 
-            var simulatedRound = eitherSimulatedRound.get();
-            assertNotNull(simulatedRound);
-            assertEquals(i + 1, simulatedRound.getRound());
+            var simulatedRounds = eitherSimulatedRounds.get();
+            assertNotNull(simulatedRounds);
+            assertEquals(i + 1, simulatedRounds.get(0).getRound());
 
             for (int a = 0; a < comp.getParticipants().size() / 2; a++) {
-                assertNotEquals(FootballMatch.MatchResult.UNFINISHED, simulatedRound.getMatches().get(a).getMatchResult());
+                assertNotEquals(FootballMatch.MatchResult.UNFINISHED, simulatedRounds.get(0).getMatches().get(a).getMatchResult());
             }
         }
     }
