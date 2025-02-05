@@ -4,6 +4,7 @@ import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,5 +87,23 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
         assertEquals(savedIds.size(), foundClubs.size());
         assertEquals(savedIds, foundClubs.stream().map(FootballClub::getId).toList());
     }
+
+    @Test
+    @DisplayName("Find by ID not in X - should find")
+    void findByIdNotIn_shouldSave() {
+        // arrange
+        var savedIds =
+                FootballClubTestUtils.getIdsOfSavedClubs(repository.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        long excluded = savedIds.get(0);
+        savedIds.remove(0);
+
+        // act
+        var foundClubs = dataLayer.findByIdNotIn(List.of(excluded), 4);
+
+        // assert
+        assertEquals(3, foundClubs.size());
+        assertEquals(savedIds, foundClubs.stream().map(FootballClub::getId).toList());
+    }
+
 }
 

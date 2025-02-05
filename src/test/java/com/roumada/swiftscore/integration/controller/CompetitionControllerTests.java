@@ -16,7 +16,6 @@ import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
-import com.roumada.swiftscore.util.PersistenceTestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -55,7 +54,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with valid football club IDs & football IDs only - should create")
     void createCompetition_validDataAndIdsOnly_isCreated() throws Exception {
         // arrange
-        var ids = PersistenceTestUtils
+        var ids = FootballClubTestUtils
                 .getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
@@ -82,7 +81,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with valid football club IDs & set fillToParticipants - should create")
     void createCompetition_validIdsAndFillToParticipantsSet_isCreated(int fillToParticipants) throws Exception {
         // arrange
-        var ids = PersistenceTestUtils
+        var ids = FootballClubTestUtils
                 .getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 4);
 
         // act
@@ -108,7 +107,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with uneven football club IDs amount & even fillToParticipants - should create")
     void createCompetition_unevenFootballClubIdsButEvenFillToParticipants_isCreated() throws Exception {
         // arrange
-        var ids = PersistenceTestUtils
+        var ids = FootballClubTestUtils
                 .getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 3);
 
         // act
@@ -134,7 +133,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with uneven football club IDs amount & uneven fillToParticipants - should return error code")
     void createCompetition_unevenFootballClubIdsButUnevenFillToParticipants_isCreated() throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 3);
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 3);
 
         // act
         var errorMsg = mvc.perform(post("/competition")
@@ -157,7 +156,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with even football club IDs amount & uneven fillToParticipants - should return error code")
     void createCompetition_evenFootballClubIdsButUnevenFillToParticipants_isCreated() throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 4);
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 4);
 
         // act
         var errorMsg = mvc.perform(post("/competition")
@@ -180,7 +179,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with fillToParticipants parameter only - should create")
     void createCompetition_withFillToParticipantsOnly_isCreated() throws Exception {
         // arrange
-        PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));
+        FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));
 
         // act
         var mvcResult = mvc.perform(post("/competition")
@@ -205,7 +204,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with uneven fillToParticipants parameter only - should create")
     void createCompetition_withUnevenFillToParticipantsOnly_isCreated() throws Exception {
         // arrange
-        PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));
+        FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));
 
         // act
         var errorMsg = mvc.perform(post("/competition")
@@ -278,7 +277,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with invalid variance value - should return error code")
     void createCompetition_invalidVarianceNumber_shouldReturnErrorCode(double variation) throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         var response = mvc.perform(post("/competition")
@@ -309,7 +308,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with invalid draw trigger chance value - should return error code")
     void createCompetition_invalidDrawTriggerChanceValue_shouldReturnErrorCode(double drawTriggerChance) throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         var response = mvc.perform(post("/competition")
@@ -340,7 +339,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition  - with invalid score diff draw trigger value - should return error code")
     void createCompetition_invalidScoreDiffDrawTriggerValue_shouldReturnErrorCode(double scoreDifferenceDrawTrigger) throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         var response = mvc.perform(post("/competition")
@@ -381,7 +380,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                                               String endDate,
                                                               String validationErrorMsg) throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         var response = mvc.perform(post("/competition")

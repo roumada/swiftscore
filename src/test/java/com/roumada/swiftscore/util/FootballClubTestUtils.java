@@ -56,4 +56,12 @@ public class FootballClubTestUtils {
                 FootballClub.builder().name("FC10").victoryChance(0.1f).build()
         );
     }
+
+    public static List<Long> getIdsOfSavedClubs(List<FootballClub> clubs){
+        return getIdsOfSavedClubs(clubs, clubs.size());
+    }
+
+    public static List<Long> getIdsOfSavedClubs(List<FootballClub> clubs, int amount){
+        return new ArrayList<>(clubs.stream().map(FootballClub::getId).limit(amount).toList());
+    }
 }
