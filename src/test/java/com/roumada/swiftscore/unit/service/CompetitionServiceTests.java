@@ -1,7 +1,6 @@
 package com.roumada.swiftscore.unit.service;
 
 
-import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
@@ -26,6 +25,7 @@ import org.mockito.stubbing.Answer;
 
 import java.util.List;
 
+import static com.neovisionaries.i18n.CountryCode.GB;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +59,7 @@ class CompetitionServiceTests {
         fc2.setId(2L);
         when(fcdl.findAllById(ids)).thenReturn(List.of(fc1, fc2));
         var dto = new CompetitionRequestDTO("",
-                CountryCode.GB,
+                GB,
                 "2025-01-01",
                 "2025-12-30",
                 ids,
@@ -95,9 +95,9 @@ class CompetitionServiceTests {
         var ids = List.of(0L, 1L);
         var clubs = FootballClubTestUtils.getFourFootballClubs(true);
         when(fcdl.findAllById(ids)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true).subList(0, 2));
-        when(fcdl.findByIdNotIn(ids, 2)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true).subList(2, 4));
+        when(fcdl.findByIdNotInAndCountryIn(ids, GB, 2)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true).subList(2, 4));
         var dto = new CompetitionRequestDTO("",
-                CountryCode.GB,
+                GB,
                 "2025-01-01",
                 "2025-12-30",
                 ids,
@@ -131,7 +131,7 @@ class CompetitionServiceTests {
         // arrange
         var ids = List.of(1L, 2L, 3L);
         var dto = new CompetitionRequestDTO("",
-                CountryCode.GB,
+                GB,
                 "2025-01-01",
                 "2025-12-30",
                 ids,
@@ -152,7 +152,7 @@ class CompetitionServiceTests {
         // arrange
         var ids = List.of(1L, 2L, 3L, 4L);
         var dto = new CompetitionRequestDTO("",
-                CountryCode.GB,
+                GB,
                 "2025-01-01",
                 "2025-12-30",
                 ids,
@@ -176,7 +176,7 @@ class CompetitionServiceTests {
         fc1.setId(1L);
         when(fcdl.findAllById(ids)).thenReturn(List.of(fc1));
         var dto = new CompetitionRequestDTO("",
-                CountryCode.GB,
+                GB,
                 "2025-01-01",
                 "2025-12-30",
                 ids,
@@ -201,7 +201,7 @@ class CompetitionServiceTests {
         var ids = List.of(0L, 1L, 2L, 3L);
         when(fcdl.findAllById(ids)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true));
         var comp = service.generateAndSave(new CompetitionRequestDTO("",
-                CountryCode.GB,
+                GB,
                 "2025-01-01",
                 "2025-12-30",
                 ids,

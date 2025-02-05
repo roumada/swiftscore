@@ -141,7 +141,7 @@ public class CompetitionService {
         }
 
         clubs.addAll(footballClubDataLayer
-                .findByIdNotIn(dto.participantIds(), dto.fillToParticipants() - dto.participantIds().size()));
+                .findByIdNotInAndCountryIn(dto.participantIds(), dto.country(), dto.fillToParticipants() - dto.participantIds().size()));
         return clubs.size() == dto.participantsAmount() ? clubs : Collections.emptyList();
     }
 

@@ -62,6 +62,7 @@ public class StatisticsService {
                             .map(FootballMatchMapper.INSTANCE::matchToMatchResponse)
                             .toList());
         }
+        standingsForFC.values().forEach(StandingsResponseDTO::calculateGoalDifference);
 
         return Either.right(standingsForFC.values()
                 .stream()
@@ -69,7 +70,7 @@ public class StatisticsService {
                         .comparingInt(StandingsResponseDTO::getPoints)
                         .thenComparing(StandingsResponseDTO::getWins)
                         .thenComparing(StandingsResponseDTO::getDraws)
-                        .thenComparing(StandingsResponseDTO::getGoalsScored)
+                        .thenComparing(StandingsResponseDTO::getGoalDifference)
                         .reversed())
                 .toList());
     }

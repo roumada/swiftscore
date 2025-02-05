@@ -12,6 +12,7 @@ public class StandingsResponseDTO {
     private int losses = 0;
     private int goalsScored = 0;
     private int goalsConceded = 0;
+    private int goalDifference = 0;
     private int points = 0;
     private List<FootballMatchResponseDTO> lastMatchesStatistics;
 
@@ -41,11 +42,11 @@ public class StandingsResponseDTO {
         goalsConceded += goals;
     }
 
-    public void addPoints(int points) {
-        this.points += points;
-    }
-
     public void setStatistics(List<FootballMatchResponseDTO> statistics) {
         this.lastMatchesStatistics = statistics;
+    }
+
+    public void calculateGoalDifference(){
+        goalDifference = goalsScored - goalsConceded;
     }
 }

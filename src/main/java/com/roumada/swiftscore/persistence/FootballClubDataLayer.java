@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.persistence;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import lombok.AllArgsConstructor;
@@ -38,5 +39,10 @@ public class FootballClubDataLayer {
     public List<FootballClub> findByIdNotIn(List<Long> footballClubIds, int amount) {
         var pageable = PageRequest.of(0, amount);
         return repository.findByIdNotIn(footballClubIds, pageable);
+    }
+
+    public List<FootballClub> findByIdNotInAndCountryIn(List<Long> footballClubIds, CountryCode country, int amount) {
+        var pageable = PageRequest.of(0, amount);
+        return repository.findByIdNotInAndCountryIn(footballClubIds, country, pageable);
     }
 }

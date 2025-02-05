@@ -134,7 +134,7 @@ public class CompetitionController {
     }
 
 
-    @Operation(summary = "Simulate a competition with given ID x times")
+    @Operation(summary = "Simulate a competition with given ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competition simulated",
                     content = {@Content(mediaType = "application/json",
@@ -145,10 +145,11 @@ public class CompetitionController {
                     content = @Content)})
     @PostMapping("/{id}/simulate")
     public ResponseEntity<Object> simulate(@PathVariable long id,
-                                           @Parameter(description = "Amount of rounds to be simulated" +
-                                                   "If value greater than rounds that can be simulated (if it's not 0), simulates until the end", example = "1")
+                                           @Parameter(description = "Amount of rounds to be simulated\n" +
+                                                   "If value greater than rounds that can be simulated (and the league can still be simulated), " +
+                                                   "simulates until the end", example = "1")
                                            @RequestParam @Min(1) Integer times,
-                                           @Parameter(description = "Simplify the result")
+                                           @Parameter(description = "Simplify the result (roundIDs instead of round objects)")
                                            @RequestParam(required = false, defaultValue = "false") boolean simplify,
                                            HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
