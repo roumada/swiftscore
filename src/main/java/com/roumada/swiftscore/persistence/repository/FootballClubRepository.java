@@ -16,4 +16,6 @@ public interface FootballClubRepository extends MongoRepository<FootballClub, Lo
     List<FootballClub> findByIdNotIn(List<Long> footballClubIds, PageRequest pageable);
 
     List<FootballClub> findByIdNotInAndCountryIn(List<Long> footballClubIds, CountryCode country, PageRequest pageable);
+
+    List<FootballClub> findAllByIdInAndCountryIn(List<Long> ids, CountryCode country);
 }

@@ -161,10 +161,10 @@ public class CompetitionController {
                 error -> ResponseEntity.badRequest().body(error),
                 success -> simplify ?
                         ResponseEntity.ok(new CompetitionSimulationSimpleResponseDTO(competition.getId(),
-                                times,
+                                competition.getLastSimulatedRound(),
                                 success.stream().map(CompetitionRound::getId).toList())) :
                         ResponseEntity.ok(new CompetitionSimulationResponseDTO(competition.getId(),
-                                times,
+                                competition.getLastSimulatedRound(),
                                 CompetitionRoundMapper.INSTANCE.roundsToResponseDTOs(success)))
         );
     }

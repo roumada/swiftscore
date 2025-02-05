@@ -127,7 +127,7 @@ public class CompetitionService {
         List<FootballClub> clubs = new ArrayList<>();
 
         if (dto.participantIds() != null) {
-            clubs = footballClubDataLayer.findAllById(dto.participantIds());
+            clubs = footballClubDataLayer.findAllByIdAndCountry(dto.participantIds(), dto.country());
 
             if (clubs.size() != dto.participantIds().size()) {
                 return Collections.emptyList();

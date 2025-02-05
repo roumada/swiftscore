@@ -32,13 +32,8 @@ public class FootballClubDataLayer {
         return repository.findById(id);
     }
 
-    public List<FootballClub> findAllById(List<Long> ids) {
-        return repository.findAllById(ids);
-    }
-
-    public List<FootballClub> findByIdNotIn(List<Long> footballClubIds, int amount) {
-        var pageable = PageRequest.of(0, amount);
-        return repository.findByIdNotIn(footballClubIds, pageable);
+    public List<FootballClub> findAllByIdAndCountry(List<Long> longs, CountryCode country) {
+        return repository.findAllByIdInAndCountryIn(longs, country);
     }
 
     public List<FootballClub> findByIdNotInAndCountryIn(List<Long> footballClubIds, CountryCode country, int amount) {

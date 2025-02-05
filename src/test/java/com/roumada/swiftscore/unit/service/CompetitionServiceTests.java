@@ -57,7 +57,7 @@ class CompetitionServiceTests {
         fc1.setId(1L);
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
         fc2.setId(2L);
-        when(fcdl.findAllById(ids)).thenReturn(List.of(fc1, fc2));
+        when(fcdl.findAllByIdAndCountry(ids, GB)).thenReturn(List.of(fc1, fc2));
         var dto = new CompetitionRequestDTO("",
                 GB,
                 "2025-01-01",
@@ -94,7 +94,7 @@ class CompetitionServiceTests {
         when(sequenceService.getNextValue()).thenAnswer((Answer<Long>) invocationOnMock -> increment());
         var ids = List.of(0L, 1L);
         var clubs = FootballClubTestUtils.getFourFootballClubs(true);
-        when(fcdl.findAllById(ids)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true).subList(0, 2));
+        when(fcdl.findAllByIdAndCountry(ids, GB)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true).subList(0, 2));
         when(fcdl.findByIdNotInAndCountryIn(ids, GB, 2)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true).subList(2, 4));
         var dto = new CompetitionRequestDTO("",
                 GB,
@@ -174,7 +174,7 @@ class CompetitionServiceTests {
         var ids = List.of(1L, 2L);
         var fc1 = FootballClub.builder().name("FC1").victoryChance(0.2f).build();
         fc1.setId(1L);
-        when(fcdl.findAllById(ids)).thenReturn(List.of(fc1));
+        when(fcdl.findAllByIdAndCountry(ids, GB)).thenReturn(List.of(fc1));
         var dto = new CompetitionRequestDTO("",
                 GB,
                 "2025-01-01",
@@ -199,7 +199,7 @@ class CompetitionServiceTests {
         // arrange
         when(sequenceService.getNextValue()).thenAnswer((Answer<Long>) invocationOnMock -> increment());
         var ids = List.of(0L, 1L, 2L, 3L);
-        when(fcdl.findAllById(ids)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true));
+        when(fcdl.findAllByIdAndCountry(ids, GB)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true));
         var comp = service.generateAndSave(new CompetitionRequestDTO("",
                 GB,
                 "2025-01-01",

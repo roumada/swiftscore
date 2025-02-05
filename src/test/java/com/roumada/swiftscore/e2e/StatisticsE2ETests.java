@@ -34,8 +34,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
     @DisplayName("Should correctly generate statistics for a competition")
     void shouldCorrectlyGenerateStatisticsForCompetition() throws JSONException {
         // arrange
-        var clubIds = clubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false))
-                .stream().map(FootballClub::getId).toList();
+        var clubIds = FootballClubTestUtils.getIdsOfSavedClubs(clubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
         CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
                 CountryCode.GB,
                 "2025-01-01",

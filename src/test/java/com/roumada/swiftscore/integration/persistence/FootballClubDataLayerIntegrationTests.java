@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.integration.persistence;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
@@ -74,14 +75,14 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     void findAllByIds_shouldSave() {
         // arrange
         var savedIds = repository.saveAll(List.of(
-                FootballClub.builder().name("FC1").victoryChance(0.1).build(),
-                FootballClub.builder().name("FC2").victoryChance(0.1).build(),
-                FootballClub.builder().name("FC3").victoryChance(0.1).build(),
-                FootballClub.builder().name("FC4").victoryChance(0.1).build()
+                FootballClub.builder().name("FC1").country(CountryCode.GB).victoryChance(0.1).build(),
+                FootballClub.builder().name("FC2").country(CountryCode.GB).victoryChance(0.1).build(),
+                FootballClub.builder().name("FC3").country(CountryCode.GB).victoryChance(0.1).build(),
+                FootballClub.builder().name("FC4").country(CountryCode.GB).victoryChance(0.1).build()
         )).stream().map(FootballClub::getId).toList();
 
         // act
-        var foundClubs = dataLayer.findAllById(savedIds);
+        var foundClubs = dataLayer.findAllByIdAndCountry(savedIds, CountryCode.GB);
 
         // assert
         assertEquals(savedIds.size(), foundClubs.size());
@@ -98,7 +99,7 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
         savedIds.remove(0);
 
         // act
-        var foundClubs = dataLayer.findByIdNotIn(List.of(excluded), 4);
+        var foundClubs = dataLayer.findByIdNotInAndCountryIn(List.of(excluded), CountryCode.GB, 4);
 
         // assert
         assertEquals(3, foundClubs.size());

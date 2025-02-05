@@ -3,6 +3,6 @@ package com.roumada.swiftscore.model.dto.response;
 import java.util.List;
 
 public record CompetitionSimulationResponseDTO(long competitionId,
-                                               int roundsSimulated,
+                                               int simulatedUntil,
                                                List<CompetitionRoundResponseDTO> rounds) {
 }

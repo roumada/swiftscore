@@ -20,8 +20,8 @@ public class FootballClubTestUtils {
 
     public static List<FootballClub> getTwoFootballClubs() {
         return List.of(
-                FootballClub.builder().name("FC1").stadiumName("FC1 Park").victoryChance(1).build(),
-                FootballClub.builder().name("FC2").stadiumName("FC2 Park").victoryChance(0.9f).build()
+                FootballClub.builder().name("FC1").country(CountryCode.GB).stadiumName("FC1 Park").victoryChance(1).build(),
+                FootballClub.builder().name("FC2").country(CountryCode.GB).stadiumName("FC2 Park").victoryChance(0.9f).build()
         );
     }
 
