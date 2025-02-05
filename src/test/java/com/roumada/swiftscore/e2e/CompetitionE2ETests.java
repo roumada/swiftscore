@@ -52,6 +52,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 "2025-01-01",
                 "2025-10-30",
                 clubIds,
+                null,
                 new SimulationValues(0));
 
         // STEP 1: create competition
@@ -134,6 +135,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 "2025-01-01",
                 "2025-10-30",
                 clubIds,
+                null,
                 new SimulationValues(0));
 
         // STEP 1: create competition

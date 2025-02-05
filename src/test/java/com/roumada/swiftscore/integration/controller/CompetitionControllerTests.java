@@ -52,8 +52,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     private FootballMatchDataLayer footballMatchDataLayer;
 
     @Test
-    @DisplayName("Create competition - with valid football club IDs - should create")
-    void createCompetition_validData_isCreated() throws Exception {
+    @DisplayName("Create competition - with valid football club IDs & football IDs only - should create")
+    void createCompetition_validDataAndIdsOnly_isCreated() throws Exception {
         // arrange
         var ids = PersistenceTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
@@ -66,6 +66,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         "2025-01-01",
                                         "2025-10-01",
                                         ids,
+                                        null,
                                         new SimulationValues(0)))))
                 .andExpect(status().isOk()).andReturn();
 
@@ -90,12 +91,13 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         "2025-01-01",
                                         "2025-10-30",
                                         List.of(1L, 2L, 3L, 9L),
+                                        null,
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Failed to generate competition - failed to retrieve at least one club from the database.", errorMsg);
+        assertEquals("Failed to generate competition - failed to retrieve enough clubs from the database.", errorMsg);
     }
 
     @Test
@@ -112,6 +114,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 "2025-01-01",
                                 "2025-10-30",
                                 List.of(1L, 2L, 3L),
+                                null,
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -137,6 +140,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 "2025-01-01",
                                 "2025-10-30",
                                 ids,
+                                null,
                                 new SimulationValues(variation, 0.0, 0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -167,6 +171,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 "2025-01-01",
                                 "2025-11-10",
                                 ids,
+                                null,
                                 new SimulationValues(0.0, 0.0, drawTriggerChance)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -197,6 +202,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 "2025-01-01",
                                 "2025-10-30",
                                 ids,
+                                null,
                                 new SimulationValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -237,6 +243,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 startDate,
                                 endDate,
                                 ids,
+                                null,
                                 new SimulationValues(0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -260,6 +267,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 "2025-01-01",
                                 "2025-10-30",
                                 List.of(1L, 2L, 3L),
+                                null,
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();

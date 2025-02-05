@@ -41,6 +41,7 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
                         "2025-01-01",
                         "2025-12-30",
                         ids,
+                        null,
                         new SimulationValues(0.0)))
                 .get();
         var compId = compdl.save(comp).getId();

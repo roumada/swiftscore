@@ -61,6 +61,7 @@ class CompetitionServiceTests {
                 "2025-01-01",
                 "2025-12-30",
                 ids,
+                null,
                 new SimulationValues(0));
 
         // act
@@ -97,6 +98,7 @@ class CompetitionServiceTests {
                 "2025-01-01",
                 "2025-12-30",
                 ids,
+                null,
                 new SimulationValues(0));
 
         // act
@@ -120,6 +122,7 @@ class CompetitionServiceTests {
                 "2025-01-01",
                 "2025-12-30",
                 ids,
+                null,
                 new SimulationValues(0))).get();
 
         for (int i = 0; i < comp.getParticipants().size() * 2 - 2; i++) {

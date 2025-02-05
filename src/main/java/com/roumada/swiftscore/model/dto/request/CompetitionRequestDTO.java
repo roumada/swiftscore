@@ -25,11 +25,15 @@ public record CompetitionRequestDTO(
         @NotNull(message = "End date cannot be null")
         String endDate,
         List<Long> participantIds,
-        int fillToParticipants,
+        Integer fillToParticipants,
         @NotNull(message = "Simulator values cannot be null")
         @Valid
         SimulationValues simulationValues
 ) {
+
+    public Integer fillToParticipants() {
+        return fillToParticipants == null ? 0 : fillToParticipants;
+    }
 
     public List<Long> participantIds() {
         return participantIds == null ? Collections.emptyList() : participantIds;
@@ -37,6 +41,6 @@ public record CompetitionRequestDTO(
 
     public int participantsAmount() {
         int participantIdsSize = participantIds == null ? 0 : participantIds.size();
-        return Math.max(participantIdsSize, fillToParticipants);
+        return Math.max(participantIdsSize, fillToParticipants());
     }
 }

@@ -118,6 +118,10 @@ public class CompetitionService {
     }
 
     private List<FootballClub> findClubs(CompetitionRequestDTO dto) {
+        if (dto.participantsAmount() == 0) {
+            return Collections.emptyList();
+        }
+
         List<FootballClub> clubs = new ArrayList<>();
 
         if (dto.participantIds() != null) {

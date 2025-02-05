@@ -154,17 +154,16 @@ public class CompetitionController {
         var findResult = service.findCompetitionById(id);
         if (findResult.isLeft()) return ResponseEntity.badRequest().body(findResult.getLeft());
 
+        var competition = findResult.get();
         return service.simulate(findResult.get(), times).fold(
                 error -> ResponseEntity.badRequest().body(error),
-                success -> {
-                    if (simplify) {
-                        return ResponseEntity.ok(new CompetitionSimulationSimpleResponseDTO(findResult.get().getId(), times,
-                                success.stream().map(CompetitionRound::getId).toList()));
-                    } else {
-                        return ResponseEntity.ok(new CompetitionSimulationResponseDTO(findResult.get().getId(), times,
-                                CompetitionRoundMapper.INSTANCE.roundsToResponseDTOs(success)));
-                    }
-                }
+                success -> simplify ?
+                        ResponseEntity.ok(new CompetitionSimulationSimpleResponseDTO(competition.getId(),
+                                times,
+                                success.stream().map(CompetitionRound::getId).toList())) :
+                        ResponseEntity.ok(new CompetitionSimulationResponseDTO(competition.getId(),
+                                times,
+                                CompetitionRoundMapper.INSTANCE.roundsToResponseDTOs(success)))
         );
     }
 
