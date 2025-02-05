@@ -125,7 +125,7 @@ public class CompetitionService {
         List<FootballClub> clubs = new ArrayList<>();
 
         if (dto.participantIds() != null) {
-            clubs = footballClubDataLayer.findAllByIdAndCountry(dto.participantIds(), dto.country());
+            clubs = new ArrayList<>(footballClubDataLayer.findAllByIdAndCountry(dto.participantIds(), dto.country()));
 
             if (clubs.size() != dto.participantIds().size()) {
                 return Either.left("Couldn't retrieve all clubs for given IDs and country");

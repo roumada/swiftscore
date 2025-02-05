@@ -215,6 +215,52 @@ class CompetitionServiceTests {
         assertEquals(String.class, optionalComp.getLeft().getClass());
     }
 
+    @Test
+    @DisplayName("Generate competition - not enough clubs to fill with fc IDs - should return error message")
+    void generateCompetition_notEnoughClubsWithFCIds_shouldGenerateError() {
+        // arrange
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(FootballClubTestUtils.getTwoFootballClubs());
+        when(fcdl.findAllByIdAndCountry(ids, ES)).thenReturn(FootballClubTestUtils.getTwoFootballClubs());
+        when(fcdl.findByIdNotInAndCountryIn(ids, ES, 2)).thenReturn(Collections.emptyList());
+        var dto = new CompetitionRequestDTO("",
+                ES,
+                "2025-01-01",
+                "2025-12-30",
+                ids,
+                4,
+                new SimulationValues(0));
+
+        // act
+        var optionalComp = service.generateAndSave(dto);
+
+        // assert
+        assertTrue(optionalComp.isLeft());
+        assertEquals(String.class, optionalComp.getLeft().getClass());
+        assertEquals("Couldn't find enough clubs from given country to fill in the league", optionalComp.getLeft());
+    }
+
+    @Test
+    @DisplayName("Generate competition - not enough clubs to fill without fc IDs - should return error message")
+    void generateCompetition_notEnoughClubsWithoutFCIds_shouldGenerateError() {
+        // arrange
+        when(fcdl.findByIdNotInAndCountryIn(Collections.emptyList(), ES, 4)).thenReturn(FootballClubTestUtils.getTwoFootballClubs());
+        var dto = new CompetitionRequestDTO("",
+                ES,
+                "2025-01-01",
+                "2025-12-30",
+                null,
+                4,
+                new SimulationValues(0));
+
+        // act
+        var optionalComp = service.generateAndSave(dto);
+
+        // assert
+        assertTrue(optionalComp.isLeft());
+        assertEquals(String.class, optionalComp.getLeft().getClass());
+        assertEquals("Couldn't find enough clubs from given country to fill in the league", optionalComp.getLeft());
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {1, 2})
     @DisplayName("Simulate competition - for a competition with four clubs - " +
