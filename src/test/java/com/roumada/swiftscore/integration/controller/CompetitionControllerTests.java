@@ -244,7 +244,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Failed to generate competition - failed to retrieve enough clubs from the database.", errorMsg);
+        assertEquals("Couldn't retrieve all clubs for given IDs and country", errorMsg);
     }
 
     @Test
@@ -270,7 +270,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Failed to generate competition - failed to retrieve enough clubs from the database.", errorMsg);
+        assertEquals("Couldn't retrieve all clubs for given IDs and country", errorMsg);
     }
 
     @Test
