@@ -248,6 +248,32 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("Create competition - invalid club countries - should return error code")
+    void createCompetition_invalidClubCountries_shouldReturnErrorCode() throws Exception {
+        // arrange
+        var clubs = FootballClubTestUtils.getFourFootballClubs(false);
+        clubs.get(0).setCountry(CountryCode.ES);
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(clubs));
+
+        // act
+        var errorMsg = mvc.perform(post("/competition")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new CompetitionRequestDTO("",
+                                        CountryCode.GB,
+                                        "2025-01-01",
+                                        "2025-10-30",
+                                        ids,
+                                        null,
+                                        new SimulationValues(0)))))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        assertEquals("Failed to generate competition - failed to retrieve enough clubs from the database.", errorMsg);
+    }
+
+    @Test
     @DisplayName("Create competition  - with uneven football club ID count - should return error code")
     void createCompetition_invalidIdCount_shouldReturnErrorCode() throws Exception {
         // arrange
@@ -269,7 +295,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // assert
         assertEquals("Failed to generate competition - the amount of clubs participating must be even.",
                 errorMsg);
-
     }
 
     @ParameterizedTest

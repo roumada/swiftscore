@@ -23,8 +23,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
+import java.util.Collections;
 import java.util.List;
 
+import static com.neovisionaries.i18n.CountryCode.ES;
 import static com.neovisionaries.i18n.CountryCode.GB;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -177,6 +179,28 @@ class CompetitionServiceTests {
         when(fcdl.findAllByIdAndCountry(ids, GB)).thenReturn(List.of(fc1));
         var dto = new CompetitionRequestDTO("",
                 GB,
+                "2025-01-01",
+                "2025-12-30",
+                ids,
+                null,
+                new SimulationValues(0));
+
+        // act
+        var optionalComp = service.generateAndSave(dto);
+
+        // assert
+        assertTrue(optionalComp.isLeft());
+        assertEquals(String.class, optionalComp.getLeft().getClass());
+    }
+
+    @Test
+    @DisplayName("Generate competition - competition and league country mismatch - should return error message")
+    void generateCompetition_invalidCountries_shouldGenerateError() {
+        // arrange
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(FootballClubTestUtils.getTwoFootballClubs());
+        when(fcdl.findAllByIdAndCountry(ids, ES)).thenReturn(Collections.emptyList());
+        var dto = new CompetitionRequestDTO("",
+                ES,
                 "2025-01-01",
                 "2025-12-30",
                 ids,
