@@ -145,7 +145,8 @@ public class CompetitionController {
                     content = @Content)})
     @PostMapping("/{id}/simulate")
     public ResponseEntity<Object> simulate(@PathVariable long id,
-                                           @Parameter(description = "Amount of rounds to be simulated", example = "1")
+                                           @Parameter(description = "Amount of rounds to be simulated" +
+                                                   "If value greater than rounds that can be simulated (if it's not 0), simulates until the end", example = "1")
                                            @RequestParam @Min(1) Integer times,
                                            @Parameter(description = "Simplify the result")
                                            @RequestParam(required = false, defaultValue = "false") boolean simplify,

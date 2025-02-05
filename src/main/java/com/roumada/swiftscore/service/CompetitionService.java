@@ -90,13 +90,14 @@ public class CompetitionService {
 
 
     public Either<String, List<CompetitionRound>> simulate(Competition competition, int times) {
-        if (!competition.canSimulate(times)) {
+        if (competition.isFullySimulated()) {
             String errorMsg =
-                    "Cannot simulate competition with [%s] and last simulated round [%s] [%s] times."
-                            .formatted(competition.getId(), competition.getLastSimulatedRound(), times);
+                    "Cannot simulate competition [%s] further".formatted(competition.getId());
             log.error(errorMsg);
             return Either.left(errorMsg);
         }
+
+        times = adjustTimesToSimulate(competition, times);
 
         List<CompetitionRound> simulatedRounds = new ArrayList<>();
         do {
@@ -109,6 +110,7 @@ public class CompetitionService {
 
         return Either.right(simulatedRounds);
     }
+
 
     private Competition simulateCurrentRound(Competition competition) {
         var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(competition.getSimulationValues()));
@@ -171,5 +173,14 @@ public class CompetitionService {
         footballMatchDataLayer.deleteByCompetitionId(id);
         competitionRoundDataLayer.deleteByCompetitionId(id);
         competitionDataLayer.delete(id);
+    }
+
+    private int adjustTimesToSimulate(Competition competition, int times) {
+        if (competition.getRounds().size() - competition.getLastSimulatedRound() < times) {
+            log.info("Attempting to simulate a competition [{}] times while the competition has only [{}] rounds left. Simulating the entire competition",
+                    times, competition.getRounds().size() - competition.getLastSimulatedRound());
+            return competition.getRounds().size() - competition.getLastSimulatedRound();
+        }
+        return times;
     }
 }

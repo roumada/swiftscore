@@ -46,8 +46,8 @@ public class Competition {
         this.rounds = rounds;
     }
 
-    public boolean canSimulate(int times) {
-        return rounds.size() >= (lastSimulatedRound + times);
+    public boolean isFullySimulated() {
+        return rounds.size() <= (lastSimulatedRound);
     }
 
     public CompetitionRound currentRound() {
