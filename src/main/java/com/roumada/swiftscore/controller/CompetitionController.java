@@ -58,6 +58,7 @@ public class CompetitionController {
                                       "participantIds": [
                                         10000, 10001
                                       ],
+                                      "fillToParticipants": 6,
                                       "simulationValues": {
                                         "variance": 0.1,
                                         "scoreDifferenceDrawTrigger": 0.2,

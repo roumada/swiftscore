@@ -3,6 +3,7 @@ package com.roumada.swiftscore.service;
 import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
+import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
@@ -14,12 +15,12 @@ import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import com.roumada.swiftscore.persistence.sequence.PrimarySequenceService;
 import io.vavr.control.Either;
-import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -49,16 +50,16 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
-        if (dto.participantIds().size() % 2 == 1) {
+        if (dto.participantsAmount() % 2 == 1) {
             var errorMsg = "Failed to generate competition - the amount of clubs participating must be even.";
             log.error(errorMsg);
             return Either.left(errorMsg);
         }
 
-        var footballClubs = footballClubDataLayer.findAllById(dto.participantIds());
+        var footballClubs = findClubs(dto);
 
-        if (footballClubs.size() != dto.participantIds().size()) {
-            var errorMsg = "Failed to generate competition - failed to retrieve at least one club from the database.";
+        if (footballClubs.isEmpty()) {
+            var errorMsg = "Failed to generate competition - failed to retrieve enough clubs from the database.";
             log.error(errorMsg);
             return Either.left(errorMsg);
         }
@@ -114,6 +115,28 @@ public class CompetitionService {
         roundSimulator.simulate(competition.currentRound());
         log.info("Competition with id [{}] simulated.", competition.getId());
         return competition;
+    }
+
+    private List<FootballClub> findClubs(CompetitionRequestDTO dto) {
+        List<FootballClub> clubs = new ArrayList<>();
+
+        if (dto.participantIds() != null) {
+            clubs = footballClubDataLayer.findAllById(dto.participantIds());
+
+            if (clubs.size() != dto.participantIds().size()) {
+                return Collections.emptyList();
+            }
+
+            if (dto.fillToParticipants() <= dto.participantIds().size()) {
+                log.info("FillToParticipants parameter [{}] lower than amount of club IDs provided ([{}]). Returning clubs with denoted club IDs only.",
+                        dto.fillToParticipants(), dto.participantIds().size());
+                return clubs;
+            }
+        }
+
+        clubs.addAll(footballClubDataLayer
+                .findByIdNotIn(dto.participantIds(), dto.fillToParticipants() - dto.participantIds().size()));
+        return clubs.size() == dto.participantsAmount() ? clubs : Collections.emptyList();
     }
 
     private void persistChanges(Competition compSimulated) {

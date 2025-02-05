@@ -4,6 +4,7 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -32,5 +33,10 @@ public class FootballClubDataLayer {
 
     public List<FootballClub> findAllById(List<Long> ids) {
         return repository.findAllById(ids);
+    }
+
+    public List<FootballClub> findByIdNotIn(List<Long> footballClubIds, int amount) {
+        var pageable = PageRequest.of(0, amount);
+        return repository.findByIdNotIn(footballClubIds, pageable);
     }
 }
