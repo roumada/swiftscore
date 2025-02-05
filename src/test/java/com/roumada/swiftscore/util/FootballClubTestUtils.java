@@ -20,17 +20,17 @@ public class FootballClubTestUtils {
 
     public static List<FootballClub> getTwoFootballClubs() {
         return List.of(
-                FootballClub.builder().name("FC1").stadiumName("FC1 Park").victoryChance(1).build(),
-                FootballClub.builder().name("FC2").stadiumName("FC2 Park").victoryChance(0.9f).build()
+                FootballClub.builder().name("FC1").country(CountryCode.GB).stadiumName("FC1 Park").victoryChance(1).build(),
+                FootballClub.builder().name("FC2").country(CountryCode.GB).stadiumName("FC2 Park").victoryChance(0.9f).build()
         );
     }
 
     public static List<FootballClub> getFourFootballClubs(boolean setIds) {
         List<FootballClub> clubs = new ArrayList<>();
-        clubs.add(FootballClub.builder().name("FC1").victoryChance(1).build());
-        clubs.add(FootballClub.builder().name("FC2").victoryChance(0.9).build());
-        clubs.add(FootballClub.builder().name("FC3").victoryChance(0.8).build());
-        clubs.add(FootballClub.builder().name("FC4").victoryChance(0.7).build());
+        clubs.add(FootballClub.builder().name("FC1").country(CountryCode.GB).victoryChance(1).build());
+        clubs.add(FootballClub.builder().name("FC2").country(CountryCode.GB).victoryChance(0.9).build());
+        clubs.add(FootballClub.builder().name("FC3").country(CountryCode.GB).victoryChance(0.8).build());
+        clubs.add(FootballClub.builder().name("FC4").country(CountryCode.GB).victoryChance(0.7).build());
 
         if (setIds) {
             clubs.get(0).setId(0L);
@@ -44,16 +44,24 @@ public class FootballClubTestUtils {
 
     public static List<FootballClub> getTenFootballClubs() {
         return List.of(
-                FootballClub.builder().name("FC1").victoryChance(1).build(),
-                FootballClub.builder().name("FC2").victoryChance(0.9f).build(),
-                FootballClub.builder().name("FC3").victoryChance(0.8f).build(),
-                FootballClub.builder().name("FC4").victoryChance(0.7f).build(),
-                FootballClub.builder().name("FC5").victoryChance(0.6f).build(),
-                FootballClub.builder().name("FC6").victoryChance(0.5f).build(),
-                FootballClub.builder().name("FC7").victoryChance(0.4f).build(),
-                FootballClub.builder().name("FC8").victoryChance(0.3f).build(),
-                FootballClub.builder().name("FC9").victoryChance(0.2f).build(),
-                FootballClub.builder().name("FC10").victoryChance(0.1f).build()
+                FootballClub.builder().name("FC1").country(CountryCode.GB).victoryChance(1).build(),
+                FootballClub.builder().name("FC2").country(CountryCode.GB).victoryChance(0.9f).build(),
+                FootballClub.builder().name("FC3").country(CountryCode.GB).victoryChance(0.8f).build(),
+                FootballClub.builder().name("FC4").country(CountryCode.GB).victoryChance(0.7f).build(),
+                FootballClub.builder().name("FC5").country(CountryCode.GB).victoryChance(0.6f).build(),
+                FootballClub.builder().name("FC6").country(CountryCode.GB).victoryChance(0.5f).build(),
+                FootballClub.builder().name("FC7").country(CountryCode.GB).victoryChance(0.4f).build(),
+                FootballClub.builder().name("FC8").country(CountryCode.GB).victoryChance(0.3f).build(),
+                FootballClub.builder().name("FC9").country(CountryCode.GB).victoryChance(0.2f).build(),
+                FootballClub.builder().name("FC10").country(CountryCode.GB).victoryChance(0.1f).build()
         );
+    }
+
+    public static List<Long> getIdsOfSavedClubs(List<FootballClub> clubs){
+        return getIdsOfSavedClubs(clubs, clubs.size());
+    }
+
+    public static List<Long> getIdsOfSavedClubs(List<FootballClub> clubs, int amount){
+        return new ArrayList<>(clubs.stream().map(FootballClub::getId).limit(amount).toList());
     }
 }

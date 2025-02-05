@@ -9,7 +9,6 @@ import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
-import com.roumada.swiftscore.util.PersistenceTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +34,13 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Get competition statistics - with valid competition ID - should return")
     void getCompetitionStatistics_validCompetitionId_shouldReturn() throws Exception {
         // arrange
-        var ids = PersistenceTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
         var comp = compService.generateAndSave(new CompetitionRequestDTO("",
                         CountryCode.GB,
                         "2025-01-01",
                         "2025-12-30",
                         ids,
+                        null,
                         new SimulationValues(0.0)))
                 .get();
         var compId = compdl.save(comp).getId();

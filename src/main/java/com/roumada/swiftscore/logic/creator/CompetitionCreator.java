@@ -44,7 +44,7 @@ public class CompetitionCreator {
         var provider = new CompetitionDatesProvider(
                 LocalDate.parse(dto.startDate()),
                 LocalDate.parse(dto.endDate()),
-                dto.participantIds().size());
+                dto.participantsAmount());
         log.info("Created date provider with start date [{}] and step [{}]", provider.getStart(), provider.getStep());
         return provider;
     }

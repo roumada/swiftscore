@@ -52,6 +52,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 "2025-01-01",
                 "2025-10-30",
                 clubIds,
+                null,
                 new SimulationValues(0));
 
         // STEP 1: create competition
@@ -65,7 +66,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .then()
                         .statusCode(200)
                         .body("id", notNullValue())
-                        .body("currentRound", equalTo(1))
+                        .body("lastSimulatedRound", equalTo(0))
                         .body("name", equalTo(request.name()))
                         .body("startDate", equalTo(request.startDate()))
                         .body("endDate", equalTo(request.endDate()))
@@ -134,6 +135,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 "2025-01-01",
                 "2025-10-30",
                 clubIds,
+                null,
                 new SimulationValues(0));
 
         // STEP 1: create competition
@@ -147,7 +149,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .then()
                         .statusCode(200)
                         .body("id", notNullValue())
-                        .body("currentRound", equalTo(1))
+                        .body("lastSimulatedRound", equalTo(0))
                         .body("name", equalTo(request.name()))
                         .body("startDate", equalTo(request.startDate()))
                         .body("endDate", equalTo(request.endDate()))
@@ -164,6 +166,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         Response simulateCompResponse =
                 given()
                         .port(port)
+                        .param("times", "1")
                         .when()
                         .post("/%s/simulate".formatted(compId))
                         .then()
@@ -173,10 +176,10 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
 
         //// check simulated match
         var jsonResponse = new JSONObject(simulateCompResponse.asString());
-        assertEquals(1, jsonResponse.getInt("round"));
-        assertEquals(1, jsonResponse.getJSONArray("matches").length());
+        assertEquals(1, jsonResponse.getJSONArray("rounds").getJSONObject(0).getInt("round"));
+        assertEquals(1, jsonResponse.getJSONArray("rounds").getJSONObject(0).getJSONArray("matches").length());
 
-        JSONObject fm1Json = (JSONObject) jsonResponse.getJSONArray("matches").get(0);
+        JSONObject fm1Json = (JSONObject) jsonResponse.getJSONArray("rounds").getJSONObject(0).getJSONArray("matches").get(0);
         assertEquals(compId, fm1Json.getLong("competitionId"));
         assertNotSame(fm1Json.get("matchResult").toString(), FootballMatch.MatchResult.UNFINISHED.toString());
 
@@ -185,6 +188,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         simulateCompResponse =
                 given()
                         .port(port)
+                        .param("times", "1")
                         .when()
                         .post("/%s/simulate".formatted(compId))
                         .then()
@@ -194,10 +198,10 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
 
         //// check simulated match
         jsonResponse = new JSONObject(simulateCompResponse.asString());
-        assertEquals(2, jsonResponse.getInt("round"));
-        assertEquals(1, jsonResponse.getJSONArray("matches").length());
+        assertEquals(2, jsonResponse.getJSONArray("rounds").getJSONObject(0).getInt("round"));
+        assertEquals(1, jsonResponse.getJSONArray("rounds").getJSONObject(0).getJSONArray("matches").length());
 
-        JSONObject fm2Json = (JSONObject) jsonResponse.getJSONArray("matches").get(0);
+        JSONObject fm2Json = (JSONObject) jsonResponse.getJSONArray("rounds").getJSONObject(0).getJSONArray("matches").get(0);
         assertEquals(compId, fm2Json.getLong("competitionId"));
         assertNotSame(fm2Json.get("matchResult").toString(), FootballMatch.MatchResult.UNFINISHED.toString());
 

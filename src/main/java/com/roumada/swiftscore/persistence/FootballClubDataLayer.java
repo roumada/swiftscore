@@ -1,9 +1,11 @@
 package com.roumada.swiftscore.persistence;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,7 +32,12 @@ public class FootballClubDataLayer {
         return repository.findById(id);
     }
 
-    public List<FootballClub> findAllById(List<Long> ids) {
-        return repository.findAllById(ids);
+    public List<FootballClub> findAllByIdAndCountry(List<Long> longs, CountryCode country) {
+        return repository.findAllByIdInAndCountryIn(longs, country);
+    }
+
+    public List<FootballClub> findByIdNotInAndCountryIn(List<Long> footballClubIds, CountryCode country, int amount) {
+        var pageable = PageRequest.of(0, amount);
+        return repository.findByIdNotInAndCountryIn(footballClubIds, country, pageable);
     }
 }

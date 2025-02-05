@@ -35,7 +35,7 @@ public class StatisticsService {
         standingsForAwaySide.addGoalsConceded(match.getHomeSideGoalsScored());
     }
 
-    public Either<String, List<StandingsResponseDTO>> getForCompetition(Long competitionId) {
+    public Either<String, List<StandingsResponseDTO>> getForCompetition(Long competitionId, Boolean simplify) {
         Optional<Competition> optCompetition = competitionDataLayer.findCompetitionById(competitionId);
         if (optCompetition.isEmpty()) {
             String warnMsg = "Couldn't find competition with ID [%s]".formatted(competitionId);
@@ -54,14 +54,18 @@ public class StatisticsService {
             }
         }
 
-        for (FootballClub fc : comp.getParticipants()) {
-            standingsForFC.get(fc.getId())
-                    .setStatistics(footballMatchDataLayer
-                            .findAllMatchesForClubInCompetition(competitionId, fc.getId(), 0, false)
-                            .stream()
-                            .map(FootballMatchMapper.INSTANCE::matchToMatchResponse)
-                            .toList());
+        if (!simplify) {
+            for (FootballClub fc : comp.getParticipants()) {
+                standingsForFC.get(fc.getId())
+                        .setStatistics(footballMatchDataLayer
+                                .findAllMatchesForClubInCompetition(competitionId, fc.getId(), 0, false)
+                                .stream()
+                                .map(FootballMatchMapper.INSTANCE::matchToMatchResponse)
+                                .toList());
+            }
         }
+
+        standingsForFC.values().forEach(StandingsResponseDTO::calculateGoalDifference);
 
         return Either.right(standingsForFC.values()
                 .stream()
@@ -69,7 +73,7 @@ public class StatisticsService {
                         .comparingInt(StandingsResponseDTO::getPoints)
                         .thenComparing(StandingsResponseDTO::getWins)
                         .thenComparing(StandingsResponseDTO::getDraws)
-                        .thenComparing(StandingsResponseDTO::getGoalsScored)
+                        .thenComparing(StandingsResponseDTO::getGoalDifference)
                         .reversed())
                 .toList());
     }

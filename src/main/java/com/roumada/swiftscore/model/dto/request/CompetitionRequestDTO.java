@@ -8,6 +8,7 @@ import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequestDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -23,10 +24,23 @@ public record CompetitionRequestDTO(
         @Valid
         @NotNull(message = "End date cannot be null")
         String endDate,
-        @NotNull(message = "Participant IDs list cannot be null")
         List<Long> participantIds,
+        Integer fillToParticipants,
         @NotNull(message = "Simulator values cannot be null")
         @Valid
         SimulationValues simulationValues
 ) {
+
+    public Integer fillToParticipants() {
+        return fillToParticipants == null ? 0 : fillToParticipants;
+    }
+
+    public List<Long> participantIds() {
+        return participantIds == null ? Collections.emptyList() : participantIds;
+    }
+
+    public int participantsAmount() {
+        int participantIdsSize = participantIds == null ? 0 : participantIds.size();
+        return Math.max(participantIdsSize, fillToParticipants());
+    }
 }

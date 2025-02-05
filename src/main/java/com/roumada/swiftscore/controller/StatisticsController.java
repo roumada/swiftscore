@@ -34,10 +34,11 @@ public class StatisticsController {
                     content = @Content)})
     @GetMapping("competition/{competitionId}")
     public ResponseEntity<Object> getStatisticsForCompetition(@PathVariable long competitionId,
+                                                              @RequestParam(required = false, defaultValue = "false") Boolean simplify,
                                                               HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
 
-        return service.getForCompetition(competitionId).fold(
+        return service.getForCompetition(competitionId, simplify).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok
         );

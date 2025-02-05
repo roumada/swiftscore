@@ -1,9 +1,11 @@
 package com.roumada.swiftscore.integration.persistence;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,18 +75,36 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     void findAllByIds_shouldSave() {
         // arrange
         var savedIds = repository.saveAll(List.of(
-                FootballClub.builder().name("FC1").victoryChance(0.1).build(),
-                FootballClub.builder().name("FC2").victoryChance(0.1).build(),
-                FootballClub.builder().name("FC3").victoryChance(0.1).build(),
-                FootballClub.builder().name("FC4").victoryChance(0.1).build()
+                FootballClub.builder().name("FC1").country(CountryCode.GB).victoryChance(0.1).build(),
+                FootballClub.builder().name("FC2").country(CountryCode.GB).victoryChance(0.1).build(),
+                FootballClub.builder().name("FC3").country(CountryCode.GB).victoryChance(0.1).build(),
+                FootballClub.builder().name("FC4").country(CountryCode.GB).victoryChance(0.1).build()
         )).stream().map(FootballClub::getId).toList();
 
         // act
-        var foundClubs = dataLayer.findAllById(savedIds);
+        var foundClubs = dataLayer.findAllByIdAndCountry(savedIds, CountryCode.GB);
 
         // assert
         assertEquals(savedIds.size(), foundClubs.size());
         assertEquals(savedIds, foundClubs.stream().map(FootballClub::getId).toList());
     }
+
+    @Test
+    @DisplayName("Find by ID not in X - should find")
+    void findByIdNotIn_shouldSave() {
+        // arrange
+        var savedIds =
+                FootballClubTestUtils.getIdsOfSavedClubs(repository.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        long excluded = savedIds.get(0);
+        savedIds.remove(0);
+
+        // act
+        var foundClubs = dataLayer.findByIdNotInAndCountryIn(List.of(excluded), CountryCode.GB, 4);
+
+        // assert
+        assertEquals(3, foundClubs.size());
+        assertEquals(savedIds, foundClubs.stream().map(FootballClub::getId).toList());
+    }
+
 }
 

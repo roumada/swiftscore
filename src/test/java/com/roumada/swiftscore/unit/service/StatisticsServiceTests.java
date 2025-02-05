@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.unit.service;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
@@ -62,6 +63,7 @@ class StatisticsServiceTests {
         var round2 = CompetitionRound.builder().round(1).matches(List.of(match2)).build();
         var round3 = CompetitionRound.builder().round(1).matches(List.of(match3)).build();
         Competition comp = Competition.builder()
+                .country(CountryCode.GB)
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(round1, round2, round3)).build();
         comp.setId(1L);
@@ -72,7 +74,7 @@ class StatisticsServiceTests {
                 .thenReturn(List.of(match1, match2, match3));
 
         // act
-        var standingsEither = service.getForCompetition(comp.getId());
+        var standingsEither = service.getForCompetition(comp.getId(), false);
 
         // assert
         assertTrue(standingsEither.isRight());

@@ -34,13 +34,13 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
     @DisplayName("Should correctly generate statistics for a competition")
     void shouldCorrectlyGenerateStatisticsForCompetition() throws JSONException {
         // arrange
-        var clubIds = clubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false))
-                .stream().map(FootballClub::getId).toList();
+        var clubIds = FootballClubTestUtils.getIdsOfSavedClubs(clubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
         CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
                 clubIds,
+                null,
                 new SimulationValues(0));
 
         // STEP 1: create competition
@@ -61,6 +61,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
         for (int i = 0; i < 6; i++) {
             given()
                     .port(port)
+                    .param("times", "1")
                     .when()
                     .post("/competition/%s/simulate".formatted(compId))
                     .then()
@@ -108,6 +109,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
                 "2025-01-01",
                 "2025-10-30",
                 clubIds,
+                null,
                 new SimulationValues(0));
 
         // STEP 1: create first competition
@@ -175,15 +177,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
         // STEP 5: simulate comp twice to resolve its matches
         given()
                 .port(port)
-                .when()
-                .post("/competition/%s/simulate".formatted(secondCompId))
-                .then()
-                .statusCode(200)
-                .extract()
-                .response();
-
-        given()
-                .port(port)
+                .param("times", "2")
                 .when()
                 .post("/competition/%s/simulate".formatted(secondCompId))
                 .then()
