@@ -38,7 +38,7 @@ class HorusSeriesTests {
     })
     @DisplayName("Should return correct amount of goals")
     void shouldReturnCorrectGoalsAmount(int ceil, double chance, int expected) {
-        assertEquals(expected, HorusSeries.getGoalsScored(ceil, chance));
+        assertEquals(expected, HorusSeries.getFromOne(ceil, chance));
     }
 
     @ParameterizedTest
@@ -70,7 +70,7 @@ class HorusSeriesTests {
     })
     @DisplayName("Should return correct amount of goals for a draw")
     void shouldReturnCorrectGoalsAmountForDraw(int ceil, double chance, int expected) {
-        assertEquals(expected, HorusSeries.getGoalsScoredForDraw(ceil, chance));
+        assertEquals(expected, HorusSeries.getFromZero(ceil, chance));
     }
 
 }

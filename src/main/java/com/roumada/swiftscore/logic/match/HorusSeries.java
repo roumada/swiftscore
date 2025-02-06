@@ -10,12 +10,12 @@ public class HorusSeries {
     private HorusSeries() {
     }
 
-    public static int getGoalsScored(int ceil, double chance) {
+    public static int getFromOne(int ceil, double chance) {
         List<Double> summedChances = generateCumulativeChance(ceil);
         return getGoalsAccordingToChances(summedChances, chance, false);
     }
 
-    public static int getGoalsScoredForDraw(int ceil, double chance) {
+    public static int getFromZero(int ceil, double chance) {
         List<Double> summedChances = generateCumulativeChance(ceil);
         return getGoalsAccordingToChances(summedChances, chance, true);
     }
