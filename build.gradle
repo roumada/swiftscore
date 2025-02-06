@@ -29,6 +29,7 @@ dependencies {
     implementation 'io.vavr:vavr:0.10.5'
     implementation 'com.neovisionaries:nv-i18n:1.29'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    implementation 'org.apache.commons:commons-collections4:4.4'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'

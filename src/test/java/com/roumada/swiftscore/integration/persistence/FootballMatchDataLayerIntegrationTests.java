@@ -6,10 +6,15 @@ import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -127,7 +132,7 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         fmr.saveAll(List.of(match, match2, match3));
 
         // act
-        var matches = dataLayer.findAllMatchesForClub(fc1.getId(), 0, true);
+        var matches = dataLayer.findAllMatchesForClub(fc1.getId(), 0, 5,true);
 
         // assert
         assertEquals(3, matches.size());
@@ -154,10 +159,40 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         fmr.saveAll(List.of(match, match2, match3));
 
         // act
-        var matches = dataLayer.findAllMatchesForClub(fc1.getId(), 0, false);
+        var matches = dataLayer.findAllMatchesForClub(fc1.getId(), 0, 5,false);
 
         // assert
         assertEquals(2, matches.size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "0, 7, 7",
+            "1, 4, 4",
+            "2, 4, 2",
+            "3, 4, 0",
+            "0, 11, 10",
+    })
+    @DisplayName("Find matches for club - various page numbers and sizes - should find adequate amount")
+    void findAllMatchesForClub_variousSizes_findAdequateAmount(int number, int size, int expectedAmount) {
+        // arrange
+        var competitionId = 1L;
+        var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
+        var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
+        fcr.save(fc1);
+        fcr.save(fc2);
+        var match = new FootballMatch(fc1, fc2);
+        match.setMatchResult(FootballMatch.MatchResult.UNFINISHED);
+        match.setCompetitionId(competitionId);
+        var matchCopies = new ArrayList<>(Collections.nCopies(10, match));
+        var deepCopies = CollectionUtils.collect(matchCopies, x-> new FootballMatch(fc1, fc2));
+        fmr.saveAll(deepCopies);
+
+        // act
+        var result = dataLayer.findAllMatchesForClub(fc1.getId(), number, size,true);
+
+        // assert
+        assertEquals(expectedAmount, result.size());
     }
 
     @Test
@@ -190,4 +225,6 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         assertEquals(Optional.empty(), dataLayer.findMatchById(savedMatch2Id));
         assertTrue(dataLayer.findMatchById(savedMatch3Id).isPresent());
     }
+
+
 }

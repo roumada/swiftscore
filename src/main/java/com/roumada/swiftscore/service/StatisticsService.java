@@ -103,7 +103,7 @@ public class StatisticsService {
         }
     }
 
-    public Either<String, FootballClubStatisticsResponseDTO> getForClub(long clubId, int page,
+    public Either<String, FootballClubStatisticsResponseDTO> getForClub(long clubId, int page, int size,
                                                                         boolean includeUnresolved) {
         var optionalFC = footballClubDataLayer.findById(clubId);
         if (optionalFC.isEmpty()) {
@@ -114,7 +114,7 @@ public class StatisticsService {
 
         var fc = optionalFC.get();
         var statsDTO = footballMatchDataLayer
-                .findAllMatchesForClub(fc.getId(), page, includeUnresolved)
+                .findAllMatchesForClub(fc.getId(), page, size, includeUnresolved)
                 .stream()
                 .map(FootballMatchMapper.INSTANCE::matchToMatchResponse)
                 .toList();

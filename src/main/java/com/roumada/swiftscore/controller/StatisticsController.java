@@ -53,8 +53,10 @@ public class StatisticsController {
                     content = @Content)})
     @GetMapping("club/{clubId}")
     public ResponseEntity<Object> getStatisticsForClub(@PathVariable long clubId,
-                                                       @Parameter(description = "Page of statistics (page size = 5)", example = "0")
-                                                       @RequestParam(required = false) Integer page,
+                                                       @Parameter(description = "Page number", example = "0")
+                                                       @RequestParam(required = false, defaultValue = "0") Integer page,
+                                                       @Parameter(description = "Page size", example = "0")
+                                                       @RequestParam(required = false, defaultValue = "5") Integer size,
                                                        @Parameter(description = "Whether to include planned but not yet played matches or not")
                                                        @RequestParam(required = false) Boolean includeUnresolved,
                                                        HttpServletRequest request) {
@@ -62,7 +64,7 @@ public class StatisticsController {
         if (includeUnresolved == null) includeUnresolved = false;
         if (page == null) page = 0;
 
-        return service.getForClub(clubId, page, includeUnresolved).fold(
+        return service.getForClub(clubId, page, size, includeUnresolved).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok
         );

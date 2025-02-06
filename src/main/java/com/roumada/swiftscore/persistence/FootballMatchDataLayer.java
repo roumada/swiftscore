@@ -31,8 +31,8 @@ public class FootballMatchDataLayer {
         return footballMatchRepository.findById(id);
     }
 
-    public List<FootballMatch> findAllMatchesForClub(long footballClubId, int page, boolean includeUnresolved) {
-        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Order.desc("date")));
+    public List<FootballMatch> findAllMatchesForClub(long footballClubId, int page, int size, boolean includeUnresolved) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.desc("date")));
 
         Page<FootballMatch> pageResult = includeUnresolved ?
                 footballMatchRepository

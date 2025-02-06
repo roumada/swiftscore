@@ -126,130 +126,124 @@
     "victoryChance": 0.71
   },
   {
-    "name": "Real Valladolid",
+    "name": "Albacete Fútbol",
     "country": "ES",
-    "stadiumName": "Estadio Valladolid Arena",
-    "victoryChance": 0.83
+    "stadiumName": "Albacete Field",
+    "victoryChance": 0.65
   },
   {
-    "name": "Granada",
+    "name": "Real Marbella",
     "country": "ES",
-    "stadiumName": "Estadio Nuevo Granada",
-    "victoryChance": 0.42
+    "stadiumName": "Costa del Sol",
+    "victoryChance": 0.72
   },
   {
-    "name": "Málaga",
+    "name": "Atlético Granada",
     "country": "ES",
-    "stadiumName": "Estadio Málaga Central",
-    "victoryChance": 0.68
+    "stadiumName": "Nuevo Los Cármenes",
+    "victoryChance": 0.58
   },
   {
-    "name": "Almería",
+    "name": "Valencia Atlético",
     "country": "ES",
-    "stadiumName": "Estadio Almería Stadium",
-    "victoryChance": 0.55
+    "stadiumName": "Mestalla Nuevo",
+    "victoryChance": 0.81
   },
   {
-    "name": "Cádiz",
+    "name": "RCD Sevilla",
     "country": "ES",
-    "stadiumName": "Estadio Cádiz Arena",
-    "victoryChance": 0.91
+    "stadiumName": "Estadio La Palmera",
+    "victoryChance": 0.69
   },
   {
-    "name": "Tenerife Fútbol",
+    "name": "Real Gijón Occidental",
     "country": "ES",
-    "stadiumName": "Estadio Tenerife Field",
-    "victoryChance": 0.39
+    "stadiumName": "Estadio El Molinón Nuevo",
+    "victoryChance": 0.47
   },
   {
-    "name": "Elche Rayo",
+    "name": "Córdoba FC",
     "country": "ES",
-    "stadiumName": "Estadio Elche Stadium",
-    "victoryChance": 0.75
+    "stadiumName": "Estadio Arcángel",
+    "victoryChance": 0.53
   },
   {
-    "name": "Las Palmas",
+    "name": "Málaga United",
     "country": "ES",
-    "stadiumName": "Estadio Las Palmas Central",
+    "stadiumName": "Estadio La Rosaleda",
+    "victoryChance": 0.76
+  },
+  {
+    "name": "Real Oviedo del Norte",
+    "country": "ES",
+    "stadiumName": "Estadio Carlos Tartiere",
     "victoryChance": 0.62
   },
   {
-    "name": "Levante Fútbol",
+    "name": "Levante del Este",
     "country": "ES",
-    "stadiumName": "Estadio Levante Field",
-    "victoryChance": 0.51
+    "stadiumName": "Ciudad de Valencia",
+    "victoryChance": 0.71
   },
   {
     "name": "Real Murcia",
     "country": "ES",
-    "stadiumName": "Estadio Murcia Arena",
-    "victoryChance": 0.86
-  },
-  {
-    "name": "Córdoba Fútbol",
-    "country": "ES",
-    "stadiumName": "Estadio Córdoba Stadium",
+    "stadiumName": "Nueva Condomina",
     "victoryChance": 0.59
   },
   {
-    "name": "Castellón",
+    "name": "Zaragoza FC",
     "country": "ES",
-    "stadiumName": "Estadio Castellón Field",
-    "victoryChance": 0.46
+    "stadiumName": "Estadio La Romareda",
+    "victoryChance": 0.68
   },
   {
-    "name": "Lugo Rayo",
+    "name": "Real Valladolid",
     "country": "ES",
-    "stadiumName": "Estadio Lugo Arena",
-    "victoryChance": 0.94
+    "stadiumName": "Estadio José Zorrilla",
+    "victoryChance": 0.74
   },
   {
-    "name": "Mérida Sol",
+    "name": "Hércules Alicante",
     "country": "ES",
-    "stadiumName": "Estadio Mérida Central",
-    "victoryChance": 0.81
+    "stadiumName": "Estadio José Rico Pérez",
+    "victoryChance": 0.51
   },
   {
-    "name": "Cartagena Fútbol",
+    "name": "Real Jaén",
     "country": "ES",
-    "stadiumName": "Estadio Cartagena Stadium",
-    "victoryChance": 0.29
+    "stadiumName": "Estadio La Victoria",
+    "victoryChance": 0.42
   },
   {
-    "name": "Huesca",
+    "name": "Cádiz Atlético",
     "country": "ES",
-    "stadiumName": "Estadio Huesca Arena",
-    "victoryChance": 0.72
+    "stadiumName": "Estadio Ramón de Carranza",
+    "victoryChance": 0.63
   },
   {
-    "name": "Albacete Fútbol",
+    "name": "Real Burgos",
     "country": "ES",
-    "stadiumName": "Estadio Albacete Field",
-    "victoryChance": 0.65
+    "stadiumName": "El Plantío",
+    "victoryChance": 0.55
   },
   {
-    "name": "Girona FC",
+    "name": "Pontevedra FC",
     "country": "ES",
-    "stadiumName": "Estadio Girona Arena",
-    "victoryChance": 0.98
+    "stadiumName": "Estadio Municipal de Pasarón",
+    "victoryChance": 0.48
   },
   {
-    "name": "Villarreal",
+    "name": "Real Santander",
     "country": "ES",
-    "stadiumName": "Estadio Villarreal Stadium",
-    "victoryChance": 0.49
+    "stadiumName": "El Sardinero",
+    "victoryChance": 0.66
   },
   {
-    "name": "Sevilla",
+    "name": "RCD Lleida",
     "country": "ES",
-    "stadiumName": "Estadio Sevilla Central",
-    "victoryChance": 0.93
-  },
-  {
-    "name": "Zaragoza",
-    "country": "ES",
-    "stadiumName": "Estadio Zaragoza Arena",
-    "victoryChance": 0.78
+    "stadiumName": "Estadio Fran Soria",
+    "victoryChance": 0.57
   }
 ]
 
