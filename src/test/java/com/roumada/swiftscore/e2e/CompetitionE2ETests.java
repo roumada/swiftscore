@@ -6,6 +6,7 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
+import com.roumada.swiftscore.model.dto.request.SimulationValuesDTO;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
@@ -20,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -84,7 +87,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 = new CompetitionUpdateRequestDTO(
                 "New Competition",
                 CountryCode.AN,
-                new SimulationValues(0.1, 0.2, 0.3));
+                new SimulationValuesDTO(0.1, 0.2, 0.3));
 
         given()
                 .port(port)
@@ -263,5 +266,113 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .get("/match/%s".formatted(fm2Json.getInt("id")))
                 .then()
                 .statusCode(400);
+    }
+
+    @Test
+    @DisplayName("Should create clubs and then attempt creating competitions with them")
+    void shouldCreateClubsAndCompetition() {
+        // Arrange
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(clubRepository.saveAll(
+                List.of(
+                        FootballClub.builder().name("Club 1").country(CountryCode.GB).victoryChance(0.5).build(),
+                        FootballClub.builder().name("Club 2").country(CountryCode.GB).victoryChance(0.5).build(),
+                        FootballClub.builder().name("Club 3").country(CountryCode.ES).victoryChance(0.5).build(),
+                        FootballClub.builder().name("Club 4").country(CountryCode.ES).victoryChance(0.5).build(),
+                        FootballClub.builder().name("Club 5").country(CountryCode.ES).victoryChance(0.5).build(),
+                        FootballClub.builder().name("Club 6").country(CountryCode.ES).victoryChance(0.5).build()
+                )));
+
+        // STEP 1 - not enough clubs to fill for given country - should fail
+        var compRequest = new CompetitionRequestDTO("Competition",
+                CountryCode.GB,
+                "2024-01-01",
+                "2024-10-01",
+                null,
+                4, new SimulationValues(0));
+
+        given()
+                .port(port)
+                .contentType(ContentType.JSON)
+                .body(compRequest)
+                .when()
+                .post("")
+                .then()
+                .statusCode(400);
+
+        // STEP 2 - not enough clubs to fill even with IDs - should fail
+        compRequest = new CompetitionRequestDTO("Competition",
+                CountryCode.GB,
+                "2024-01-01",
+                "2024-10-01",
+                ids.subList(0, 2),
+                4, new SimulationValues(0));
+
+        given()
+                .port(port)
+                .contentType(ContentType.JSON)
+                .body(compRequest)
+                .when()
+                .post("")
+                .then()
+                .statusCode(400);
+
+        // STEP 3 - enough clubs to fill but can't mix countries - should fail
+        compRequest = new CompetitionRequestDTO("Competition",
+                CountryCode.ES,
+                "2024-01-01",
+                "2024-10-01",
+                ids.subList(0, 2),
+                4, new SimulationValues(0));
+
+        given()
+                .port(port)
+                .contentType(ContentType.JSON)
+                .body(compRequest)
+                .when()
+                .post("")
+                .then()
+                .statusCode(400);
+
+        compRequest = new CompetitionRequestDTO("Competition",
+                CountryCode.GB,
+                "2024-01-01",
+                "2024-10-01",
+                ids.subList(3, 6),
+                null, new SimulationValues(0));
+
+        given()
+                .port(port)
+                .contentType(ContentType.JSON)
+                .body(compRequest)
+                .when()
+                .post("")
+                .then()
+                .statusCode(400);
+
+        // STEP 4 - enough clubs - should succeed
+        compRequest = new CompetitionRequestDTO("Competition",
+                CountryCode.ES,
+                "2024-01-01",
+                "2024-10-01",
+                ids.subList(3, 4),
+                4, new SimulationValues(0));
+
+        given()
+                .port(port)
+                .contentType(ContentType.JSON)
+                .body(compRequest)
+                .when()
+                .post("")
+                .then()
+                .statusCode(200)
+                .body("id", notNullValue())
+                .body("lastSimulatedRound", equalTo(0))
+                .body("name", equalTo(compRequest.name()))
+                .body("startDate", equalTo(compRequest.startDate()))
+                .body("endDate", equalTo(compRequest.endDate()))
+                .body("country", equalTo(compRequest.country().toString()))
+                .body("simulationValues.variance", equalTo(0.0F))
+                .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.0F))
+                .body("simulationValues.drawTriggerChance", equalTo(0.0F));
     }
 }
