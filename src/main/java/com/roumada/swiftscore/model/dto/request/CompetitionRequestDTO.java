@@ -7,6 +7,7 @@ import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequestDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,11 +33,11 @@ public record CompetitionRequestDTO(
 ) {
 
     public Integer fillToParticipants() {
-        return fillToParticipants == null ? 0 : fillToParticipants;
+        return ObjectUtils.defaultIfNull(fillToParticipants, 0);
     }
 
     public List<Long> participantIds() {
-        return participantIds == null ? Collections.emptyList() : participantIds;
+        return ObjectUtils.defaultIfNull(participantIds, Collections.emptyList());
     }
 
     public int participantsAmount() {

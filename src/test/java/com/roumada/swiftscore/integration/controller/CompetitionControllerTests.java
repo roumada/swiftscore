@@ -7,6 +7,7 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
+import com.roumada.swiftscore.model.dto.request.SimulationValuesDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
@@ -351,10 +352,10 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // assert
         JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
         if (drawTriggerChance < 0) {
-            assertEquals("Draw trigger cannot be lower than 0",
+            assertEquals("Draw trigger chance cannot be lower than 0",
                     validationErrors.get(0));
         } else {
-            assertEquals("Draw trigger cannot be higher than 1",
+            assertEquals("Draw trigger chance cannot be higher than 1",
                     validationErrors.get(0));
         }
     }
@@ -741,7 +742,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                         .getDouble("scoreDifferenceDrawTrigger"));
     }
 
-
     @Test
     @DisplayName("Update competition - simulation values only - should return updated")
     void updateCompetition_simValues_shouldReturnUpdated() throws Exception {
@@ -757,7 +757,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new CompetitionUpdateRequestDTO(null,
                 null,
-                new SimulationValues(0.1, 0.2, 0.3));
+                new SimulationValuesDTO(0.1, 0.2, 0.3));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -790,12 +790,246 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("Update competition - variance only - should return updated")
+    void updateCompetition_variance_shouldReturnUpdated() throws Exception {
+        // arrange
+        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var saved = competitionDataLayer.save(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .simulationValues(simVals)
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionUpdateRequestDTO(null,
+                null,
+                new SimulationValuesDTO(0.1, null, null));
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseJSON = new JSONObject(response);
+
+        // assert
+        assertEquals(saved.getName(), responseJSON.getString("name"));
+        assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
+        assertEquals(dto
+                        .simulationValues()
+                        .variance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("variance"));
+        assertEquals(simVals
+                        .scoreDifferenceDrawTrigger(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("scoreDifferenceDrawTrigger"));
+        assertEquals(simVals
+                        .drawTriggerChance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("drawTriggerChance"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "-0.1, 'Variance cannot be lower than 0'",
+            "1.1, 'Variance cannot be higher than 1'",})
+    @DisplayName("Update competition - variance only, invalid values - should return error code")
+    void updateCompetition_invalidVarianceOnly_shouldReturnErrorCode(double variance, String validationErrorMsg) throws Exception {
+        // arrange
+        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var saved = competitionDataLayer.save(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .simulationValues(simVals)
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionUpdateRequestDTO(null,
+                null,
+                new SimulationValuesDTO(variance, null, null));
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
+    }
+
+    @Test
+    @DisplayName("Update competition - score diff draw trigger only - should return updated")
+    void updateCompetition_sddt_shouldReturnUpdated() throws Exception {
+        // arrange
+        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var saved = competitionDataLayer.save(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .simulationValues(simVals)
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionUpdateRequestDTO(null,
+                null,
+                new SimulationValuesDTO(null, 0.2, null));
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseJSON = new JSONObject(response);
+
+        // assert
+        assertEquals(saved.getName(), responseJSON.getString("name"));
+        assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
+        assertEquals(simVals
+                        .variance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("variance"));
+        assertEquals(simVals
+                        .drawTriggerChance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("drawTriggerChance"));
+        assertEquals(dto
+                        .simulationValues()
+                        .scoreDifferenceDrawTrigger(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("scoreDifferenceDrawTrigger"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "-0.1, 'Score difference draw trigger cannot be lower than 0'",
+            "1.1, 'Score difference draw trigger cannot be higher than 1'",})
+    @DisplayName("Update competition - score diff draw trigger only, invalid values - should return error code")
+    void updateCompetition_invalidSddt_shouldReturnUpdated(double sddt, String validationErrorMsg) throws Exception {
+        // arrange
+        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var saved = competitionDataLayer.save(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .simulationValues(simVals)
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionUpdateRequestDTO(null,
+                null,
+                new SimulationValuesDTO(null, sddt, null));
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
+    }
+
+    @Test
+    @DisplayName("Update competition - draw trigger chance only - should return updated")
+    void updateCompetition_dtc_shouldReturnUpdated() throws Exception {
+        // arrange
+        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var saved = competitionDataLayer.save(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .simulationValues(simVals)
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionUpdateRequestDTO(null,
+                null,
+                new SimulationValuesDTO(null, null, 0.2));
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseJSON = new JSONObject(response);
+
+        // assert
+        assertEquals(saved.getName(), responseJSON.getString("name"));
+        assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
+        assertEquals(simVals
+                        .variance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("variance"));
+        assertEquals(dto
+                        .simulationValues()
+                        .drawTriggerChance(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("drawTriggerChance"));
+        assertEquals(simVals
+                        .scoreDifferenceDrawTrigger(),
+                responseJSON
+                        .getJSONObject("simulationValues")
+                        .getDouble("scoreDifferenceDrawTrigger"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "-0.1, 'Draw trigger chance cannot be lower than 0'",
+            "1.1, 'Draw trigger chance cannot be higher than 1'",})
+    @DisplayName("Update competition - draw trigger chance only, invalid values - should return error code")
+    void updateCompetition_invalidDrawTriggerChance_shouldReturnUpdated(double dtc, String validationErrorMsg) throws Exception {
+        // arrange
+        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var saved = competitionDataLayer.save(Competition.builder()
+                .name("Competition")
+                .country(CountryCode.GB)
+                .simulationValues(simVals)
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var dto = new CompetitionUpdateRequestDTO(null,
+                null,
+                new SimulationValuesDTO(null, null, dtc));
+        var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
+    }
+
+    @Test
     @DisplayName("Update competition - invalid ID - should return error message")
     void updateCompetition_invalidId_shouldReturnUpdated() throws Exception {
         // act
         var dto = new CompetitionUpdateRequestDTO(null,
                 null,
-                new SimulationValues(0.1, 0.2, 0.3));
+                new SimulationValuesDTO(0.1, 0.2, 0.3));
         var response = mvc.perform(patch("/competition/0")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -813,8 +1047,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
             "1.1, 0.2, 0.2, 'Variance cannot be higher than 1'",
             "0.2, -1, 0.2, 'Score difference draw trigger cannot be lower than 0'",
             "0.2, 1.1, 0.2, 'Score difference draw trigger cannot be higher than 1'",
-            "0.2, 0.2, -1, 'Draw trigger cannot be lower than 0'",
-            "0.2, 0.2, 1.1, 'Draw trigger cannot be higher than 1'",
+            "0.2, 0.2, -1, 'Draw trigger chance cannot be lower than 0'",
+            "0.2, 0.2, 1.1, 'Draw trigger chance cannot be higher than 1'",
     })
     @DisplayName("Update competition - invalid simulation values  - should return error code")
     void updateCompetition_invalidSimValues_shouldReturnErrorCode(double variance,
@@ -833,7 +1067,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new CompetitionUpdateRequestDTO(null,
                 null,
-                new SimulationValues(variance, sddt, dtc));
+                new SimulationValuesDTO(variance, sddt, dtc));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))

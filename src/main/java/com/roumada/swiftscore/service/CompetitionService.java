@@ -4,6 +4,7 @@ import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
@@ -17,6 +18,7 @@ import com.roumada.swiftscore.persistence.sequence.PrimarySequenceService;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -164,8 +166,18 @@ public class CompetitionService {
 
         if (dto.name() != null) competition.setName(dto.name());
         if (dto.country() != null) competition.setCountry(dto.country());
-        if (dto.simulationValues() != null) competition.setSimulationValues(dto.simulationValues());
+        if (dto.simulationValues() != null) {
+            var variance = ObjectUtils.defaultIfNull(dto.simulationValues().variance(),
+                    competition.getSimulationValues().variance());
 
+            var sddt = ObjectUtils.defaultIfNull(dto.simulationValues().scoreDifferenceDrawTrigger(),
+                    competition.getSimulationValues().scoreDifferenceDrawTrigger());
+
+            var dtc = ObjectUtils.defaultIfNull(dto.simulationValues().drawTriggerChance(),
+                    competition.getSimulationValues().drawTriggerChance());
+
+            competition.setSimulationValues(new SimulationValues(variance, sddt, dtc));
+        }
         return Either.right(competitionDataLayer.save(competition));
     }
 
