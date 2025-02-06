@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.logic.match.resolver;
 
+import com.roumada.swiftscore.logic.match.HorusSeries;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,8 +10,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class HomeSideVictorResolver implements Resolver {
     @Override
     public void resolve(FootballMatch footballMatch) {
-        int homeSideGoalsScored = ThreadLocalRandom.current().nextInt(6) + 1;
-        int awaySideGoalsScored = ThreadLocalRandom.current().nextInt(homeSideGoalsScored);
+        int homeSideScoredCeiling = ThreadLocalRandom.current().nextInt(8);
+        int homeSideGoalsScored = HorusSeries.getGoalsScored(homeSideScoredCeiling, ThreadLocalRandom.current().nextDouble());
+        int awaySideGoalsScored = HorusSeries.getGoalsScored(homeSideGoalsScored - 1, ThreadLocalRandom.current().nextDouble()) - 1;
         footballMatch.setHomeSideGoalsScored(homeSideGoalsScored);
         footballMatch.setAwaySideGoalsScored(awaySideGoalsScored);
     }

@@ -23,22 +23,22 @@ class HorusSeriesTests {
             "2, 0.51, 2",
             "2, 0.74, 2",
             "2, 0.75, 2",
-            "2, 0.78, 0",
-            "2, 1, 0",
+            "2, 0.78, 3",
+            "2, 1, 3",
             "3, 0, 1",
             "3, 0.49, 1",
             "3, 0.5, 1",
             "3, 0.51, 2",
             "3, 0.74, 2",
             "3, 0.75, 2",
-            "3, 0.78, 0",
-            "3, 0.874, 0",
-            "3, 0.876, 3",
-            "3, 1, 3",
+            "3, 0.78, 3",
+            "3, 0.874, 3",
+            "3, 0.876, 4",
+            "3, 1, 4",
     })
-    @DisplayName("Should return correct amount of goals for victor distribution")
-    void shouldReturnCorrectGoalsAmountForVictorDistribution(int ceil, double chance, int expected) {
-        assertEquals(expected, HorusSeries.getVictorGoalsScored(ceil, chance));
+    @DisplayName("Should return correct amount of goals")
+    void shouldReturnCorrectGoalsAmount(int ceil, double chance, int expected) {
+        assertEquals(expected, HorusSeries.getGoalsScored(ceil, chance));
     }
 
     @ParameterizedTest
@@ -68,8 +68,9 @@ class HorusSeriesTests {
             "3, 0.876, 3",
             "3, 1, 3",
     })
-    @DisplayName("Should return correct amount of goals for normal distribution")
-    void shouldReturnCorrectGoalsAmountForNormalDistribution(int ceil, double chance, int expected) {
-        assertEquals(expected, HorusSeries.getGoalsScored(ceil, chance));
+    @DisplayName("Should return correct amount of goals for a draw")
+    void shouldReturnCorrectGoalsAmountForDraw(int ceil, double chance, int expected) {
+        assertEquals(expected, HorusSeries.getGoalsScoredForDraw(ceil, chance));
     }
+
 }
