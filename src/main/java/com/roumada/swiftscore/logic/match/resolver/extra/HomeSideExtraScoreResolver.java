@@ -5,7 +5,7 @@ import com.roumada.swiftscore.model.match.FootballMatch;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class HomeSideExtraScoreResolver implements com.roumada.swiftscore.logic.match.resolver.Resolver {
+public class HomeSideExtraScoreResolver implements ExtraScoreResolver {
     @Override
     public void resolve(FootballMatch footballMatch) {
         int bonusGoalsCeiling = Math.min(6,

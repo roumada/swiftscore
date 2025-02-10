@@ -1,12 +1,11 @@
 package com.roumada.swiftscore.logic.match.resolver.extra;
 
 import com.roumada.swiftscore.logic.match.HorusSeries;
-import com.roumada.swiftscore.logic.match.resolver.Resolver;
 import com.roumada.swiftscore.model.match.FootballMatch;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class AwaySideExtraScoreResolver implements Resolver {
+public class AwaySideExtraScoreResolver implements ExtraScoreResolver {
     @Override
     public void resolve(FootballMatch footballMatch) {
         int bonusGoalsCeiling = Math.min(6,

@@ -6,7 +6,7 @@ import com.roumada.swiftscore.model.match.FootballMatch;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class DrawResolver implements Resolver {
+public class DrawResolver implements ScoreResolver {
     @Override
     public void resolve(FootballMatch footballMatch) {
         int goalsScored = HorusSeries.getFromZero(

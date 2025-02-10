@@ -6,7 +6,7 @@ import com.roumada.swiftscore.model.match.FootballMatch;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class AwaySideVictorResolver implements Resolver {
+public class AwaySideVictorResolver implements ScoreResolver {
     @Override
     public void resolve(FootballMatch footballMatch) {
         int awaySideScoredCeiling = ThreadLocalRandom.current().nextInt(9);

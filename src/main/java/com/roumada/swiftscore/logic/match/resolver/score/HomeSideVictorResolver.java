@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-public class HomeSideVictorResolver implements Resolver {
+public class HomeSideVictorResolver implements ScoreResolver {
     @Override
     public void resolve(FootballMatch footballMatch) {
         int homeSideScoredCeiling = ThreadLocalRandom.current().nextInt(8);
