@@ -24,11 +24,10 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
     @Override
     public void simulateMatch(FootballMatch footballMatch) {
         determineResult(footballMatch);
-        ScoreResolverFactory.getFor(footballMatch.getMatchResult()).resolve(footballMatch);
-        if (footballMatch.getMatchResult() == FootballMatch.MatchResult.HOME_SIDE_VICTORY ||
-                footballMatch.getMatchResult() == FootballMatch.MatchResult.AWAY_SIDE_VICTORY) {
-            ExtraScoreResolverFactory.getFor(footballMatch.getMatchResult()).resolve(footballMatch);
-        }
+        ScoreResolverFactory.getFor(footballMatch.getMatchResult())
+                .ifPresent(resolver -> resolver.resolve(footballMatch));
+        ExtraScoreResolverFactory.getFor(footballMatch.getMatchResult())
+                .ifPresent(resolver -> resolver.resolve(footballMatch));
     }
 
     private void determineResult(FootballMatch footballMatch) {

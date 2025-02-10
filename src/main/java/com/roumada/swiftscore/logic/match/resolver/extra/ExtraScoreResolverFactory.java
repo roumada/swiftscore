@@ -1,10 +1,13 @@
 package com.roumada.swiftscore.logic.match.resolver.extra;
 
 import com.roumada.swiftscore.model.match.FootballMatch;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 
+@Slf4j
 public class ExtraScoreResolverFactory {
     private static final Map<FootballMatch.MatchResult, ExtraScoreResolver> resolverMap = new EnumMap<>(FootballMatch.MatchResult.class);
 
@@ -16,11 +19,12 @@ public class ExtraScoreResolverFactory {
     private ExtraScoreResolverFactory() {
     }
 
-    public static ExtraScoreResolver getFor(FootballMatch.MatchResult matchResult) {
+    public static Optional<ExtraScoreResolver> getFor(FootballMatch.MatchResult matchResult) {
         var resolver = resolverMap.get(matchResult);
         if (resolver == null) {
-            throw new IllegalArgumentException("An ExtraScoreResolver can only be assigned to a HOME_SIDE_VICTORY or AWAY_SIDE_VICTORY status.");
+            log.warn("An ExtraScoreResolver can only be assigned to a HOME_SIDE_VICTORY or AWAY_SIDE_VICTORY status.");
+            return Optional.empty();
         }
-        return resolver;
+        return Optional.of(resolver);
     }
 }
