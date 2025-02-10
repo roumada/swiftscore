@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HorusSeries {
-    private static final List<Integer> GOALS_DISTRIBUTION = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9);
     private HorusSeries() {
     }
 
@@ -42,11 +41,11 @@ public class HorusSeries {
     }
 
     private static int getGoalsAccordingToChances(List<Double> summedChances, double chance, boolean isDraw) {
-        if(summedChances.size() == 1) return GOALS_DISTRIBUTION.get(0);
+        if(summedChances.size() == 1) return 1;
 
         for (int i = 0; i < summedChances.size() - 1; i++) {
             Range<Double> range = Range.of(summedChances.get(i), summedChances.get(i + 1));
-            if (range.contains(chance)) return isDraw ? GOALS_DISTRIBUTION.get(i) - 1 : GOALS_DISTRIBUTION.get(i);
+            if (range.contains(chance)) return isDraw ? i : i + 1;
         }
         return 0;
     }
