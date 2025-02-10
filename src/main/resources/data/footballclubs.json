@@ -1,6 +1,6 @@
 [
   {
-    "name": "Brighton Vale",
+    "name": "Northbridge United",
     "country": "GB",
     "stadiumName": "Vale Grounds",
     "victoryChance": 0.77
@@ -8,14 +8,14 @@
   {
     "name": "Harrowfield United",
     "country": "GB",
-    "stadiumName": "Harrow Park",
-    "victoryChance": 0.65
+    "stadiumName": "Emerald Park",
+    "victoryChance": 0.35
   },
   {
     "name": "Wexford Albion",
     "country": "GB",
     "stadiumName": "Albion Arena",
-    "victoryChance": 0.72
+    "victoryChance": 0.42
   },
   {
     "name": "Dunwich Rovers",
@@ -27,7 +27,7 @@
     "name": "Carlington City",
     "country": "GB",
     "stadiumName": "City Grounds",
-    "victoryChance": 0.84
+    "victoryChance": 0.44
   },
   {
     "name": "Springfield Wanderers",
@@ -45,31 +45,31 @@
     "name": "Grayside FC",
     "country": "GB",
     "stadiumName": "Grayside Stadium",
-    "victoryChance": 0.82
+    "victoryChance": 0.62
   },
   {
     "name": "Harrowgate Hornets",
     "country": "GB",
     "stadiumName": "Hornets Field",
-    "victoryChance": 0.61
+    "victoryChance": 0.41
   },
   {
-    "name": "Blossom Bay",
+    "name": "St. Albans FC",
     "country": "GB",
-    "stadiumName": "Bay Arena",
-    "victoryChance": 0.77
+    "stadiumName": "Bridgewater",
+    "victoryChance": 0.37
   },
   {
     "name": "Redditch Lions",
     "country": "GB",
-    "stadiumName": "Lions Stadium",
-    "victoryChance": 0.58
+    "stadiumName": "Lionheart Park",
+    "victoryChance": 0.28
   },
   {
-    "name": "Eastwood North",
+    "name": "Silverwood Knights",
     "country": "GB",
     "stadiumName": "North Park",
-    "victoryChance": 0.69
+    "victoryChance": 0.59
   },
   {
     "name": "Manchester Caledon",
@@ -78,19 +78,19 @@
     "victoryChance": 0.80
   },
   {
-    "name": "Mereworth Dragons",
+    "name": "Mereworth",
     "country": "GB",
     "stadiumName": "Dragon Park",
     "victoryChance": 0.74
   },
   {
-    "name": "Keswick Spurs",
+    "name": "Keswick AFC",
     "country": "GB",
-    "stadiumName": "Spurs Field",
+    "stadiumName": "The Orchard",
     "victoryChance": 0.59
   },
   {
-    "name": "Stamford Creek",
+    "name": "Stamford",
     "country": "GB",
     "stadiumName": "Creek Arena",
     "victoryChance": 0.72
@@ -99,7 +99,7 @@
     "name": "Orton Athletic",
     "country": "GB",
     "stadiumName": "Athletic Grounds",
-    "victoryChance": 0.65
+    "victoryChance": 0.35
   },
   {
     "name": "Bramwell Knights",
@@ -108,13 +108,13 @@
     "victoryChance": 0.78
   },
   {
-    "name": "Cambridge Argonauts",
+    "name": "Cambridge",
     "country": "GB",
     "stadiumName": "Argonaut Park",
-    "victoryChance": 0.85
+    "victoryChance": 0.55
   },
   {
-    "name": "Pendlewood Strikers",
+    "name": "Kingsford AFC",
     "country": "GB",
     "stadiumName": "Strikers Arena",
     "victoryChance": 0.63
@@ -124,6 +124,36 @@
     "country": "GB",
     "stadiumName": "Sunderland Field",
     "victoryChance": 0.71
+  },
+  {
+    "name": "Manchester Metal",
+    "country": "GB",
+    "stadiumName": "Hartfield",
+    "victoryChance": 0.81
+  },
+  {
+    "name": "Newhaven",
+    "country": "GB",
+    "stadiumName": "Lantern Pavilion",
+    "victoryChance": 0.45
+  },
+  {
+    "name": "Leytonstone",
+    "country": "GB",
+    "stadiumName": "Pine Hill",
+    "victoryChance": 0.33
+  },
+  {
+    "name": "Wolverhampton FC",
+    "country": "GB",
+    "stadiumName": "Millennium Fortress",
+    "victoryChance": 0.65
+  },
+  {
+    "name": "Elmsford FC",
+    "country": "GB",
+    "stadiumName": "Cobblewood Stadium",
+    "victoryChance": 0.21
   },
   {
     "name": "Albacete Fútbol",
@@ -225,13 +255,13 @@
     "name": "Real Burgos",
     "country": "ES",
     "stadiumName": "El Plantío",
-    "victoryChance": 0.55
+    "victoryChance": 0.35
   },
   {
     "name": "Pontevedra FC",
     "country": "ES",
     "stadiumName": "Estadio Municipal de Pasarón",
-    "victoryChance": 0.48
+    "victoryChance": 0.38
   },
   {
     "name": "Real Santander",
@@ -243,7 +273,187 @@
     "name": "RCD Lleida",
     "country": "ES",
     "stadiumName": "Estadio Fran Soria",
-    "victoryChance": 0.57
+    "victoryChance": 0.47
+  },
+  {
+    "name": "VfB Eichwald",
+    "country": "DE",
+    "stadiumName": "Hardtwaldstadion",
+    "victoryChance": 0.41
+  },
+  {
+    "name": "FC Rheinbach",
+    "country": "DE",
+    "stadiumName": "Rheinpark Arena",
+    "victoryChance": 0.67
+  },
+  {
+    "name": "SV Eichenwald",
+    "country": "DE",
+    "stadiumName": "Waldstadion Köln",
+    "victoryChance": 0.52
+  },
+  {
+    "name": "VfL Bergstadt",
+    "country": "DE",
+    "stadiumName": "Bergstadt Arena",
+    "victoryChance": 0.38
+  },
+  {
+    "name": "SC Fortuna Kassel",
+    "country": "DE",
+    "stadiumName": "Fortuna-Arena Frankfurt",
+    "victoryChance": 0.59
+  },
+  {
+    "name": "FC Nordlicht Bremen",
+    "country": "DE",
+    "stadiumName": "Nordlicht Arena",
+    "victoryChance": 0.73
+  },
+  {
+    "name": "SV Blau-Weiß Lüneburg",
+    "country": "DE",
+    "stadiumName": "Blau-Weiß Stadion",
+    "victoryChance": 0.45
+  },
+  {
+    "name": "FC Sternenbach",
+    "country": "DE",
+    "stadiumName": "Sternenarena München",
+    "victoryChance": 0.21
+  },
+  {
+    "name": "VfR Wiesental",
+    "country": "DE",
+    "stadiumName": "Wiesental Arena",
+    "victoryChance": 0.49
+  },
+  {
+    "name": "SC Rot-Weiß Koblenz",
+    "country": "DE",
+    "stadiumName": "Rot-Schwarz Arena",
+    "victoryChance": 0.56
+  },
+  {
+    "name": "FC Adler Freiburg",
+    "country": "DE",
+    "stadiumName": "Adlerpark Stadion",
+    "victoryChance": 0.34
+  },
+  {
+    "name": "SV Grün-Weiß Osnabrück",
+    "country": "DE",
+    "stadiumName": "Grün-Weiß Stadion",
+    "victoryChance": 0.42
+  },
+  {
+    "name": "FC Hafenstadt Rostock",
+    "country": "DE",
+    "stadiumName": "Hafenpark Stadion",
+    "victoryChance": 0.55
+  },
+  {
+    "name": "VfB Eichwald",
+    "country": "DE",
+    "stadiumName": "Eichenwald Stadion",
+    "victoryChance": 0.48
+  },
+  {
+    "name": "SC Fortuna Mainz",
+    "country": "DE",
+    "stadiumName": "Fortuna-Arena Frankfurt",
+    "victoryChance": 0.47
+  },
+  {
+    "name": "FC Blau-Gold Dortmund",
+    "country": "DE",
+    "stadiumName": "Westfalenpark Stadion",
+    "victoryChance": 0.56
+  },
+  {
+    "name": "SV Waldhof Kaiserslautern",
+    "country": "DE",
+    "stadiumName": "Kaiserwald Stadion",
+    "victoryChance": 0.39
+  },
+  {
+    "name": "FC Sonnenberg",
+    "country": "DE",
+    "stadiumName": "Sonnenberg Arena",
+    "victoryChance": 0.71
+  },
+  {
+    "name": "VfL Fortuna Essen",
+    "country": "DE",
+    "stadiumName": "Ruhrstadion Essen",
+    "victoryChance": 0.53
+  },
+  {
+    "name": "SC Rot-Schwarz Heidelberg",
+    "country": "DE",
+    "stadiumName": "Rot-Schwarz Arena",
+    "victoryChance": 0.52
+  },
+  {
+    "name": "FC Falkenhorst",
+    "country": "DE",
+    "stadiumName": "Falkenhorst Arena",
+    "victoryChance": 0.47
+  },
+  {
+    "name": "SV Eintracht Trier",
+    "country": "DE",
+    "stadiumName": "Moselstadion",
+    "victoryChance": 0.58
+  },
+  {
+    "name": "FC Nordstern Kiel",
+    "country": "DE",
+    "stadiumName": "Nordstern Stadion",
+    "victoryChance": 0.44
+  },
+  {
+    "name": "VfR Blau-Weiß Leipzig",
+    "country": "DE",
+    "stadiumName": "Blau-Weiß Stadion",
+    "victoryChance": 0.51
+  },
+  {
+    "name": "SC Fortuna Regensburg",
+    "country": "DE",
+    "stadiumName": "Donau-Arena",
+    "victoryChance": 0.63
+  },
+  {
+    "name": "FC Adler München",
+    "country": "DE",
+    "stadiumName": "Adlerpark Stadion",
+    "victoryChance": 0.29
+  },
+  {
+    "name": "SV Grün-Weiß Augsburg",
+    "country": "DE",
+    "stadiumName": "Grün-Weiß Stadion",
+    "victoryChance": 0.54
+  },
+  {
+    "name": "FC Himmelstadt",
+    "country": "DE",
+    "stadiumName": "Himmelberg Arena",
+    "victoryChance": 0.46
+  },
+  {
+    "name": "VfL Fortuna Braunschweig",
+    "country": "DE",
+    "stadiumName": "Löwenpark Stadion",
+    "victoryChance": 0.30
+  },
+  {
+    "name": "SC Rot-Weiß Frankfurt",
+    "country": "DE",
+    "stadiumName": "Königsberg Arena",
+    "victoryChance": 0.50
   }
 ]
 
