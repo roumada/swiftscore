@@ -21,7 +21,7 @@ public class ScoreResolverFactory {
     public static Resolver getFor(FootballMatch.MatchResult matchResult) {
         Resolver resolver = resolverMap.get(matchResult);
         if (resolver == null) {
-            throw new IllegalArgumentException("A ScoreResolver cannot be assigned to a FootballMatch with a non-match finished status.");
+            throw new IllegalArgumentException("A ScoreResolver cannot be assigned to a FootballMatch with a match unfinished status.");
         }
         return resolver;
     }
