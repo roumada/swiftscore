@@ -7,7 +7,7 @@ import jakarta.validation.constraints.DecimalMin;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
-public record SimulationValuesDTO(
+public record UpdateSimulationValuesDTO(
         @DecimalMin(value = "0.0", message = "Variance cannot be lower than 0")
         @DecimalMax(value = "1.0", message = "Variance cannot be higher than 1")
         Double variance,
@@ -17,8 +17,4 @@ public record SimulationValuesDTO(
         @DecimalMin(value = "0.0", message = "Draw trigger chance cannot be lower than 0")
         @DecimalMax(value = "1.0", message = "Draw trigger chance cannot be higher than 1")
         Double drawTriggerChance) {
-
-    public SimulationValuesDTO(double variance) {
-        this(variance, 0., 0.);
-    }
 }

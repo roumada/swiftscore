@@ -5,9 +5,9 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
-import com.roumada.swiftscore.model.dto.request.SimulationValuesDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
@@ -62,7 +62,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var mvcResult = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CompetitionRequestDTO("",
+                                new CreateCompetitionRequestDTO("",
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
@@ -89,7 +89,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var mvcResult = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CompetitionRequestDTO("",
+                                new CreateCompetitionRequestDTO("",
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
@@ -115,7 +115,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var mvcResult = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CompetitionRequestDTO("",
+                                new CreateCompetitionRequestDTO("",
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
@@ -140,7 +140,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var errorMsg = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CompetitionRequestDTO("",
+                                new CreateCompetitionRequestDTO("",
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
@@ -163,7 +163,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var errorMsg = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CompetitionRequestDTO("",
+                                new CreateCompetitionRequestDTO("",
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
@@ -186,7 +186,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var mvcResult = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CompetitionRequestDTO("",
+                                new CreateCompetitionRequestDTO("",
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
@@ -211,7 +211,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var errorMsg = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CompetitionRequestDTO("",
+                                new CreateCompetitionRequestDTO("",
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
@@ -234,7 +234,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var errorMsg = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CompetitionRequestDTO("",
+                                new CreateCompetitionRequestDTO("",
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-30",
@@ -260,7 +260,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var errorMsg = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CompetitionRequestDTO("",
+                                new CreateCompetitionRequestDTO("",
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-30",
@@ -283,7 +283,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var errorMsg = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
@@ -308,7 +308,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
@@ -339,7 +339,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-11-10",
@@ -370,7 +370,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
@@ -411,7 +411,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO("",
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
                                 CountryCode.GB,
                                 startDate,
                                 endDate,
@@ -435,7 +435,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CompetitionRequestDTO(null,
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO(null,
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
@@ -661,7 +661,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO("New Competition",
+        var dto = new UpdateCompetitionRequestDTO("New Competition",
                 null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -708,7 +708,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 CountryCode.SE,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -755,9 +755,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 null,
-                new SimulationValuesDTO(0.1, 0.2, 0.3));
+                new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -803,9 +803,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 null,
-                new SimulationValuesDTO(0.1, null, null));
+                new UpdateSimulationValuesDTO(0.1, null, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -852,9 +852,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 null,
-                new SimulationValuesDTO(variance, null, null));
+                new UpdateSimulationValuesDTO(variance, null, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -881,9 +881,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 null,
-                new SimulationValuesDTO(null, 0.2, null));
+                new UpdateSimulationValuesDTO(null, 0.2, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -930,9 +930,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 null,
-                new SimulationValuesDTO(null, sddt, null));
+                new UpdateSimulationValuesDTO(null, sddt, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -959,9 +959,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 null,
-                new SimulationValuesDTO(null, null, 0.2));
+                new UpdateSimulationValuesDTO(null, null, 0.2));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -1008,9 +1008,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 null,
-                new SimulationValuesDTO(null, null, dtc));
+                new UpdateSimulationValuesDTO(null, null, dtc));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -1027,9 +1027,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - invalid ID - should return error message")
     void updateCompetition_invalidId_shouldReturnUpdated() throws Exception {
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 null,
-                new SimulationValuesDTO(0.1, 0.2, 0.3));
+                new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
         var response = mvc.perform(patch("/competition/0")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -1065,9 +1065,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var dto = new CompetitionUpdateRequestDTO(null,
+        var dto = new UpdateCompetitionRequestDTO(null,
                 null,
-                new SimulationValuesDTO(variance, sddt, dtc));
+                new UpdateSimulationValuesDTO(variance, sddt, dtc));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))

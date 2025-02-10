@@ -7,10 +7,10 @@ import jakarta.validation.Valid;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
-public record CompetitionUpdateRequestDTO(
+public record UpdateCompetitionRequestDTO(
         String name,
         CountryCode country,
         @Valid
-        SimulationValuesDTO simulationValues
+        UpdateSimulationValuesDTO simulationValues
 ) {
 }

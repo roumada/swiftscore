@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponseDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
@@ -48,7 +48,7 @@ public class CompetitionController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Competition to create", required = true,
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CompetitionRequestDTO.class),
+                            schema = @Schema(implementation = CreateCompetitionRequestDTO.class),
                             examples = @ExampleObject(value = """
                                     {
                                       "name": "Competition",
@@ -66,7 +66,7 @@ public class CompetitionController {
                                       }
                                     }
                                     """)))
-            @Valid @RequestBody CompetitionRequestDTO dto,
+            @Valid @RequestBody CreateCompetitionRequestDTO dto,
             HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.generateAndSave(dto).fold(
@@ -100,7 +100,7 @@ public class CompetitionController {
                     content = @Content)})
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateCompetition(@PathVariable long id,
-                                                    @Valid @RequestBody CompetitionUpdateRequestDTO dto,
+                                                    @Valid @RequestBody UpdateCompetitionRequestDTO dto,
                                                     HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.update(id, dto).fold(

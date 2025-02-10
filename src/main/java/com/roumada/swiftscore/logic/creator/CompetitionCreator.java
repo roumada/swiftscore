@@ -2,7 +2,7 @@ package com.roumada.swiftscore.logic.creator;
 
 import com.roumada.swiftscore.logic.CompetitionDatesProvider;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -20,7 +20,7 @@ public class CompetitionCreator {
     private CompetitionCreator() {
     }
 
-    public static Either<String, Competition> createFromRequest(CompetitionRequestDTO dto, List<FootballClub> footballClubs) {
+    public static Either<String, Competition> createFromRequest(CreateCompetitionRequestDTO dto, List<FootballClub> footballClubs) {
         var generationResult = CompetitionRoundsCreator.create(footballClubs);
         if (generationResult.isLeft()) {
             return Either.left(generationResult.getLeft());
@@ -40,7 +40,7 @@ public class CompetitionCreator {
                 .build());
     }
 
-    private static CompetitionDatesProvider createProvider(CompetitionRequestDTO dto) {
+    private static CompetitionDatesProvider createProvider(CreateCompetitionRequestDTO dto) {
         var provider = new CompetitionDatesProvider(
                 LocalDate.parse(dto.startDate()),
                 LocalDate.parse(dto.endDate()),
