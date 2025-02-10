@@ -75,6 +75,6 @@ class ResolverFactoryTests {
         });
 
         // assert
-        assertEquals("A ScoreResolver cannot be assigned to a FootballMatch with a non-match finished status.", exception.getMessage());
+        assertEquals("A ScoreResolver cannot be assigned to a FootballMatch with a match unfinished status.", exception.getMessage());
     }
 }
