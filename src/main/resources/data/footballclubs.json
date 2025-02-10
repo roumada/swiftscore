@@ -303,7 +303,7 @@
     "name": "SC Fortuna Kassel",
     "country": "DE",
     "stadiumName": "Fortuna-Arena Frankfurt",
-    "victoryChance": 0.59
+    "victoryChance": 0.69
   },
   {
     "name": "FC Nordlicht Bremen",
@@ -339,7 +339,7 @@
     "name": "FC Adler Freiburg",
     "country": "DE",
     "stadiumName": "Adlerpark Stadion",
-    "victoryChance": 0.34
+    "victoryChance": 0.77
   },
   {
     "name": "SV Grün-Weiß Osnabrück",
@@ -363,13 +363,13 @@
     "name": "SC Fortuna Mainz",
     "country": "DE",
     "stadiumName": "Fortuna-Arena Frankfurt",
-    "victoryChance": 0.47
+    "victoryChance": 0.74
   },
   {
     "name": "FC Blau-Gold Dortmund",
     "country": "DE",
     "stadiumName": "Westfalenpark Stadion",
-    "victoryChance": 0.56
+    "victoryChance": 0.80
   },
   {
     "name": "SV Waldhof Kaiserslautern",
@@ -417,7 +417,7 @@
     "name": "VfR Blau-Weiß Leipzig",
     "country": "DE",
     "stadiumName": "Blau-Weiß Stadion",
-    "victoryChance": 0.51
+    "victoryChance": 0.75
   },
   {
     "name": "SC Fortuna Regensburg",
