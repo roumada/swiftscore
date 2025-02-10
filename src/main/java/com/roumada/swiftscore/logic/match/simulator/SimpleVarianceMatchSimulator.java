@@ -1,6 +1,7 @@
 package com.roumada.swiftscore.logic.match.simulator;
 
-import com.roumada.swiftscore.logic.match.resolver.ScoreResolverFactory;
+import com.roumada.swiftscore.logic.match.resolver.extra.ExtraScoreResolverFactory;
+import com.roumada.swiftscore.logic.match.resolver.score.ScoreResolverFactory;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,10 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
     @Override
     public void simulateMatch(FootballMatch footballMatch) {
         determineResult(footballMatch);
-        ScoreResolverFactory.getFor(footballMatch.getMatchResult()).resolve(footballMatch);
+        ScoreResolverFactory.getFor(footballMatch.getMatchResult())
+                .ifPresent(resolver -> resolver.resolve(footballMatch));
+        ExtraScoreResolverFactory.getFor(footballMatch.getMatchResult())
+                .ifPresent(resolver -> resolver.resolve(footballMatch));
     }
 
     private void determineResult(FootballMatch footballMatch) {

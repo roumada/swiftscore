@@ -28,6 +28,7 @@ public class FootballMatch {
     private double awaySideCalculatedVictoryChance;
     private int awaySideGoalsScored;
     private MatchResult matchResult = MatchResult.UNFINISHED;
+    private int extraVictorGoals;
 
     public FootballMatch(LocalDateTime date, FootballClub homeSideFootballClub, FootballClub awaySideFootballClub) {
         this.date = date;

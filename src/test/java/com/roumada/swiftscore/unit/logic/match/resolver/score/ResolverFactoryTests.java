@@ -1,13 +1,14 @@
 package com.roumada.swiftscore.unit.logic.match.resolver.score;
 
 
-import com.roumada.swiftscore.logic.match.resolver.ScoreResolverFactory;
+import com.roumada.swiftscore.logic.match.resolver.score.ScoreResolverFactory;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ResolverFactoryTests {
 
@@ -21,7 +22,14 @@ class ResolverFactoryTests {
         fm.setMatchResult(FootballMatch.MatchResult.HOME_SIDE_VICTORY);
 
         // act
-        ScoreResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
+        var getResult = ScoreResolverFactory.getFor(fm.getMatchResult());
+
+        // assert
+        assertTrue(getResult.isPresent());
+        var resolver = getResult.get();
+
+        // act
+        resolver.resolve(fm);
 
         // assert
         assertTrue(fm.getHomeSideGoalsScored() > fm.getAwaySideGoalsScored());
@@ -37,7 +45,14 @@ class ResolverFactoryTests {
         fm.setMatchResult(FootballMatch.MatchResult.AWAY_SIDE_VICTORY);
 
         // act
-        ScoreResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
+        var getResult = ScoreResolverFactory.getFor(fm.getMatchResult());
+
+        // assert
+        assertTrue(getResult.isPresent());
+        var resolver = getResult.get();
+
+        // act
+        resolver.resolve(fm);
 
         // assert
         assertTrue(fm.getHomeSideGoalsScored() < fm.getAwaySideGoalsScored());
@@ -53,15 +68,22 @@ class ResolverFactoryTests {
         fm.setMatchResult(FootballMatch.MatchResult.DRAW);
 
         // act
-        ScoreResolverFactory.getFor(fm.getMatchResult()).resolve(fm);
+        var getResult = ScoreResolverFactory.getFor(fm.getMatchResult());
+
+        // assert
+        assertTrue(getResult.isPresent());
+        var resolver = getResult.get();
+
+        // act
+        resolver.resolve(fm);
 
         // assert
         assertEquals(fm.getHomeSideGoalsScored(), fm.getAwaySideGoalsScored());
     }
 
     @Test
-    @DisplayName("Resolve score - unresolved - should throw an exception")
-    void resolveScore_unresolved_shouldThrowAnException() {
+    @DisplayName("Resolve score - unresolved - should not find a resolver")
+    void resolveScore_unresolved_shouldNotFindAResolver() {
         // arrange
         FootballMatch fm = new FootballMatch(
                 FootballClub.builder().name("FC1").victoryChance(0.5).build(),
@@ -70,11 +92,9 @@ class ResolverFactoryTests {
 
         // act
         FootballMatch.MatchResult mr = fm.getMatchResult();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            ScoreResolverFactory.getFor(mr);
-        });
+        var getResult = ScoreResolverFactory.getFor(mr);
 
         // assert
-        assertEquals("A ScoreResolver cannot be assigned to a FootballMatch with a non-match finished status.", exception.getMessage());
+        assertTrue(getResult.isEmpty());
     }
 }
