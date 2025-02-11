@@ -4,10 +4,12 @@ import com.neovisionaries.i18n.CountryCode;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document(collection = "football_club")
+@CompoundIndex(def = "{'name': 1, 'country': 1, 'stadiumName': 1}")
 public class FootballClub {
 
     @Id

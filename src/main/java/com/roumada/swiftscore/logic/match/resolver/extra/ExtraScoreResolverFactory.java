@@ -21,10 +21,6 @@ public class ExtraScoreResolverFactory {
 
     public static Optional<ExtraScoreResolver> getFor(FootballMatch.MatchResult matchResult) {
         var resolver = resolverMap.get(matchResult);
-        if (resolver == null) {
-            log.warn("An ExtraScoreResolver can only be assigned to a HOME_SIDE_VICTORY or AWAY_SIDE_VICTORY status.");
-            return Optional.empty();
-        }
-        return Optional.of(resolver);
+        return Optional.ofNullable(resolver);
     }
 }

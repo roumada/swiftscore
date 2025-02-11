@@ -21,11 +21,6 @@ public class ScoreResolverFactory {
     }
 
     public static Optional<ScoreResolver> getFor(FootballMatch.MatchResult matchResult) {
-        var resolver = resolverMap.get(matchResult);
-        if (resolver == null) {
-            log.warn("A ScoreResolver cannot be assigned to a FootballMatch with a match unfinished status.");
-            return Optional.empty();
-        }
-        return Optional.of(resolver);
+        return Optional.ofNullable(resolverMap.get(matchResult));
     }
 }

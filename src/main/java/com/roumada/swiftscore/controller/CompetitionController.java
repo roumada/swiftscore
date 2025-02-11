@@ -24,6 +24,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -129,21 +130,18 @@ public class CompetitionController {
     @ApiResponse(responseCode = "200", description = "Competitions according to criteria returned",
             content = @Content)
     @GetMapping("/search")
-    public ResponseEntity<Object> getAllCompetitions(HttpServletRequest request,
-                                                     SearchCompetitionCriteriaDTO criteria,
-                                                     Boolean simplify,
-                                                     Pageable pageable) {
+    public ResponseEntity<Page<CompetitionResponseDTO>> getAllCompetitions(HttpServletRequest request,
+                                                                           SearchCompetitionCriteriaDTO criteria,
+                                                                           Pageable pageable) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var result = service.search(criteria, pageable);
 
-        return (simplify != null && simplify) ?
-                ResponseEntity.ok(new PageImpl<>(result.getContent()
-                        .stream()
-                        .map(CompetitionMapper.INSTANCE::competitionToCompetitionResponseDTO)
-                        .toList(),
+        return ResponseEntity.ok(new PageImpl<>(result.getContent()
+                .stream()
+                .map(CompetitionMapper.INSTANCE::competitionToCompetitionResponseDTO)
+                .toList(),
                 pageable,
-                result.getTotalElements())) :
-                ResponseEntity.ok(result);
+                result.getTotalElements()));
     }
 
 
