@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -112,26 +113,6 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
         // act & assert
         mvc.perform(get("/footballclub/" + 999))
                 .andExpect(status().is4xxClientError());
-    }
-
-    @Test
-    @DisplayName("Get all football clubs  - should return")
-    void getAllFootballClubs_shouldReturn() throws Exception {
-        // arrange
-        footballClubDataLayer.save(FootballClub.builder().name("FC1").victoryChance(0.5).build());
-        footballClubDataLayer.save(FootballClub.builder().name("FC2").victoryChance(0.4).build());
-
-        // act
-        var response = mvc.perform(get("/footballclub/search"))
-//                        .param("page", "0")
-//                        .param("size", "2"))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse().getContentAsString();
-        var responseJSON = new JSONObject(response);
-
-        // assert
-        assertEquals(2, responseJSON.getJSONArray("content").length());
     }
 
     @Test
@@ -262,5 +243,40 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'1', AN, '', '1', '1'",
+            "'', AN, '', '11', '10'",
+            "'1', AN, '', '3', '2'",
+            "'', GB, '', '1', '1'",
+            "'', GB, '', '8', '4'",
+            "'', AN, '1', '1', '1'",
+            "'', AN, '1', '3', '2'",
+            "'1', GB, '', '1', '1'",
+            "'', GB, '2', '1', '1'",
+            "'1', AN, '1', '1', '1'",
+            "'9', GB, '9', '1', '1'",
+    })
+    @DisplayName("Search football clubs - various criteria - should return expected amount")
+    void searchFootballClubs_variousCriteria_shouldReturnExpectedAmount(String name, CountryCode country, String stadiumName, int pageSize, int expected) throws Exception {
+        // arrange
+        footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubsWithVariousCountries());
+
+        // act
+        var response = mvc.perform(get("/footballclub/search")
+                        .param("size", String.valueOf(pageSize))
+                        .param("name", name)
+                        .param("country", country == CountryCode.AN ? null : country.toString())
+                        .param("stadiumName", stadiumName)
+                )
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var responseJSON = new JSONObject(response);
+
+        // assert
+        assertEquals(expected, responseJSON.getJSONArray("content").length());
     }
 }
