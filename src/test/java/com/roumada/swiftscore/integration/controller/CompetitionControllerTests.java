@@ -497,36 +497,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get all competitions - should return")
-    void getAllCompetitions_shouldReturnAll() throws Exception {
-        // arrange
-        var round1 = new CompetitionRound(1, Collections.emptyList());
-        var round2 = new CompetitionRound(1, Collections.emptyList());
-        competitionRoundDataLayer.save(round1);
-        competitionRoundDataLayer.save(round2);
-        var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
-        competitionDataLayer.save(Competition.builder()
-                .name("Competition")
-                .simulationValues(new SimulationValues(0))
-                .participants(savedClubs)
-                .rounds(List.of(round1))
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("Competition")
-                .simulationValues(new SimulationValues(0))
-                .participants(savedClubs)
-                .rounds(List.of(round2))
-                .build());
-
-        // act
-        var result = mvc.perform(get("/competition/search")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        var resultArray = new JSONObject(result);
-
-        // assert
-        assertEquals(2, resultArray.getJSONArray("content").length());
-    }
-
-    @Test
     @DisplayName("Simulate competition  - can still be simulated - should simulate and return simulated round")
     void simulateCompetitionRound_canStillBeSimulated_shouldSimulateAndReturn() throws Exception {
         // arrange
@@ -1080,4 +1050,167 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {2, 3})
+    @DisplayName("Search competitions - no criteria - should return all")
+    void searchCompetitions_noCriteria_shouldReturnAll(int pageSize) throws Exception {
+        // arrange
+        competitionDataLayer.save(Competition.builder()
+                .name("British League")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+        competitionDataLayer.save(Competition.builder()
+                .name("Deutsche Liga")
+                .country(CountryCode.DE)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+        competitionDataLayer.save(Competition.builder()
+                .name("Spanish Liga")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var response = mvc.perform(get("/competition/search")
+                        .param("size", String.valueOf(pageSize))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+        var resultArray = new JSONObject(response);
+
+        // assert
+        assertEquals(pageSize, resultArray.getJSONArray("content").length());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2})
+    @DisplayName("Search competitions - name only - should find")
+    void searchCompetitions_nameOnly_shouldFind(int pageSize) throws Exception {
+        // arrange
+        competitionDataLayer.save(Competition.builder()
+                .name("British League")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+        competitionDataLayer.save(Competition.builder()
+                .name("British League 2")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+        competitionDataLayer.save(Competition.builder()
+                .name("Spanish Liga")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var response = mvc.perform(get("/competition/search")
+                        .param("size", String.valueOf(pageSize))
+                        .param("name", "League")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        // assert
+        var responseJson = new JSONObject(response);
+        assertEquals(pageSize, responseJson.getJSONArray("content").length());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2})
+    @DisplayName("Search competitions - country only - should find")
+    void searchCompetitions_countryOnly_shouldFind(int pageSize) throws Exception {
+        // arrange
+        competitionDataLayer.save(Competition.builder()
+                .name("British League")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+        competitionDataLayer.save(Competition.builder()
+                .name("British League 2")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+        competitionDataLayer.save(Competition.builder()
+                .name("Spanish Liga")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var response = mvc.perform(get("/competition/search")
+                        .param("size", String.valueOf(pageSize))
+                        .param("country", "GB")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        // assert
+        var responseJson = new JSONObject(response);
+        assertEquals(pageSize, responseJson.getJSONArray("content").length());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2})
+    @DisplayName("Search competitions - name and country - should find")
+    void searchCompetitions_nameAndCountry_shouldFind(int pageSize) throws Exception {
+        // arrange
+        competitionDataLayer.save(Competition.builder()
+                .name("British League")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+        competitionDataLayer.save(Competition.builder()
+                .name("British League 2")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+        competitionDataLayer.save(Competition.builder()
+                .name("Spanish Liga")
+                .country(CountryCode.GB)
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        // act
+        var response = mvc.perform(get("/competition/search")
+                        .param("size", String.valueOf(pageSize))
+                        .param("name", "brit")
+                        .param("country", "GB")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        // assert
+        var responseJson = new JSONObject(response);
+        assertEquals(pageSize, responseJson.getJSONArray("content").length());
+    }
 }
