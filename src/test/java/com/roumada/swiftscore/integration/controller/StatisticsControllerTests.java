@@ -4,7 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
@@ -35,7 +35,7 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     void getCompetitionStatistics_validCompetitionId_shouldReturn() throws Exception {
         // arrange
         var ids = FootballClubTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
-        var comp = compService.generateAndSave(new CompetitionRequestDTO("",
+        var comp = compService.generateAndSave(new CreateCompetitionRequestDTO("",
                         CountryCode.GB,
                         "2025-01-01",
                         "2025-12-30",

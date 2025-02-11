@@ -4,9 +4,9 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
-import com.roumada.swiftscore.model.dto.request.SimulationValuesDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
@@ -50,7 +50,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         // arrange
         var clubIds = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs())
                 .stream().map(FootballClub::getId).toList();
-        CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
+        CreateCompetitionRequestDTO request = new CreateCompetitionRequestDTO("Competition",
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
@@ -83,11 +83,11 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         int id = createCompetitionResponse.jsonPath().getInt("id");
 
         // STEP 2: update competition
-        CompetitionUpdateRequestDTO updateRequest
-                = new CompetitionUpdateRequestDTO(
+        UpdateCompetitionRequestDTO updateRequest
+                = new UpdateCompetitionRequestDTO(
                 "New Competition",
                 CountryCode.AN,
-                new SimulationValuesDTO(0.1, 0.2, 0.3));
+                new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
 
         given()
                 .port(port)
@@ -133,7 +133,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         // arrange
         var clubIds = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs())
                 .stream().map(FootballClub::getId).toList();
-        CompetitionRequestDTO request = new CompetitionRequestDTO("Competition",
+        CreateCompetitionRequestDTO request = new CreateCompetitionRequestDTO("Competition",
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
@@ -283,7 +283,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 )));
 
         // STEP 1 - not enough clubs to fill for given country - should fail
-        var compRequest = new CompetitionRequestDTO("Competition",
+        var compRequest = new CreateCompetitionRequestDTO("Competition",
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
@@ -300,7 +300,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .statusCode(400);
 
         // STEP 2 - not enough clubs to fill even with IDs - should fail
-        compRequest = new CompetitionRequestDTO("Competition",
+        compRequest = new CreateCompetitionRequestDTO("Competition",
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
@@ -317,7 +317,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .statusCode(400);
 
         // STEP 3 - enough clubs to fill but can't mix countries - should fail
-        compRequest = new CompetitionRequestDTO("Competition",
+        compRequest = new CreateCompetitionRequestDTO("Competition",
                 CountryCode.ES,
                 "2024-01-01",
                 "2024-10-01",
@@ -333,7 +333,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .then()
                 .statusCode(400);
 
-        compRequest = new CompetitionRequestDTO("Competition",
+        compRequest = new CreateCompetitionRequestDTO("Competition",
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
@@ -350,7 +350,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .statusCode(400);
 
         // STEP 4 - enough clubs - should succeed
-        compRequest = new CompetitionRequestDTO("Competition",
+        compRequest = new CreateCompetitionRequestDTO("Competition",
                 CountryCode.ES,
                 "2024-01-01",
                 "2024-10-01",

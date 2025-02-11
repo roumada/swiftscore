@@ -3,7 +3,7 @@ package com.roumada.swiftscore.unit.service;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
@@ -60,7 +60,7 @@ class CompetitionServiceTests {
         var fc2 = FootballClub.builder().name("FC2").victoryChance(0.3f).build();
         fc2.setId(2L);
         when(fcdl.findAllByIdAndCountry(ids, GB)).thenReturn(List.of(fc1, fc2));
-        var dto = new CompetitionRequestDTO("",
+        var dto = new CreateCompetitionRequestDTO("",
                 GB,
                 "2025-01-01",
                 "2025-12-30",
@@ -98,7 +98,7 @@ class CompetitionServiceTests {
         var clubs = FootballClubTestUtils.getFourFootballClubs(true);
         when(fcdl.findAllByIdAndCountry(ids, GB)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true).subList(0, 2));
         when(fcdl.findByIdNotInAndCountryIn(ids, GB, 2)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true).subList(2, 4));
-        var dto = new CompetitionRequestDTO("",
+        var dto = new CreateCompetitionRequestDTO("",
                 GB,
                 "2025-01-01",
                 "2025-12-30",
@@ -132,7 +132,7 @@ class CompetitionServiceTests {
     void generateCompetition_unevenIdAmount_shouldGenerateError() {
         // arrange
         var ids = List.of(1L, 2L, 3L);
-        var dto = new CompetitionRequestDTO("",
+        var dto = new CreateCompetitionRequestDTO("",
                 GB,
                 "2025-01-01",
                 "2025-12-30",
@@ -153,7 +153,7 @@ class CompetitionServiceTests {
     void generateCompetition_unevenGreaterFillToParticipantsAmount_shouldGenerateError() {
         // arrange
         var ids = List.of(1L, 2L, 3L, 4L);
-        var dto = new CompetitionRequestDTO("",
+        var dto = new CreateCompetitionRequestDTO("",
                 GB,
                 "2025-01-01",
                 "2025-12-30",
@@ -177,7 +177,7 @@ class CompetitionServiceTests {
         var fc1 = FootballClub.builder().name("FC1").victoryChance(0.2f).build();
         fc1.setId(1L);
         when(fcdl.findAllByIdAndCountry(ids, GB)).thenReturn(List.of(fc1));
-        var dto = new CompetitionRequestDTO("",
+        var dto = new CreateCompetitionRequestDTO("",
                 GB,
                 "2025-01-01",
                 "2025-12-30",
@@ -199,7 +199,7 @@ class CompetitionServiceTests {
         // arrange
         var ids = FootballClubTestUtils.getIdsOfSavedClubs(FootballClubTestUtils.getTwoFootballClubs());
         when(fcdl.findAllByIdAndCountry(ids, ES)).thenReturn(Collections.emptyList());
-        var dto = new CompetitionRequestDTO("",
+        var dto = new CreateCompetitionRequestDTO("",
                 ES,
                 "2025-01-01",
                 "2025-12-30",
@@ -222,7 +222,7 @@ class CompetitionServiceTests {
         var ids = FootballClubTestUtils.getIdsOfSavedClubs(FootballClubTestUtils.getTwoFootballClubs());
         when(fcdl.findAllByIdAndCountry(ids, ES)).thenReturn(FootballClubTestUtils.getTwoFootballClubs());
         when(fcdl.findByIdNotInAndCountryIn(ids, ES, 2)).thenReturn(Collections.emptyList());
-        var dto = new CompetitionRequestDTO("",
+        var dto = new CreateCompetitionRequestDTO("",
                 ES,
                 "2025-01-01",
                 "2025-12-30",
@@ -244,7 +244,7 @@ class CompetitionServiceTests {
     void generateCompetition_notEnoughClubsWithoutFCIds_shouldGenerateError() {
         // arrange
         when(fcdl.findByIdNotInAndCountryIn(Collections.emptyList(), ES, 4)).thenReturn(FootballClubTestUtils.getTwoFootballClubs());
-        var dto = new CompetitionRequestDTO("",
+        var dto = new CreateCompetitionRequestDTO("",
                 ES,
                 "2025-01-01",
                 "2025-12-30",
@@ -270,7 +270,7 @@ class CompetitionServiceTests {
         when(sequenceService.getNextValue()).thenAnswer((Answer<Long>) invocationOnMock -> increment());
         var ids = List.of(0L, 1L, 2L, 3L);
         when(fcdl.findAllByIdAndCountry(ids, GB)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true));
-        var comp = service.generateAndSave(new CompetitionRequestDTO("",
+        var comp = service.generateAndSave(new CreateCompetitionRequestDTO("",
                 GB,
                 "2025-01-01",
                 "2025-12-30",

@@ -15,7 +15,7 @@ import java.util.List;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
 @ValidCompetitionRequestDTO
-public record CompetitionRequestDTO(
+public record CreateCompetitionRequestDTO(
         @NotNull(message = "Name cannot be null")
         String name,
         CountryCode country,

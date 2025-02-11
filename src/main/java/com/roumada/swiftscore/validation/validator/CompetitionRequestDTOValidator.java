@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.validation.validator;
 
-import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequestDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -10,13 +10,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
-public class CompetitionRequestDTOValidator implements ConstraintValidator<ValidCompetitionRequestDTO, CompetitionRequestDTO> {
+public class CompetitionRequestDTOValidator implements ConstraintValidator<ValidCompetitionRequestDTO, CreateCompetitionRequestDTO> {
 
     @Value("${application.maximum_competition_duration}")
     private int MAXIMUM_COMPETITION_DURATION;
 
     @Override
-    public boolean isValid(CompetitionRequestDTO dto, ConstraintValidatorContext context) {
+    public boolean isValid(CreateCompetitionRequestDTO dto, ConstraintValidatorContext context) {
         boolean isDateMissing = false;
         if (dto.startDate() == null || dto.startDate().isEmpty()) {
             context

@@ -1,7 +1,8 @@
 package com.roumada.swiftscore.controller;
 
-import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponseDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
@@ -23,10 +24,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -48,7 +50,7 @@ public class CompetitionController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Competition to create", required = true,
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CompetitionRequestDTO.class),
+                            schema = @Schema(implementation = CreateCompetitionRequestDTO.class),
                             examples = @ExampleObject(value = """
                                     {
                                       "name": "Competition",
@@ -66,7 +68,7 @@ public class CompetitionController {
                                       }
                                     }
                                     """)))
-            @Valid @RequestBody CompetitionRequestDTO dto,
+            @Valid @RequestBody CreateCompetitionRequestDTO dto,
             HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.generateAndSave(dto).fold(
@@ -74,7 +76,7 @@ public class CompetitionController {
                 success -> ResponseEntity.ok(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(success)));
     }
 
-    @Operation(summary = "Find a competition")
+    @Operation(summary = "Find a competition by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competition returned",
                     content = {@Content(mediaType = "application/json",
@@ -100,7 +102,7 @@ public class CompetitionController {
                     content = @Content)})
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateCompetition(@PathVariable long id,
-                                                    @Valid @RequestBody CompetitionUpdateRequestDTO dto,
+                                                    @Valid @RequestBody UpdateCompetitionRequestDTO dto,
                                                     HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.update(id, dto).fold(
@@ -124,13 +126,22 @@ public class CompetitionController {
         return ResponseEntity.ok("OK");
     }
 
-    @Operation(summary = "Get all competitions")
-    @ApiResponse(responseCode = "200", description = "All competitions returned",
+    @Operation(summary = "Search for competitions")
+    @ApiResponse(responseCode = "200", description = "Competitions according to criteria returned",
             content = @Content)
-    @GetMapping("/all")
-    public List<CompetitionResponseDTO> getAllCompetitions(HttpServletRequest request) {
+    @GetMapping("/search")
+    public ResponseEntity<Page<CompetitionResponseDTO>> getAllCompetitions(HttpServletRequest request,
+                                                                           SearchCompetitionCriteriaDTO criteria,
+                                                                           Pageable pageable) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
-        return service.findAllCompetitions().stream().map(CompetitionMapper.INSTANCE::competitionToCompetitionResponseDTO).toList();
+        var result = service.search(criteria, pageable);
+
+        return ResponseEntity.ok(new PageImpl<>(result.getContent()
+                .stream()
+                .map(CompetitionMapper.INSTANCE::competitionToCompetitionResponseDTO)
+                .toList(),
+                pageable,
+                result.getTotalElements()));
     }
 
 

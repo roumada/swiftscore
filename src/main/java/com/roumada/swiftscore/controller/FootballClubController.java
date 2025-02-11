@@ -1,7 +1,9 @@
 package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.request.FootballClubRequestDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
+import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
+import com.roumada.swiftscore.model.mapper.CompetitionMapper;
 import com.roumada.swiftscore.service.FootballClubService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,8 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @Slf4j
 @RestController
@@ -24,7 +30,7 @@ public class FootballClubController {
 
     private final FootballClubService service;
 
-    @Operation(summary = "Find a football club")
+    @Operation(summary = "Find a football club by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Football club returned",
                     content = {@Content(mediaType = "application/json",
@@ -41,20 +47,22 @@ public class FootballClubController {
                 ResponseEntity::ok);
     }
 
-    @Operation(summary = "Find all football clubs")
+    @Operation(summary = "Search for football clubs")
     @ApiResponse(responseCode = "200", description = "Football clubs returned",
             content = {@Content(mediaType = "application/json")})
-    @GetMapping("/all")
-    public ResponseEntity<Object> getAllClubs(HttpServletRequest request) {
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchClubs(HttpServletRequest request,
+                                              SearchFootballClubSearchCriteriaDTO criteria,
+                                              Pageable pageable) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
-        return ResponseEntity.ok(service.findAll());
+        return ResponseEntity.ok(service.searchClubs(criteria, pageable));
     }
 
     @Operation(summary = "Create a football club")
     @ApiResponse(responseCode = "200", description = "Football club created",
             content = {@Content(mediaType = "application/json")})
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<Object> createFootballClub(@Valid @RequestBody FootballClubRequestDTO dto,
+    public ResponseEntity<Object> createFootballClub(@Valid @RequestBody CreateFootballClubRequestDTO dto,
                                                      HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return ResponseEntity.ok(service.save(dto));
@@ -69,7 +77,7 @@ public class FootballClubController {
                     content = @Content)})
     @PatchMapping(value = "/{id}", consumes = "application/json")
     public ResponseEntity<Object> updateFootballClub(@PathVariable long id,
-                                                     @RequestBody FootballClubRequestDTO dto,
+                                                     @RequestBody CreateFootballClubRequestDTO dto,
                                                      HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.update(id, dto).fold(

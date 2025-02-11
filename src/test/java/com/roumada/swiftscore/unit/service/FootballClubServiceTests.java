@@ -3,7 +3,8 @@ package com.roumada.swiftscore.unit.service;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.request.FootballClubRequestDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
+import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.service.FootballClubService;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
@@ -11,11 +12,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class FootballClubServiceTests extends AbstractBaseIntegrationTest {
@@ -55,10 +59,11 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
     void findAll_shouldReturn() {
         // arrange
         var ids = FootballClubTestUtils.getFourFootballClubs(true).stream().map(FootballClub::getId).toList();
-        when(footballClubRepository.findAll()).thenReturn(FootballClubTestUtils.getFourFootballClubs(true));
+        when(footballClubRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(FootballClubTestUtils.getFourFootballClubs(true)));
 
         // act
-        List<FootballClub> clubs = service.findAll();
+        var searchResult = service.searchClubs(new SearchFootballClubSearchCriteriaDTO(null, null, null), Pageable.ofSize(20));
+        var clubs = searchResult.getContent();
 
         // assert
         assertEquals(4, clubs.size());
@@ -89,7 +94,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var fc = service.save(
-                new FootballClubRequestDTO("FC", CountryCode.GB, "FC Stadium", 0.5)
+                new CreateFootballClubRequestDTO("FC", CountryCode.GB, "FC Stadium", 0.5)
         );
 
         // assert
@@ -107,7 +112,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(0L,
-                new FootballClubRequestDTO("FC2", null, null, 0.0));
+                new CreateFootballClubRequestDTO("FC2", null, null, 0.0));
 
         // assert
         assertTrue(updateResult.isLeft());
@@ -130,7 +135,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(id,
-                new FootballClubRequestDTO("FC2", null, null, 0.0));
+                new CreateFootballClubRequestDTO("FC2", null, null, 0.0));
 
         // assert
         assertTrue(updateResult.isRight());
@@ -155,7 +160,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(id,
-                new FootballClubRequestDTO(null, CountryCode.PL, null, 0.0));
+                new CreateFootballClubRequestDTO(null, CountryCode.PL, null, 0.0));
 
         // assert
         assertTrue(updateResult.isRight());
@@ -180,7 +185,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(id,
-                new FootballClubRequestDTO(null, null, "FC Park", 0.0));
+                new CreateFootballClubRequestDTO(null, null, "FC Park", 0.0));
 
         // assert
         assertTrue(updateResult.isRight());
@@ -205,7 +210,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(id,
-                new FootballClubRequestDTO(null, null, null, 0.2));
+                new CreateFootballClubRequestDTO(null, null, null, 0.2));
 
         // assert
         assertTrue(updateResult.isRight());

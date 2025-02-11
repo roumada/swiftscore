@@ -5,8 +5,9 @@ import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.request.CompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.CompetitionUpdateRequestDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -19,6 +20,8 @@ import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -46,11 +49,7 @@ public class CompetitionService {
                 });
     }
 
-    public List<Competition> findAllCompetitions() {
-        return competitionDataLayer.findAllCompetitions();
-    }
-
-    public Either<String, Competition> generateAndSave(CompetitionRequestDTO dto) {
+    public Either<String, Competition> generateAndSave(CreateCompetitionRequestDTO dto) {
         if (dto.participantsAmount() % 2 == 1) {
             var errorMsg = "Failed to generate competition - the amount of clubs participating must be even.";
             log.error(errorMsg);
@@ -119,7 +118,7 @@ public class CompetitionService {
         return competition;
     }
 
-    private Either<String, List<FootballClub>> findClubs(CompetitionRequestDTO dto) {
+    private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequestDTO dto) {
         if (dto.participantsAmount() == 0) {
             return Either.left("Neither fillToParticipants nor footballClubIDs have been set");
         }
@@ -154,7 +153,7 @@ public class CompetitionService {
         competitionDataLayer.save(compSimulated);
     }
 
-    public Either<String, Competition> update(long id, CompetitionUpdateRequestDTO dto) {
+    public Either<String, Competition> update(long id, UpdateCompetitionRequestDTO dto) {
         var findResult = competitionDataLayer.findCompetitionById(id);
         if (findResult.isEmpty()) {
             String warnMsg = "Competition with ID [%s] not found.".formatted(id);
@@ -194,5 +193,19 @@ public class CompetitionService {
             return competition.getRounds().size() - competition.getLastSimulatedRound();
         }
         return times;
+    }
+
+    public Page<Competition> search(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
+        if(criteria.hasNoCriteria()) return competitionDataLayer.findAllCompetitions(pageable);
+        if(criteria.hasOneCriteria()) return searchWithSingleCriteria(criteria, pageable);
+        return competitionDataLayer.findByNameContainingIgnoreCaseAndCountry(criteria.name(), criteria.country(), pageable);
+    }
+
+    private Page<Competition> searchWithSingleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
+        return switch(criteria.getSingleCriteriaType()){
+            case NAME -> competitionDataLayer.findByNameContaining(criteria.name(), pageable);
+            case COUNTRY -> competitionDataLayer.findByCountry(criteria.country(), pageable);
+            default -> Page.empty();
+        };
     }
 }
