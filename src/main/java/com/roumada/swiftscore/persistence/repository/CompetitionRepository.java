@@ -12,4 +12,6 @@ public interface CompetitionRepository extends MongoRepository<Competition, Long
     Page<Competition> findByCountry(CountryCode country, Pageable pageable);
 
     Page<Competition> findByNameContainingIgnoreCaseAndCountry(String name, CountryCode country, Pageable pageable);
+
+    Page<Competition> findBySeason(String season, Pageable pageable);
 }

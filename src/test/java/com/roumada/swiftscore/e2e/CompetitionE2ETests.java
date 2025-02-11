@@ -73,6 +73,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .body("name", equalTo(request.name()))
                         .body("startDate", equalTo(request.startDate()))
                         .body("endDate", equalTo(request.endDate()))
+                        .body("season", equalTo("2025"))
                         .body("country", equalTo(request.country().toString()))
                         .body("simulationValues.variance", equalTo(0.0F))
                         .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.0F))

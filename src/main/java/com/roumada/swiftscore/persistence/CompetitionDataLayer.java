@@ -1,14 +1,23 @@
 package com.roumada.swiftscore.persistence;
 
 import com.neovisionaries.i18n.CountryCode;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -17,6 +26,7 @@ import java.util.Optional;
 public class CompetitionDataLayer {
 
     private final CompetitionRepository competitionRepository;
+    private final MongoTemplate template;
 
     public Competition save(Competition competition) {
         var saved = competitionRepository.save(competition);
@@ -45,7 +55,23 @@ public class CompetitionDataLayer {
         return competitionRepository.findByCountry(country, pageable);
     }
 
-    public Page<Competition> findByNameContainingIgnoreCaseAndCountry(String name, CountryCode country, Pageable pageable) {
-        return competitionRepository.findByNameContainingIgnoreCaseAndCountry(name, country, pageable);
+    public PageImpl<Competition> searchWithMultipleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
+        Query query = new Query().with(pageable);
+        if (StringUtils.isNotEmpty(criteria.name())) {
+            query.addCriteria(Criteria.where("name").regex(".*" + criteria.name() + ".*", "i"));
+        }
+        if (criteria.country() != null) {
+            query.addCriteria(Criteria.where("country").is(criteria.country()));
+        }
+        if (StringUtils.isNotEmpty(criteria.season())) {
+            query.addCriteria(Criteria.where("season").is(criteria.season()));
+        }
+        List<Competition> competitions = template.find(query, Competition.class);
+        long total = template.count(Query.of(query).limit(-1).skip(-1), Competition.class);
+        return new PageImpl<>(competitions, pageable, total);
+    }
+
+    public Page<Competition> findBySeason(String season, Pageable pageable) {
+        return competitionRepository.findBySeason(season, pageable);
     }
 }

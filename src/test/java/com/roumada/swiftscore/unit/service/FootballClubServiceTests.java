@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,21 +63,6 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
         // act
         var searchResult = service.searchClubs(new SearchFootballClubSearchCriteriaDTO(null, null, null), Pageable.ofSize(20));
         var clubs = searchResult.getContent();
-
-        // assert
-        assertEquals(4, clubs.size());
-        assertEquals(ids, clubs.stream().map(FootballClub::getId).toList());
-    }
-
-    @Test
-    @DisplayName("Find all by IDs - should return")
-    void findAllByIds_shouldReturn() {
-        // arrange
-        var ids = FootballClubTestUtils.getFourFootballClubs(true).stream().map(FootballClub::getId).toList();
-        when(footballClubRepository.findAllById(ids)).thenReturn(FootballClubTestUtils.getFourFootballClubs(true));
-
-        // act
-        List<FootballClub> clubs = service.findAllByIds(ids);
 
         // assert
         assertEquals(4, clubs.size());

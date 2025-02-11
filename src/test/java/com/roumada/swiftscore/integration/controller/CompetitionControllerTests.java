@@ -29,6 +29,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -512,6 +513,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
+                .startDate(LocalDate.of(2024, 1, 1))
+                .endDate(LocalDate.of(2024, 10, 1))
                 .simulationValues(new SimulationValues(0))
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(round))
@@ -545,6 +548,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
+                .startDate(LocalDate.of(2024, 1, 1))
+                .endDate(LocalDate.of(2024, 10, 1))
                 .simulationValues(new SimulationValues(0))
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(round))
@@ -571,6 +576,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
+                .startDate(LocalDate.of(2024, 1, 1))
+                .endDate(LocalDate.of(2024, 10, 1))
                 .simulationValues(new SimulationValues(0))
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(round, round, round, round))
@@ -603,6 +610,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
+                .startDate(LocalDate.of(2024, 1, 1))
+                .endDate(LocalDate.of(2024, 10, 1))
                 .simulationValues(new SimulationValues(0))
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(round, round, round, round))

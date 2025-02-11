@@ -25,6 +25,7 @@ public class Competition {
     private CountryCode country;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String season;
     private SimulationValues simulationValues;
     @DBRef
     private List<FootballClub> participants;
@@ -46,6 +47,14 @@ public class Competition {
         this.simulationValues = simulationValues;
         this.participants = participants;
         this.rounds = rounds;
+        determineSeason();
+    }
+
+    private void determineSeason() {
+        if (startDate != null && endDate != null) {
+            this.season = startDate.getYear() == endDate.getYear() ? String.valueOf(startDate.getYear()) :
+                    "%s/%s".formatted(startDate.getYear(), endDate.getYear());
+        }
     }
 
     public boolean isFullySimulated() {

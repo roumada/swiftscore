@@ -4,6 +4,7 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
+import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FootballClubService {
 
-    private final FootballClubRepository repository;
-    private final MongoTemplate template;
+    private final FootballClubDataLayer dataLayer;
 
     public Either<String, FootballClub> findById(long id) {
-        var findResult = repository.findById(id);
+        var findResult = dataLayer.findById(id);
         if (findResult.isEmpty()) {
             String errorMsg = "Unable to find football club with given id [%s]".formatted(id);
             log.warn(errorMsg);
@@ -36,16 +36,12 @@ public class FootballClubService {
         } else return Either.right(findResult.get());
     }
 
-    public List<FootballClub> findAllByIds(Iterable<Long> ids) {
-        return repository.findAllById(ids);
-    }
-
     public FootballClub save(CreateFootballClubRequestDTO dto) {
-        return repository.save(FootballClubMapper.INSTANCE.requestToObject(dto));
+        return dataLayer.save(FootballClubMapper.INSTANCE.requestToObject(dto));
     }
 
     public Either<String, FootballClub> update(Long id, CreateFootballClubRequestDTO dto) {
-        var findResult = repository.findById(id);
+        var findResult = dataLayer.findById(id);
         if (findResult.isEmpty()) {
             String errorMsg = "Unable to find football club with given id [%s]".formatted(id);
             log.warn(errorMsg);
@@ -61,7 +57,7 @@ public class FootballClubService {
         var footballClub = findResult.get();
         updateFields(dto, footballClub);
 
-        return Either.right(repository.save(footballClub));
+        return Either.right(dataLayer.save(footballClub));
     }
 
     private void updateFields(CreateFootballClubRequestDTO dto, FootballClub footballClub) {
@@ -81,31 +77,19 @@ public class FootballClubService {
 
     public Page<FootballClub> searchClubs(SearchFootballClubSearchCriteriaDTO criteria, Pageable pageable) {
         if (criteria.hasNoCriteria())
-            return repository.findAll(pageable);
+            return dataLayer.findAll(pageable);
         if (criteria.hasOneCriteria())
             return searchWithSingleCriteria(criteria, pageable);
 
-        Query query = new Query().with(pageable);
-        if (StringUtils.isNotEmpty(criteria.name())) {
-            query.addCriteria(Criteria.where("name").regex(".*" + criteria.name() + ".*", "i"));
-        }
-        if (criteria.country() != null) {
-            query.addCriteria(Criteria.where("country").is(criteria.country()));
-        }
-        if (StringUtils.isNotEmpty(criteria.stadiumName())) {
-            query.addCriteria(Criteria.where("stadiumName").regex(".*" + criteria.stadiumName() + ".*", "i"));
-        }
-        List<FootballClub> clubs = template.find(query, FootballClub.class);
-        long total = template.count(Query.of(query).limit(-1).skip(-1), FootballClub.class);
-        return new PageImpl<>(clubs, pageable, total);
+        return dataLayer.searchWithMultipleCriteria(criteria, pageable);
     }
 
     private Page<FootballClub> searchWithSingleCriteria(SearchFootballClubSearchCriteriaDTO criteria, Pageable pageable) {
         return switch (criteria.getSingleCriteriaType()) {
-            case NAME -> repository.findByNameContainingIgnoreCase(criteria.name(), pageable);
-            case STADIUM_NAME -> repository.findByStadiumNameContainingIgnoreCase(criteria.stadiumName(), pageable);
-            case COUNTRY -> repository.findByCountry(criteria.country(), pageable);
-            case NONE -> Page.empty();
+            case NAME -> dataLayer.findByNameContainingIgnoreCase(criteria.name(), pageable);
+            case STADIUM_NAME -> dataLayer.findByStadiumNameContainingIgnoreCase(criteria.stadiumName(), pageable);
+            case COUNTRY -> dataLayer.findByCountry(criteria.country(), pageable);
+            default -> Page.empty();
         };
     }
 }

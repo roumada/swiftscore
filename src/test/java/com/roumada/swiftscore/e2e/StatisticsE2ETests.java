@@ -86,7 +86,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
         for (int i = 0; i < statisticsArray.length(); i++) {
             JSONObject statisticsJson = statisticsArray.getJSONObject(i);
             assertTrue(statisticsJson.getInt("wins") + statisticsJson.getInt("draws") + statisticsJson.getInt("losses") > 0);
-            assertTrue(statisticsJson.getInt("goalsScored") + statisticsJson.getInt("goalsScored") > 0);
+            assertTrue(statisticsJson.getInt("goalsScored") > 0);
             assertNotNull(statisticsJson.getJSONArray("lastMatchesStatistics"));
             for (int j = i; j < statisticsArray.length(); j++) {
                 JSONObject statisticsJsonNext = statisticsArray.getJSONObject(j);
