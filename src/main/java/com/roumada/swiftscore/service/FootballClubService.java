@@ -105,6 +105,7 @@ public class FootballClubService {
             case NAME -> repository.findByNameContainingIgnoreCase(criteria.name(), pageable);
             case STADIUM_NAME -> repository.findByStadiumNameContainingIgnoreCase(criteria.stadiumName(), pageable);
             case COUNTRY -> repository.findByCountry(criteria.country(), pageable);
+            case NONE -> Page.empty();
         };
     }
 }

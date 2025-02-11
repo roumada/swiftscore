@@ -519,11 +519,11 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .build());
 
         // act
-        var result = mvc.perform(get("/competition/all")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        var resultArray = new JSONArray(result);
+        var result = mvc.perform(get("/competition/search")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        var resultArray = new JSONObject(result);
 
         // assert
-        assertEquals(2, resultArray.length());
+        assertEquals(2, resultArray.getJSONArray("content").length());
     }
 
     @Test

@@ -10,6 +10,7 @@ import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
@@ -85,7 +86,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
                 .build())).stream().map(Competition::getId).toList();
 
         // act
-        var comps = competitionDataLayer.findAllCompetitions();
+        var comps = competitionDataLayer.findAllCompetitions(Pageable.ofSize(20)).getContent();
 
         // assert
         assertEquals(2, comps.size());

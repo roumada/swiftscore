@@ -5,6 +5,7 @@ import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.Competition;
@@ -19,6 +20,8 @@ import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,10 +47,6 @@ public class CompetitionService {
                     log.warn(warnMsg);
                     return Either.left(warnMsg);
                 });
-    }
-
-    public List<Competition> findAllCompetitions() {
-        return competitionDataLayer.findAllCompetitions();
     }
 
     public Either<String, Competition> generateAndSave(CreateCompetitionRequestDTO dto) {
@@ -194,5 +193,19 @@ public class CompetitionService {
             return competition.getRounds().size() - competition.getLastSimulatedRound();
         }
         return times;
+    }
+
+    public Page<Competition> search(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
+        if(criteria.hasNoCriteria()) return competitionDataLayer.findAllCompetitions(pageable);
+        if(criteria.hasOneCriteria()) return searchWithSingleCriteria(criteria, pageable);
+        return competitionDataLayer.findByNameContainingIgnoreCaseAndCountry(criteria.name(), criteria.country(), pageable);
+    }
+
+    private Page<Competition> searchWithSingleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
+        return switch(criteria.getSingleCriteriaType()){
+            case NAME -> competitionDataLayer.findByNameContaining(criteria.name(), pageable);
+            case COUNTRY -> competitionDataLayer.findByCountry(criteria.country(), pageable);
+            default -> Page.empty();
+        };
     }
 }

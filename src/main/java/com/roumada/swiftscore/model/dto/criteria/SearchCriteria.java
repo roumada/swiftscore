@@ -8,6 +8,7 @@ public interface SearchCriteria {
     public enum SingleCriteriaType{
         NAME,
         COUNTRY,
-        STADIUM_NAME
+        STADIUM_NAME,
+        NONE
     }
 }
