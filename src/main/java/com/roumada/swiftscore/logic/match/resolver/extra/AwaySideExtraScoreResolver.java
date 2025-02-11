@@ -10,9 +10,8 @@ public class AwaySideExtraScoreResolver implements ExtraScoreResolver {
     public void resolve(FootballMatch footballMatch) {
         int bonusGoalsCeiling = Math.min(6,
                 (int) (footballMatch.getAwaySideCalculatedVictoryChance() - footballMatch.getHomeSideCalculatedVictoryChance()) * 10);
-        int addedGoals = HorusSeries.getFromOne(bonusGoalsCeiling, ThreadLocalRandom.current().nextDouble());
-        int extraGoals = footballMatch.getAwaySideGoalsScored() + addedGoals;
-        footballMatch.setAwaySideGoalsScored(extraGoals);
+        int extraGoals = HorusSeries.getFromOne(bonusGoalsCeiling, ThreadLocalRandom.current().nextDouble());
+        footballMatch.setAwaySideGoalsScored(footballMatch.getAwaySideGoalsScored() + extraGoals);
         footballMatch.setExtraVictorGoals(extraGoals);
     }
 }
