@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.model.match;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.roumada.swiftscore.model.FootballClub;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,14 +22,12 @@ public class FootballMatch {
     private Long competitionRoundId;
     @DBRef
     private FootballClub homeSideFootballClub;
-    private double homeSideCalculatedVictoryChance;
     private int homeSideGoalsScored;
     @DBRef
     private FootballClub awaySideFootballClub;
-    private double awaySideCalculatedVictoryChance;
     private int awaySideGoalsScored;
     private MatchResult matchResult = MatchResult.UNFINISHED;
-    private int extraVictorGoals;
+    private FootballMatchCalculatedValues calculatedValues = new FootballMatchCalculatedValues();
 
     public FootballMatch(LocalDateTime date, FootballClub homeSideFootballClub, FootballClub awaySideFootballClub) {
         this.date = date;
@@ -40,12 +39,41 @@ public class FootballMatch {
         this(null, homeSideFootballClub, awaySideFootballClub);
     }
 
+    @JsonIgnore
     public double getHomeSideVictoryChance() {
         return homeSideFootballClub.getVictoryChance();
     }
 
+    @JsonIgnore
     public double getAwaySideVictoryChance() {
         return awaySideFootballClub.getVictoryChance();
+    }
+
+    public void setHomeSideCalculatedVictoryChance(double homeSideVictoryChance) {
+        calculatedValues.setHomeSideCalculatedVictoryChance(homeSideVictoryChance);
+    }
+
+    public void setAwaySideCalculatedVictoryChance(double awaySideVictoryChance) {
+        calculatedValues.setAwaySideCalculatedVictoryChance(awaySideVictoryChance);
+    }
+
+    @JsonIgnore
+    public double getHomeSideCalculatedVictoryChance() {
+        return calculatedValues.getHomeSideCalculatedVictoryChance();
+    }
+
+    @JsonIgnore
+    public double getAwaySideCalculatedVictoryChance() {
+        return calculatedValues.getAwaySideCalculatedVictoryChance();
+    }
+
+    public void setExtraVictorGoals(int addedGoals) {
+        calculatedValues.setExtraVictorGoals(addedGoals);
+    }
+
+    @JsonIgnore
+    public int getExtraVictorGoals() {
+        return calculatedValues.getExtraVictorGoals();
     }
 
     public enum MatchResult {
