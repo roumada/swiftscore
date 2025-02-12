@@ -80,7 +80,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(ints = {2, 8})
-    @DisplayName("Create competition - with valid football club IDs & set fillToParticipants - should create")
+    @DisplayName("Create competition - with valid football club IDs & set participants - should create")
     void createCompetition_validIdsAndFillToParticipantsSet_isCreated(int fillToParticipants) throws Exception {
         // arrange
         var ids = FootballClubTestUtils
@@ -106,7 +106,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with uneven football club IDs amount & even fillToParticipants - should create")
+    @DisplayName("Create competition - with uneven football club IDs amount & even participants - should create")
     void createCompetition_unevenFootballClubIdsButEvenFillToParticipants_isCreated() throws Exception {
         // arrange
         var ids = FootballClubTestUtils
@@ -132,7 +132,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with uneven football club IDs amount & uneven fillToParticipants - should return error code")
+    @DisplayName("Create competition - with uneven football club IDs amount & uneven participants - should return error code")
     void createCompetition_unevenFootballClubIdsButUnevenFillToParticipants_isCreated() throws Exception {
         // arrange
         var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 3);
@@ -155,7 +155,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with even football club IDs amount & uneven fillToParticipants - should return error code")
+    @DisplayName("Create competition - with even football club IDs amount & uneven participants - should return error code")
     void createCompetition_evenFootballClubIdsButUnevenFillToParticipants_isCreated() throws Exception {
         // arrange
         var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 4);
@@ -178,7 +178,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with fillToParticipants parameter only - should create")
+    @DisplayName("Create competition - with participants parameter only - should create")
     void createCompetition_withFillToParticipantsOnly_isCreated() throws Exception {
         // arrange
         FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));
@@ -203,7 +203,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with uneven fillToParticipants parameter only - should create")
+    @DisplayName("Create competition - with uneven participants parameter only - should create")
     void createCompetition_withUnevenFillToParticipantsOnly_isCreated() throws Exception {
         // arrange
         FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));

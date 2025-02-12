@@ -19,6 +19,7 @@ public record CompetitionResponseDTO(
         String season,
         CountryCode country,
         SimulationValues simulationValues,
+        int relegationSpots,
         List<Long> participantIds,
         List<Long> roundIds
 ) {

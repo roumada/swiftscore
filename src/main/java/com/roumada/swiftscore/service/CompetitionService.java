@@ -120,7 +120,7 @@ public class CompetitionService {
 
     private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequestDTO dto) {
         if (dto.participantsAmount() == 0) {
-            return Either.left("Neither fillToParticipants nor footballClubIDs have been set");
+            return Either.left("Neither participants nor footballClubIDs have been set");
         }
 
         List<FootballClub> clubs = new ArrayList<>();
@@ -132,15 +132,15 @@ public class CompetitionService {
                 return Either.left("Couldn't retrieve all clubs for given IDs and country");
             }
 
-            if (dto.fillToParticipants() <= dto.participantIds().size()) {
-                log.info("FillToParticipants parameter [{}] lower than amount of club IDs provided ([{}]). Returning clubs with denoted club IDs only.",
-                        dto.fillToParticipants(), dto.participantIds().size());
+            if (dto.participants() <= dto.participantIds().size()) {
+                log.info("Participants parameter [{}] lower than amount of club IDs provided ([{}]). Returning clubs with denoted club IDs only.",
+                        dto.participants(), dto.participantIds().size());
                 return Either.right(clubs);
             }
         }
 
         clubs.addAll(footballClubDataLayer
-                .findByIdNotInAndCountryIn(dto.participantIds(), dto.country(), dto.fillToParticipants() - dto.participantIds().size()));
+                .findByIdNotInAndCountryIn(dto.participantIds(), dto.country(), dto.participants() - dto.participantIds().size()));
         return clubs.size() == dto.participantsAmount() ?
                 Either.right(clubs) :
                 Either.left("Couldn't find enough clubs from given country to fill in the league");

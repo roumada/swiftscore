@@ -35,6 +35,7 @@ public class CompetitionCreator {
                 .startDate(LocalDate.parse(dto.startDate()))
                 .endDate(LocalDate.parse(dto.endDate()))
                 .simulationValues(dto.simulationValues())
+                .relegationSpots(dto.relegationSpots())
                 .participants(footballClubs)
                 .rounds(rounds)
                 .build());

@@ -90,7 +90,7 @@ class CompetitionServiceTests {
     }
 
     @Test
-    @DisplayName("Generate competition - valid IDs and greater fillToParticipants parameter - should generate")
+    @DisplayName("Generate competition - valid IDs and greater participants parameter - should generate")
     void generateCompetition_validIdsAndGreaterFillToParticipantsParameter_shouldGenerate() {
         // arrange
         when(sequenceService.getNextValue()).thenAnswer((Answer<Long>) invocationOnMock -> increment());
@@ -149,7 +149,7 @@ class CompetitionServiceTests {
     }
 
     @Test
-    @DisplayName("Generate competition - uneven fillToParticipants value greater than Ids - should return error message")
+    @DisplayName("Generate competition - uneven participants value greater than Ids - should return error message")
     void generateCompetition_unevenGreaterFillToParticipantsAmount_shouldGenerateError() {
         // arrange
         var ids = List.of(1L, 2L, 3L, 4L);
@@ -159,7 +159,7 @@ class CompetitionServiceTests {
                 "2025-12-30",
                 ids,
                 7,
-                new SimulationValues(0));
+                new SimulationValues(0), 1);
 
         // act
         var optionalComp = service.generateAndSave(dto);

@@ -27,6 +27,7 @@ public class Competition {
     private LocalDate endDate;
     private String season;
     private SimulationValues simulationValues;
+    private int relegationSpots;
     @DBRef
     private List<FootballClub> participants;
     @DBRef
@@ -39,12 +40,14 @@ public class Competition {
                         LocalDate endDate,
                         SimulationValues simulationValues,
                         List<FootballClub> participants,
+                        int relegationSpots,
                         List<CompetitionRound> rounds) {
         this.name = name;
         this.country = country;
         this.startDate = startDate;
         this.endDate = endDate;
         this.simulationValues = simulationValues;
+        this.relegationSpots = relegationSpots;
         this.participants = participants;
         this.rounds = rounds;
         determineSeason();
