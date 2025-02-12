@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Premier Conference",
+    "country": "GB",
+    "startDate": "2024-07-01",
+    "endDate": "2025-05-01",
+    "fillToParticipants": 20,
+    "simulationValues": {
+      "variance": 0.35,
+      "scoreDifferenceDrawTrigger": 0.2,
+      "drawTriggerChance": 0.3
+    }
+  },
+  {
+    "name": "Oberste Liga",
+    "country": "DE",
+    "startDate": "2024-07-01",
+    "endDate": "2025-05-01",
+    "fillToParticipants": 18,
+    "simulationValues": {
+      "variance": 0.4,
+      "scoreDifferenceDrawTrigger": 0.15,
+      "drawTriggerChance": 0.4
+    }
+  },
+  {
+    "name": "Elite Liga",
+    "country": "ES",
+    "startDate": "2024-07-01",
+    "endDate": "2025-05-01",
+    "fillToParticipants": 16,
+    "simulationValues": {
+      "variance": 0.3,
+      "scoreDifferenceDrawTrigger": 0.3,
+      "drawTriggerChance": 0.3
+    }
+  }
+]

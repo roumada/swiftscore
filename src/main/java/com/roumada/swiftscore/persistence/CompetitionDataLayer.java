@@ -30,7 +30,7 @@ public class CompetitionDataLayer {
 
     public Competition save(Competition competition) {
         var saved = competitionRepository.save(competition);
-        log.debug("Competition with ID [{}] saved.", saved.getId());
+        log.info("Competition with ID [{}] saved.", saved.getId());
         return saved;
     }
 
@@ -44,7 +44,7 @@ public class CompetitionDataLayer {
 
     public void delete(long id) {
         competitionRepository.deleteById(id);
-        log.debug("Competition with ID [{}] deleted.", id);
+        log.info("Competition with ID [{}] deleted.", id);
     }
 
     public Page<Competition> findByNameContaining(String name, Pageable pageable) {
