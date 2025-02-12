@@ -73,6 +73,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .body("name", equalTo(request.name()))
                         .body("startDate", equalTo(request.startDate()))
                         .body("endDate", equalTo(request.endDate()))
+                        .body("season", equalTo("2025"))
                         .body("country", equalTo(request.country().toString()))
                         .body("simulationValues.variance", equalTo(0.0F))
                         .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.0F))
@@ -187,11 +188,11 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         assertNotSame(fm1Json.get("matchResult").toString(), FootballMatch.MatchResult.UNFINISHED.toString());
 
 
-        // STEP 3: simulate competition
+        // STEP 3: simulate competition - simulating more times than rounds left should simulate until the end
         simulateCompResponse =
                 given()
                         .port(port)
-                        .param("times", "1")
+                        .param("times", "4")
                         .when()
                         .post("/%s/simulate".formatted(compId))
                         .then()

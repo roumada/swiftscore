@@ -16,6 +16,7 @@ public record CompetitionResponseDTO(
         String name,
         LocalDate startDate,
         LocalDate endDate,
+        String season,
         CountryCode country,
         SimulationValues simulationValues,
         List<Long> participantIds,

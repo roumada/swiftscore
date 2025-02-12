@@ -198,13 +198,15 @@ public class CompetitionService {
     public Page<Competition> search(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
         if(criteria.hasNoCriteria()) return competitionDataLayer.findAllCompetitions(pageable);
         if(criteria.hasOneCriteria()) return searchWithSingleCriteria(criteria, pageable);
-        return competitionDataLayer.findByNameContainingIgnoreCaseAndCountry(criteria.name(), criteria.country(), pageable);
+
+        return competitionDataLayer.searchWithMultipleCriteria(criteria, pageable);
     }
 
     private Page<Competition> searchWithSingleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
         return switch(criteria.getSingleCriteriaType()){
             case NAME -> competitionDataLayer.findByNameContaining(criteria.name(), pageable);
             case COUNTRY -> competitionDataLayer.findByCountry(criteria.country(), pageable);
+            case SEASON -> competitionDataLayer.findBySeason(criteria.season(), pageable);
             default -> Page.empty();
         };
     }

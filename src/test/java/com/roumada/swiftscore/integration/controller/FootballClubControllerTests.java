@@ -247,20 +247,20 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
 
     @ParameterizedTest
     @CsvSource({
-            "'1', AN, '', '1', '1'",
-            "'', AN, '', '11', '10'",
-            "'1', AN, '', '3', '2'",
+            "'1', '', '', '1', '1'",
+            "'', '', '', '11', '10'",
+            "'1', '', '', '3', '2'",
             "'', GB, '', '1', '1'",
             "'', GB, '', '8', '4'",
-            "'', AN, '1', '1', '1'",
-            "'', AN, '1', '3', '2'",
+            "'', '', '1', '1', '1'",
+            "'', '', '1', '3', '2'",
             "'1', GB, '', '1', '1'",
             "'', GB, '2', '1', '1'",
-            "'1', AN, '1', '1', '1'",
+            "'1', '', '1', '1', '1'",
             "'9', GB, '9', '1', '1'",
     })
     @DisplayName("Search football clubs - various criteria - should return expected amount")
-    void searchFootballClubs_variousCriteria_shouldReturnExpectedAmount(String name, CountryCode country, String stadiumName, int pageSize, int expected) throws Exception {
+    void searchFootballClubs_variousCriteria_shouldReturnExpectedAmount(String name, String country, String stadiumName, int pageSize, int expected) throws Exception {
         // arrange
         footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubsWithVariousCountries());
 
@@ -268,7 +268,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
         var response = mvc.perform(get("/footballclub/search")
                         .param("size", String.valueOf(pageSize))
                         .param("name", name)
-                        .param("country", country == CountryCode.AN ? null : country.toString())
+                        .param("country", country)
                         .param("stadiumName", stadiumName)
                 )
                 .andExpect(status().isOk())

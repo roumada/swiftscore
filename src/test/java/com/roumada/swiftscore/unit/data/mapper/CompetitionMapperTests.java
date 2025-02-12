@@ -8,6 +8,7 @@ import com.roumada.swiftscore.model.match.CompetitionRound;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,6 +30,8 @@ class CompetitionMapperTests {
         cr2.setId(4L);
         var object = Competition.builder()
                 .name("Competition")
+                .startDate(LocalDate.of(2024, 1, 1))
+                .endDate(LocalDate.of(2024, 10, 1))
                 .simulationValues(new SimulationValues(0))
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(cr1, cr2))
