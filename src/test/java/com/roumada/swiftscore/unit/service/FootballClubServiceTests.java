@@ -5,7 +5,7 @@ import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
-import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.service.FootballClubService;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
     @Mock
-    FootballClubRepository footballClubRepository;
+    FootballClubDataLayer dataLayer;
     @InjectMocks
     FootballClubService service;
 
@@ -33,7 +33,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
     void findById_validID_shouldReturn() {
         // arrange
         var id = 1L;
-        when(footballClubRepository.findById(id)).thenReturn(Optional.of(FootballClubTestUtils.getClub(true)));
+        when(dataLayer.findById(id)).thenReturn(Optional.of(FootballClubTestUtils.getClub(true)));
 
         // act
         var findResult = service.findById(id);
@@ -58,7 +58,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
     void findAll_shouldReturn() {
         // arrange
         var ids = FootballClubTestUtils.getFourFootballClubs(true).stream().map(FootballClub::getId).toList();
-        when(footballClubRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(FootballClubTestUtils.getFourFootballClubs(true)));
+        when(dataLayer.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(FootballClubTestUtils.getFourFootballClubs(true)));
 
         // act
         var searchResult = service.searchClubs(new SearchFootballClubSearchCriteriaDTO(null, null, null), Pageable.ofSize(20));
@@ -74,7 +74,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
     void saveFC_shouldReturn() {
         // arrange
         var fcSaved = FootballClub.builder().name("FC").country(CountryCode.GB).stadiumName("FC Stadium").victoryChance(0.5).build();
-        when(footballClubRepository.save(fcSaved)).thenReturn(fcSaved);
+        when(dataLayer.save(fcSaved)).thenReturn(fcSaved);
 
         // act
         var fc = service.save(
@@ -92,7 +92,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update football club - invalid ID - should return error code")
     void updateFC_invalidID_shouldReturnErrorCode() {
         // arrange
-        when(footballClubRepository.findById(0L)).thenReturn(Optional.empty());
+        when(dataLayer.findById(0L)).thenReturn(Optional.empty());
 
         // act
         var updateResult = service.update(0L,
@@ -113,8 +113,8 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
         var fcUpdated = FootballClub.builder().name("FC2").country(CountryCode.GB).stadiumName("FC Stadium").victoryChance(0.5).build();
         fcSaved.setId(id);
         fcUpdated.setId(id);
-        when(footballClubRepository.findById(id)).thenReturn(Optional.of(fcSaved));
-        when(footballClubRepository.save(fcUpdated)).thenReturn(fcUpdated);
+        when(dataLayer.findById(id)).thenReturn(Optional.of(fcSaved));
+        when(dataLayer.save(fcUpdated)).thenReturn(fcUpdated);
 
 
         // act
@@ -139,8 +139,8 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
         var fcUpdated = FootballClub.builder().name("FC").country(CountryCode.PL).stadiumName("FC Stadium").victoryChance(0.5).build();
         fcSaved.setId(id);
         fcUpdated.setId(id);
-        when(footballClubRepository.findById(id)).thenReturn(Optional.of(fcSaved));
-        when(footballClubRepository.save(fcUpdated)).thenReturn(fcUpdated);
+        when(dataLayer.findById(id)).thenReturn(Optional.of(fcSaved));
+        when(dataLayer.save(fcUpdated)).thenReturn(fcUpdated);
 
         // act
         var updateResult = service.update(id,
@@ -164,8 +164,8 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
         var fcUpdated = FootballClub.builder().name("FC").country(CountryCode.GB).stadiumName("FC Park").victoryChance(0.5).build();
         fcSaved.setId(id);
         fcUpdated.setId(id);
-        when(footballClubRepository.findById(id)).thenReturn(Optional.of(fcSaved));
-        when(footballClubRepository.save(fcUpdated)).thenReturn(fcUpdated);
+        when(dataLayer.findById(id)).thenReturn(Optional.of(fcSaved));
+        when(dataLayer.save(fcUpdated)).thenReturn(fcUpdated);
 
         // act
         var updateResult = service.update(id,
@@ -189,8 +189,8 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
         var fcUpdated = FootballClub.builder().name("FC").country(CountryCode.GB).stadiumName("FC Stadium").victoryChance(0.2).build();
         fcSaved.setId(id);
         fcUpdated.setId(id);
-        when(footballClubRepository.findById(id)).thenReturn(Optional.of(fcSaved));
-        when(footballClubRepository.save(fcUpdated)).thenReturn(fcUpdated);
+        when(dataLayer.findById(id)).thenReturn(Optional.of(fcSaved));
+        when(dataLayer.save(fcUpdated)).thenReturn(fcUpdated);
 
         // act
         var updateResult = service.update(id,
