@@ -1100,27 +1100,70 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 2})
-    @DisplayName("Search competitions - name only - should find")
-    void searchCompetitions_nameOnly_shouldFind(int pageSize) throws Exception {
+    @CsvSource({
+            "1,     '',   '',           '3'",
+            "'',    GB,   '',           '2'",
+            "'',    '',   2024/2025,    '3'",
+            "'',    DE,   2024/2025,    '1'",
+            "1,     '',   2024/2025,    '3'",
+            "2,     IT,   2024/2025,    '0'",
+            "2,     GB,   2025,         '1'",
+    })
+    @DisplayName("Search competitions - various criteria - should find expected amount")
+    void searchCompetitions_variousCriteria_shouldFind(String name, String country, String season, int expected) throws Exception {
         // arrange
         competitionDataLayer.save(Competition.builder()
-                .name("British League")
+                .name("Brit League 1")
                 .country(CountryCode.GB)
+                .startDate(LocalDate.of(2024, 7, 1))
+                .endDate(LocalDate.of(2025, 5, 1))
                 .simulationValues(new SimulationValues(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
         competitionDataLayer.save(Competition.builder()
-                .name("British League 2")
+                .name("Brit League 2")
                 .country(CountryCode.GB)
+                .startDate(LocalDate.of(2025, 1, 1))
+                .endDate(LocalDate.of(2025, 10, 1))
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        competitionDataLayer.save(Competition.builder()
+                .name("German League 1")
+                .country(CountryCode.DE)
+                .startDate(LocalDate.of(2024, 7, 1))
+                .endDate(LocalDate.of(2025, 5, 1))
                 .simulationValues(new SimulationValues(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
         competitionDataLayer.save(Competition.builder()
-                .name("Spanish Liga")
-                .country(CountryCode.GB)
+                .name("German League 2")
+                .country(CountryCode.DE)
+                .startDate(LocalDate.of(2025, 1, 1))
+                .endDate(LocalDate.of(2025, 10, 1))
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+
+        competitionDataLayer.save(Competition.builder()
+                .name("Italian League 1")
+                .country(CountryCode.IT)
+                .startDate(LocalDate.of(2024, 7, 1))
+                .endDate(LocalDate.of(2025, 5, 1))
+                .simulationValues(new SimulationValues(0))
+                .participants(Collections.emptyList())
+                .rounds(Collections.emptyList())
+                .build());
+        competitionDataLayer.save(Competition.builder()
+                .name("Italian League 2")
+                .country(CountryCode.IT)
+                .startDate(LocalDate.of(2025, 1, 1))
+                .endDate(LocalDate.of(2025, 10, 1))
                 .simulationValues(new SimulationValues(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
@@ -1128,8 +1171,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var response = mvc.perform(get("/competition/search")
-                        .param("size", String.valueOf(pageSize))
-                        .param("name", "League")
+                        .param("name", name)
+                        .param("country", country)
+                        .param("season", season)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -1137,89 +1181,6 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         var responseJson = new JSONObject(response);
-        assertEquals(pageSize, responseJson.getJSONArray("content").length());
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {1, 2})
-    @DisplayName("Search competitions - country only - should find")
-    void searchCompetitions_countryOnly_shouldFind(int pageSize) throws Exception {
-        // arrange
-        competitionDataLayer.save(Competition.builder()
-                .name("British League")
-                .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("British League 2")
-                .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("Spanish Liga")
-                .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-
-        // act
-        var response = mvc.perform(get("/competition/search")
-                        .param("size", String.valueOf(pageSize))
-                        .param("country", "GB")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse().getContentAsString();
-
-        // assert
-        var responseJson = new JSONObject(response);
-        assertEquals(pageSize, responseJson.getJSONArray("content").length());
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {1, 2})
-    @DisplayName("Search competitions - name and country - should find")
-    void searchCompetitions_nameAndCountry_shouldFind(int pageSize) throws Exception {
-        // arrange
-        competitionDataLayer.save(Competition.builder()
-                .name("British League")
-                .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("British League 2")
-                .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("Spanish Liga")
-                .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-
-        // act
-        var response = mvc.perform(get("/competition/search")
-                        .param("size", String.valueOf(pageSize))
-                        .param("name", "brit")
-                        .param("country", "GB")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse().getContentAsString();
-
-        // assert
-        var responseJson = new JSONObject(response);
-        assertEquals(pageSize, responseJson.getJSONArray("content").length());
+        assertEquals(expected, responseJson.getJSONArray("content").length());
     }
 }

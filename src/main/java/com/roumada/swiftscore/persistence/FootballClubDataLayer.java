@@ -66,7 +66,7 @@ public class FootballClubDataLayer {
         return repository.findByCountry(country, pageable);
     }
 
-    public PageImpl<FootballClub> searchWithMultipleCriteria(SearchFootballClubSearchCriteriaDTO criteria, Pageable pageable) {
+    public Page<FootballClub> searchWithMultipleCriteria(SearchFootballClubSearchCriteriaDTO criteria, Pageable pageable) {
         Query query = new Query().with(pageable);
         if (StringUtils.isNotEmpty(criteria.name())) {
             query.addCriteria(Criteria.where("name").regex(".*" + criteria.name() + ".*", "i"));
