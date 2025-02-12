@@ -188,11 +188,11 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         assertNotSame(fm1Json.get("matchResult").toString(), FootballMatch.MatchResult.UNFINISHED.toString());
 
 
-        // STEP 3: simulate competition
+        // STEP 3: simulate competition - simulating more times than rounds left should simulate until the end
         simulateCompResponse =
                 given()
                         .port(port)
-                        .param("times", "1")
+                        .param("times", "4")
                         .when()
                         .post("/%s/simulate".formatted(compId))
                         .then()
