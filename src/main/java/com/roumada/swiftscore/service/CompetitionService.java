@@ -159,6 +159,15 @@ public class CompetitionService {
 
         Competition competition = findResult.get();
 
+        if (dto.relegationSpots() != null) {
+            if (competition.getParticipants().size() - 1 <= dto.relegationSpots()) {
+                String warnMsg = "New relegation spots amount [%s] exceeds amount of participants in competition [%s] by at least two"
+                        .formatted(dto.relegationSpots(), competition.getParticipants().size());
+                log.warn(warnMsg);
+                return Either.left(warnMsg);
+            } else competition.setRelegationSpots(dto.relegationSpots());
+        }
+
         if (dto.name() != null) competition.setName(dto.name());
         if (dto.country() != null) competition.setCountry(dto.country());
         if (dto.simulationValues() != null) {
@@ -192,14 +201,14 @@ public class CompetitionService {
     }
 
     public Page<Competition> search(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
-        if(criteria.hasNoCriteria()) return competitionDataLayer.findAllCompetitions(pageable);
-        if(criteria.hasOneCriteria()) return searchWithSingleCriteria(criteria, pageable);
+        if (criteria.hasNoCriteria()) return competitionDataLayer.findAllCompetitions(pageable);
+        if (criteria.hasOneCriteria()) return searchWithSingleCriteria(criteria, pageable);
 
         return competitionDataLayer.searchWithMultipleCriteria(criteria, pageable);
     }
 
     private Page<Competition> searchWithSingleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
-        return switch(criteria.getSingleCriteriaType()){
+        return switch (criteria.getSingleCriteriaType()) {
             case NAME -> competitionDataLayer.findByNameContaining(criteria.name(), pageable);
             case COUNTRY -> competitionDataLayer.findByCountry(criteria.country(), pageable);
             case SEASON -> competitionDataLayer.findBySeason(criteria.season(), pageable);

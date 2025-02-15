@@ -443,7 +443,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(ints = {3, 4})
-    @DisplayName("Create competition  - invalid relegation spots amount - should return error code")
+    @DisplayName("Create competition - invalid relegation spots amount - should return error code")
     void createCompetition_invalidRelegationSpotsAmount_shouldReturnErrorCode(int relegationSpots) throws Exception {
         // arrange
         footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
@@ -649,6 +649,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO("New Competition",
                 null,
+                null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -696,6 +697,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 CountryCode.SE,
+                null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -742,6 +744,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -790,6 +793,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(0.1, null, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -840,6 +844,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
+                null,
                 new UpdateSimulationValuesDTO(variance, null, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -868,6 +873,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(null, 0.2, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -918,6 +924,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
+                null,
                 new UpdateSimulationValuesDTO(null, sddt, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -946,6 +953,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(null, null, 0.2));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -996,6 +1004,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
+                null,
                 new UpdateSimulationValuesDTO(null, null, dtc));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -1014,6 +1023,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     void updateCompetition_invalidId_shouldReturnUpdated() throws Exception {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
         var response = mvc.perform(patch("/competition/0")
@@ -1052,6 +1062,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(variance, sddt, dtc));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))

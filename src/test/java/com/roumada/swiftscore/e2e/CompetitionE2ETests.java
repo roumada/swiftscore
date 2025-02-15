@@ -106,6 +106,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 = new UpdateCompetitionRequestDTO(
                 "New Competition",
                 CountryCode.AN,
+                null,
                 new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
 
         given()

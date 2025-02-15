@@ -31,7 +31,7 @@ public class CompetitionRequestDTOValidator implements ConstraintValidator<Valid
 
         if (dto.participantsAmount() - 1 <= dto.parameters().relegationSpots()) {
             context
-                    .buildConstraintViolationWithTemplate("Amount of participants must be at least greater than one than relegateion spots")
+                    .buildConstraintViolationWithTemplate("Amount of participants must be at least greater than two than relegation spots")
                     .addConstraintViolation();
             return false;
         }
