@@ -5,6 +5,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
@@ -67,9 +68,10 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        null,
-                                        new SimulationValues(0)))))
+                                        new CompetitionParametersDTO(0, ids, 0),
+                                        new SimulationValues(0))
+
+                        )))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
@@ -80,8 +82,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(ints = {2, 8})
-    @DisplayName("Create competition - with valid football club IDs & set fillToParticipants - should create")
-    void createCompetition_validIdsAndFillToParticipantsSet_isCreated(int fillToParticipants) throws Exception {
+    @DisplayName("Create competition - with valid football club IDs & set participants - should create")
+    void createCompetition_validIdsAndFillToParticipantsSet_isCreated(int participants) throws Exception {
         // arrange
         var ids = FootballClubTestUtils
                 .getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 4);
@@ -94,9 +96,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        fillToParticipants,
-                                        new SimulationValues(0)))))
+                                        new CompetitionParametersDTO(participants, ids, 0),
+                                        new SimulationValues(0))
+                        )))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
@@ -106,7 +108,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with uneven football club IDs amount & even fillToParticipants - should create")
+    @DisplayName("Create competition - with uneven football club IDs amount & even participants - should create")
     void createCompetition_unevenFootballClubIdsButEvenFillToParticipants_isCreated() throws Exception {
         // arrange
         var ids = FootballClubTestUtils
@@ -120,9 +122,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        8,
-                                        new SimulationValues(0)))))
+                                        new CompetitionParametersDTO(8, ids, 0),
+                                        new SimulationValues(0))
+                        )))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
@@ -132,7 +134,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with uneven football club IDs amount & uneven fillToParticipants - should return error code")
+    @DisplayName("Create competition - with uneven football club IDs amount & uneven participants - should return error code")
     void createCompetition_unevenFootballClubIdsButUnevenFillToParticipants_isCreated() throws Exception {
         // arrange
         var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 3);
@@ -145,8 +147,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        7,
+                                        new CompetitionParametersDTO(7, ids, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
 
@@ -155,7 +156,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with even football club IDs amount & uneven fillToParticipants - should return error code")
+    @DisplayName("Create competition - with even football club IDs amount & uneven participants - should return error code")
     void createCompetition_evenFootballClubIdsButUnevenFillToParticipants_isCreated() throws Exception {
         // arrange
         var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 4);
@@ -168,8 +169,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        7,
+                                        new CompetitionParametersDTO(7, ids, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
 
@@ -178,7 +178,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with fillToParticipants parameter only - should create")
+    @DisplayName("Create competition - with participants parameter only - should create")
     void createCompetition_withFillToParticipantsOnly_isCreated() throws Exception {
         // arrange
         FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));
@@ -191,8 +191,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        null,
-                                        8,
+                                        new CompetitionParametersDTO(8, null, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().isOk()).andReturn();
 
@@ -203,7 +202,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with uneven fillToParticipants parameter only - should create")
+    @DisplayName("Create competition - with uneven participants parameter only - should create")
     void createCompetition_withUnevenFillToParticipantsOnly_isCreated() throws Exception {
         // arrange
         FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));
@@ -216,8 +215,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        null,
-                                        7,
+                                        new CompetitionParametersDTO(7, null, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
 
@@ -239,8 +237,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-30",
-                                        List.of(1L, 2L, 3L, 9L),
-                                        null,
+                                        new CompetitionParametersDTO(0, List.of(1L, 2L, 3L, 9L), 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -265,8 +262,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-30",
-                                        ids,
-                                        null,
+                                        new CompetitionParametersDTO(0, ids, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -288,8 +284,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                List.of(1L, 2L, 3L),
-                                null,
+                                new CompetitionParametersDTO(0, List.of(1L, 2L, 3L), 0),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -313,8 +308,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                ids,
-                                null,
+                                new CompetitionParametersDTO(0, ids, 0),
                                 new SimulationValues(variation, 0.0, 0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -344,8 +338,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-11-10",
-                                ids,
-                                null,
+                                new CompetitionParametersDTO(0, ids, 0),
                                 new SimulationValues(0.0, 0.0, drawTriggerChance)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -375,8 +368,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                ids,
-                                null,
+                                new CompetitionParametersDTO(0, ids, 0),
                                 new SimulationValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -416,8 +408,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 startDate,
                                 endDate,
-                                ids,
-                                null,
+                                new CompetitionParametersDTO(0, ids, 0),
                                 new SimulationValues(0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -428,7 +419,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition  - with null name - should return error code")
+    @DisplayName("Create competition - with null name - should return error code")
     void createCompetition_withNullName_shouldReturnErrorCode() throws Exception {
         // arrange
         footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
@@ -440,8 +431,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                List.of(1L, 2L, 3L),
-                                null,
+                                new CompetitionParametersDTO(4, null, 0),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -451,21 +441,38 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         assertEquals("Name cannot be null", validationErrors.get(0));
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {3, 4})
+    @DisplayName("Create competition - invalid relegation spots amount - should return error code")
+    void createCompetition_invalidRelegationSpotsAmount_shouldReturnErrorCode(int relegationSpots) throws Exception {
+        // arrange
+        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
+
+        // act
+        var response = mvc.perform(post("/competition")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("Competition",
+                                CountryCode.GB,
+                                "2025-01-01",
+                                "2025-10-30",
+                                new CompetitionParametersDTO(4, null, relegationSpots),
+                                new SimulationValues(0)))))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertEquals("Amount of participants must be at least greater than one than relegateion spots", validationErrors.get(0));
+    }
+
     @Test
-    @DisplayName("Delete competition - exists - should return OK")
-    void deleteCompetition_exists_shouldReturnOK() throws Exception {
+    @DisplayName("Delete competition - should return OK")
+    void deleteCompetition_shouldReturnOK() throws Exception {
         // arrange
         var id = competitionDataLayer.save(Competition.builder().build()).getId();
 
         // act
         mvc.perform(delete("/competition/%s".formatted(id))).andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Delete competition - doesn't exist - should return no content")
-    void deleteCompetition_nonExistent_shouldReturnNoContent() throws Exception {
-        // act
-        mvc.perform(delete("/competition/-1")).andExpect(status().isNoContent());
     }
 
     @Test
@@ -642,6 +649,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO("New Competition",
                 null,
+                null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -689,6 +697,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 CountryCode.SE,
+                null,
                 null);
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -735,6 +744,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -783,6 +793,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(0.1, null, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -833,6 +844,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
+                null,
                 new UpdateSimulationValuesDTO(variance, null, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -861,6 +873,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(null, 0.2, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -911,6 +924,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
+                null,
                 new UpdateSimulationValuesDTO(null, sddt, null));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -939,6 +953,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(null, null, 0.2));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -989,6 +1004,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
+                null,
                 new UpdateSimulationValuesDTO(null, null, dtc));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -1007,6 +1023,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     void updateCompetition_invalidId_shouldReturnUpdated() throws Exception {
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
         var response = mvc.perform(patch("/competition/0")
@@ -1045,6 +1062,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         var dto = new UpdateCompetitionRequestDTO(null,
+                null,
                 null,
                 new UpdateSimulationValuesDTO(variance, sddt, dtc));
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))

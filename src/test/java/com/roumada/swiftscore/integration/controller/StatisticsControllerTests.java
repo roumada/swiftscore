@@ -4,6 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
@@ -39,9 +40,8 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
                         CountryCode.GB,
                         "2025-01-01",
                         "2025-12-30",
-                        ids,
-                        null,
-                        new SimulationValues(0.0)))
+                new CompetitionParametersDTO(0, ids, 0),
+                new SimulationValues(0)))
                 .get();
         var compId = compdl.save(comp).getId();
 

@@ -60,7 +60,7 @@ public class CompetitionController {
                                       "participantIds": [
                                         10000, 10001
                                       ],
-                                      "fillToParticipants": 6,
+                                      "participants": 6,
                                       "simulationValues": {
                                         "variance": 0.1,
                                         "scoreDifferenceDrawTrigger": 0.2,
@@ -113,15 +113,11 @@ public class CompetitionController {
     @Operation(summary = "Delete a competition")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competition deleted",
-                    content = @Content),
-            @ApiResponse(responseCode = "204", description = "Competition not found for deletion",
                     content = @Content)})
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCompetition(@PathVariable long id,
                                                     HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
-        var comp = service.findCompetitionById(id);
-        if (comp.isLeft()) return ResponseEntity.noContent().build();
         service.delete(id);
         return ResponseEntity.ok("OK");
     }

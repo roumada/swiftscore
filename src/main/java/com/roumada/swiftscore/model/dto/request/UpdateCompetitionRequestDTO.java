@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 public record UpdateCompetitionRequestDTO(
         String name,
         CountryCode country,
+        Integer relegationSpots,
         @Valid
         UpdateSimulationValuesDTO simulationValues
 ) {

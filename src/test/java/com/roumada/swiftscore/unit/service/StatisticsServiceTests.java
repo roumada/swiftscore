@@ -80,11 +80,11 @@ class StatisticsServiceTests {
         assertTrue(standingsEither.isRight());
 
         var standings = standingsEither.get();
-        assertFalse(standings.isEmpty());
-        assertEquals(2, standings.size());
+        assertFalse(standings.standings().isEmpty());
+        assertEquals(2, standings.standings().size());
 
-        var standings1 = standings.get(0);
-        var standings2 = standings.get(1);
+        var standings1 = standings.standings().get(0);
+        var standings2 = standings.standings().get(1);
         assertEquals("FC1", standings1.getFootballClubName());
         assertEquals(2, standings1.getWins());
         assertEquals(1, standings1.getDraws());

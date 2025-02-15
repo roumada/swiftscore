@@ -119,10 +119,6 @@ public class CompetitionService {
     }
 
     private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequestDTO dto) {
-        if (dto.participantsAmount() == 0) {
-            return Either.left("Neither fillToParticipants nor footballClubIDs have been set");
-        }
-
         List<FootballClub> clubs = new ArrayList<>();
 
         if (dto.participantIds() != null) {
@@ -132,15 +128,15 @@ public class CompetitionService {
                 return Either.left("Couldn't retrieve all clubs for given IDs and country");
             }
 
-            if (dto.fillToParticipants() <= dto.participantIds().size()) {
-                log.info("FillToParticipants parameter [{}] lower than amount of club IDs provided ([{}]). Returning clubs with denoted club IDs only.",
-                        dto.fillToParticipants(), dto.participantIds().size());
+            if (dto.participants() <= dto.participantIds().size()) {
+                log.info("Participants parameter [{}] lower than amount of club IDs provided ([{}]). Returning clubs with denoted club IDs only.",
+                        dto.participants(), dto.participantIds().size());
                 return Either.right(clubs);
             }
         }
 
         clubs.addAll(footballClubDataLayer
-                .findByIdNotInAndCountryIn(dto.participantIds(), dto.country(), dto.fillToParticipants() - dto.participantIds().size()));
+                .findByIdNotInAndCountryIn(dto.participantIds(), dto.country(), dto.participants() - dto.participantIds().size()));
         return clubs.size() == dto.participantsAmount() ?
                 Either.right(clubs) :
                 Either.left("Couldn't find enough clubs from given country to fill in the league");
@@ -162,6 +158,15 @@ public class CompetitionService {
         }
 
         Competition competition = findResult.get();
+
+        if (dto.relegationSpots() != null) {
+            if (competition.getParticipants().size() - 1 <= dto.relegationSpots()) {
+                String warnMsg = "New relegation spots amount [%s] exceeds amount of participants in competition [%s] by at least two"
+                        .formatted(dto.relegationSpots(), competition.getParticipants().size());
+                log.warn(warnMsg);
+                return Either.left(warnMsg);
+            } else competition.setRelegationSpots(dto.relegationSpots());
+        }
 
         if (dto.name() != null) competition.setName(dto.name());
         if (dto.country() != null) competition.setCountry(dto.country());
@@ -196,14 +201,14 @@ public class CompetitionService {
     }
 
     public Page<Competition> search(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
-        if(criteria.hasNoCriteria()) return competitionDataLayer.findAllCompetitions(pageable);
-        if(criteria.hasOneCriteria()) return searchWithSingleCriteria(criteria, pageable);
+        if (criteria.hasNoCriteria()) return competitionDataLayer.findAllCompetitions(pageable);
+        if (criteria.hasOneCriteria()) return searchWithSingleCriteria(criteria, pageable);
 
         return competitionDataLayer.searchWithMultipleCriteria(criteria, pageable);
     }
 
     private Page<Competition> searchWithSingleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
-        return switch(criteria.getSingleCriteriaType()){
+        return switch (criteria.getSingleCriteriaType()) {
             case NAME -> competitionDataLayer.findByNameContaining(criteria.name(), pageable);
             case COUNTRY -> competitionDataLayer.findByCountry(criteria.country(), pageable);
             case SEASON -> competitionDataLayer.findBySeason(criteria.season(), pageable);

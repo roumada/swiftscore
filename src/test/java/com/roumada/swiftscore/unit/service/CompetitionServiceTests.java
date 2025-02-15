@@ -3,6 +3,7 @@ package com.roumada.swiftscore.unit.service;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -64,8 +65,7 @@ class CompetitionServiceTests {
                 GB,
                 "2025-01-01",
                 "2025-12-30",
-                ids,
-                null,
+                new CompetitionParametersDTO(0, ids, 0),
                 new SimulationValues(0));
 
         // act
@@ -90,7 +90,7 @@ class CompetitionServiceTests {
     }
 
     @Test
-    @DisplayName("Generate competition - valid IDs and greater fillToParticipants parameter - should generate")
+    @DisplayName("Generate competition - valid IDs and greater participants parameter - should generate")
     void generateCompetition_validIdsAndGreaterFillToParticipantsParameter_shouldGenerate() {
         // arrange
         when(sequenceService.getNextValue()).thenAnswer((Answer<Long>) invocationOnMock -> increment());
@@ -102,8 +102,7 @@ class CompetitionServiceTests {
                 GB,
                 "2025-01-01",
                 "2025-12-30",
-                ids,
-                4,
+                new CompetitionParametersDTO(4, ids, 0),
                 new SimulationValues(0));
 
         // act
@@ -136,8 +135,7 @@ class CompetitionServiceTests {
                 GB,
                 "2025-01-01",
                 "2025-12-30",
-                ids,
-                null,
+                new CompetitionParametersDTO(0, ids, 0),
                 new SimulationValues(0));
 
         // act
@@ -149,7 +147,7 @@ class CompetitionServiceTests {
     }
 
     @Test
-    @DisplayName("Generate competition - uneven fillToParticipants value greater than Ids - should return error message")
+    @DisplayName("Generate competition - uneven participants value greater than Ids - should return error message")
     void generateCompetition_unevenGreaterFillToParticipantsAmount_shouldGenerateError() {
         // arrange
         var ids = List.of(1L, 2L, 3L, 4L);
@@ -157,8 +155,7 @@ class CompetitionServiceTests {
                 GB,
                 "2025-01-01",
                 "2025-12-30",
-                ids,
-                7,
+                new CompetitionParametersDTO(7, ids, 0),
                 new SimulationValues(0));
 
         // act
@@ -181,8 +178,7 @@ class CompetitionServiceTests {
                 GB,
                 "2025-01-01",
                 "2025-12-30",
-                ids,
-                null,
+                new CompetitionParametersDTO(0, ids, 0),
                 new SimulationValues(0));
 
         // act
@@ -203,8 +199,7 @@ class CompetitionServiceTests {
                 ES,
                 "2025-01-01",
                 "2025-12-30",
-                ids,
-                null,
+                new CompetitionParametersDTO(0, ids, 0),
                 new SimulationValues(0));
 
         // act
@@ -226,8 +221,7 @@ class CompetitionServiceTests {
                 ES,
                 "2025-01-01",
                 "2025-12-30",
-                ids,
-                4,
+                new CompetitionParametersDTO(4, ids, 0),
                 new SimulationValues(0));
 
         // act
@@ -248,8 +242,7 @@ class CompetitionServiceTests {
                 ES,
                 "2025-01-01",
                 "2025-12-30",
-                null,
-                4,
+                new CompetitionParametersDTO(4, null, 0),
                 new SimulationValues(0));
 
         // act
@@ -274,8 +267,7 @@ class CompetitionServiceTests {
                 GB,
                 "2025-01-01",
                 "2025-12-30",
-                ids,
-                null,
+                new CompetitionParametersDTO(0, ids, 0),
                 new SimulationValues(0))).get();
 
         for (int i = 0; i < comp.getParticipants().size() * 2 - 2; i += times) {

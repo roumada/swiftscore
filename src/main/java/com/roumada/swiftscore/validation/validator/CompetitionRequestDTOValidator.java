@@ -2,6 +2,7 @@ package com.roumada.swiftscore.validation.validator;
 
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequestDTO;
+import io.micrometer.common.util.StringUtils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,14 +18,32 @@ public class CompetitionRequestDTOValidator implements ConstraintValidator<Valid
 
     @Override
     public boolean isValid(CreateCompetitionRequestDTO dto, ConstraintValidatorContext context) {
+        if (dto.parameters() == null) {
+            return false;
+        }
+
+        if (dto.participantsAmount() == 0) {
+            context
+                    .buildConstraintViolationWithTemplate("Neither participants nor footballClubIDs have been set")
+                    .addConstraintViolation();
+            return false;
+        }
+
+        if (dto.participantsAmount() - 1 <= dto.parameters().relegationSpots()) {
+            context
+                    .buildConstraintViolationWithTemplate("Amount of participants must be at least greater than two than relegation spots")
+                    .addConstraintViolation();
+            return false;
+        }
+
         boolean isDateMissing = false;
-        if (dto.startDate() == null || dto.startDate().isEmpty()) {
+        if (StringUtils.isEmpty(dto.startDate())) {
             context
                     .buildConstraintViolationWithTemplate("Start date must be present")
                     .addConstraintViolation();
             isDateMissing = true;
         }
-        if (dto.endDate() == null || dto.endDate().isEmpty()) {
+        if (StringUtils.isEmpty(dto.endDate())) {
             context
                     .buildConstraintViolationWithTemplate("End date must be present")
                     .addConstraintViolation();

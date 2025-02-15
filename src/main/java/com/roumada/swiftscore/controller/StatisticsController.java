@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponseDTO;
-import com.roumada.swiftscore.model.dto.response.StandingsResponseDTO;
+import com.roumada.swiftscore.model.dto.response.FootballClubStandings;
 import com.roumada.swiftscore.service.StatisticsService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +29,7 @@ public class StatisticsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Standings generated and returned",
                     content = {@Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = StandingsResponseDTO.class)))}),
+                            array = @ArraySchema(schema = @Schema(implementation = FootballClubStandings.class)))}),
             @ApiResponse(responseCode = "400", description = "Competition not found",
                     content = @Content)})
     @GetMapping("competition/{competitionId}")

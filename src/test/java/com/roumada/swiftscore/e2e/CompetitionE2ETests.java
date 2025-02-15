@@ -4,14 +4,19 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
 import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
+import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,14 +32,23 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CompetitionE2ETests extends AbstractBaseIntegrationTest {
 
     @Autowired
     private FootballClubRepository clubRepository;
+
+    @Autowired
+    private CompetitionRepository competitionRepository;
+
+    @Autowired
+    private FootballMatchRepository footballMatchRepository;
+
+    @Autowired
+    private CompetitionRoundRepository compRoundRepository;
+
 
     @LocalServerPort
     private int port;
@@ -48,15 +62,14 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
     @DisplayName("Should create, update and then delete competition")
     void shouldCreateUpdateAndDeleteCompetition() {
         // arrange
-        var clubIds = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs())
-                .stream().map(FootballClub::getId).toList();
+        var clubIds = FootballClubTestUtils.getIdsOfSavedClubs(
+                clubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
         CreateCompetitionRequestDTO request = new CreateCompetitionRequestDTO("Competition",
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                clubIds,
-                null,
-                new SimulationValues(0));
+                new CompetitionParametersDTO(0, clubIds, 1),
+                new SimulationValues(0.3, 0.4, 0.1));
 
         // STEP 1: create competition
         Response createCompetitionResponse =
@@ -75,19 +88,25 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .body("endDate", equalTo(request.endDate()))
                         .body("season", equalTo("2025"))
                         .body("country", equalTo(request.country().toString()))
-                        .body("simulationValues.variance", equalTo(0.0F))
-                        .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.0F))
-                        .body("simulationValues.drawTriggerChance", equalTo(0.0F))
+                        .body("relegationSpots", equalTo(request.parameters().relegationSpots()))
+                        .body("simulationValues.variance", equalTo(0.3F))
+                        .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.4F))
+                        .body("simulationValues.drawTriggerChance", equalTo(0.1F))
                         .extract()
                         .response();
 
-        int id = createCompetitionResponse.jsonPath().getInt("id");
+        JsonPath responseJson = createCompetitionResponse.jsonPath();
+        long compId = responseJson.getInt("id");
+        List<Long> roundIds = responseJson.getList("roundIds");
+        assertEquals(6, roundIds.size());
+        assertEquals(4, responseJson.getList("participantIds").size());
 
         // STEP 2: update competition
         UpdateCompetitionRequestDTO updateRequest
                 = new UpdateCompetitionRequestDTO(
                 "New Competition",
                 CountryCode.AN,
+                null,
                 new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
 
         given()
@@ -95,10 +114,15 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(updateRequest)
                 .when()
-                .patch("/%s".formatted(id))
+                .patch("/%s".formatted(compId))
                 .then()
                 .statusCode(200)
-                .body("id", equalTo(id))
+                .body("id", equalTo((int)compId))
+                .body("lastSimulatedRound", equalTo(0))
+                .body("startDate", equalTo(request.startDate()))
+                .body("endDate", equalTo(request.endDate()))
+                .body("season", equalTo("2025"))
+                .body("relegationSpots", equalTo(request.parameters().relegationSpots()))
                 .body("name", equalTo(updateRequest.name()))
                 .body("country", equalTo(updateRequest.country().toString()))
                 .body("simulationValues.variance", equalTo(0.1F))
@@ -113,34 +137,29 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when()
-                .delete("/%s".formatted(id))
+                .delete("/%s".formatted(compId))
                 .then()
                 .statusCode(200);
 
-        // STEP 4: attempt to delete non-existent competition and receive 204 code
-        given()
-                .port(port)
-                .contentType(ContentType.JSON)
-                .body(request)
-                .when()
-                .delete("/%s".formatted(id))
-                .then()
-                .statusCode(204);
+        // ASSERT: check if all objects related to competition have been deleted
+        assertTrue(competitionRepository.findById(compId).isEmpty());
+        assertTrue(compRoundRepository.findAllById(roundIds).isEmpty());
+        assertTrue(footballMatchRepository.findAll().isEmpty());
     }
 
     @Test
     @DisplayName("Should create and simulate competition until can no longer be simulated and delete competition and its matches")
     void shouldCreateSimulateAndDeleteCompetition() throws JSONException {
         // arrange
-        var clubIds = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs())
-                .stream().map(FootballClub::getId).toList();
+        var clubIds = FootballClubTestUtils.getIdsOfSavedClubs(clubRepository.saveAll(
+                FootballClubTestUtils.getTwoFootballClubs()
+        ));
         CreateCompetitionRequestDTO request = new CreateCompetitionRequestDTO("Competition",
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                clubIds,
-                null,
-                new SimulationValues(0));
+                new CompetitionParametersDTO(0, clubIds, 0),
+                new SimulationValues(0.3, 0.4, 0.1));
 
         // STEP 1: create competition
         Response createCompetitionResponse =
@@ -157,16 +176,18 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .body("name", equalTo(request.name()))
                         .body("startDate", equalTo(request.startDate()))
                         .body("endDate", equalTo(request.endDate()))
+                        .body("season", equalTo("2025"))
                         .body("country", equalTo(request.country().toString()))
-                        .body("simulationValues.variance", equalTo(0.0F))
-                        .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.0F))
-                        .body("simulationValues.drawTriggerChance", equalTo(0.0F))
+                        .body("relegationSpots", equalTo(request.parameters().relegationSpots()))
+                        .body("simulationValues.variance", equalTo(0.3F))
+                        .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.4F))
+                        .body("simulationValues.drawTriggerChance", equalTo(0.1F))
                         .extract()
                         .response();
 
         int compId = createCompetitionResponse.jsonPath().getInt("id");
 
-        // STEP 2: simulate competition
+        // STEP 2: simulate competition once
         Response simulateCompResponse =
                 given()
                         .port(port)
@@ -175,15 +196,24 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .post("/%s/simulate".formatted(compId))
                         .then()
                         .statusCode(200)
+                        .body("competitionId", equalTo(compId))
+                        .body("simulatedUntil", equalTo(1))
                         .extract()
                         .response();
 
         //// check simulated match
         var jsonResponse = new JSONObject(simulateCompResponse.asString());
-        assertEquals(1, jsonResponse.getJSONArray("rounds").getJSONObject(0).getInt("round"));
-        assertEquals(1, jsonResponse.getJSONArray("rounds").getJSONObject(0).getJSONArray("matches").length());
+        assertEquals(1, jsonResponse.getJSONArray("rounds")
+                .getJSONObject(0)
+                .getInt("round"));
+        assertEquals(1, jsonResponse.getJSONArray("rounds")
+                .getJSONObject(0)
+                .getJSONArray("matches").length());
 
-        JSONObject fm1Json = (JSONObject) jsonResponse.getJSONArray("rounds").getJSONObject(0).getJSONArray("matches").get(0);
+        JSONObject fm1Json = (JSONObject) jsonResponse
+                .getJSONArray("rounds")
+                .getJSONObject(0)
+                .getJSONArray("matches").get(0);
         assertEquals(compId, fm1Json.getLong("competitionId"));
         assertNotSame(fm1Json.get("matchResult").toString(), FootballMatch.MatchResult.UNFINISHED.toString());
 
@@ -192,11 +222,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         simulateCompResponse =
                 given()
                         .port(port)
-                        .param("times", "4")
+                        .param("times", "2")
                         .when()
                         .post("/%s/simulate".formatted(compId))
                         .then()
                         .statusCode(200)
+                        .body("simulatedUntil", equalTo(2))
                         .extract()
                         .response();
 
@@ -217,7 +248,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .then()
                 .statusCode(400);
 
-        // Step 5: retrieve matches for competition
+        // STEP 5: retrieve matches for competition
         RestAssured.basePath = "";
         given()
                 .port(port)
@@ -234,39 +265,6 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .get("/match/%s".formatted(fm2Json.getInt("id")))
                 .then()
                 .statusCode(200);
-
-        // STEP 5: delete competition (and all of its matches automatically)
-        given()
-                .port(port)
-                .contentType(ContentType.JSON)
-                .when()
-                .delete("/competition/%s".formatted(compId))
-                .then()
-                .statusCode(200);
-
-        given()
-                .port(port)
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/competition/%s".formatted(compId))
-                .then()
-                .statusCode(400);
-
-        given()
-                .port(port)
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/match/%s".formatted(fm1Json.getInt("id")))
-                .then()
-                .statusCode(400);
-
-        given()
-                .port(port)
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/match/%s".formatted(fm2Json.getInt("id")))
-                .then()
-                .statusCode(400);
     }
 
     @Test
@@ -288,8 +286,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
-                null,
-                4, new SimulationValues(0));
+                new CompetitionParametersDTO(4, null, 0),
+                new SimulationValues(0));
 
         given()
                 .port(port)
@@ -305,8 +303,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
-                ids.subList(0, 2),
-                4, new SimulationValues(0));
+                new CompetitionParametersDTO(4, ids.subList(0, 2), 0),
+                new SimulationValues(0));
 
         given()
                 .port(port)
@@ -322,8 +320,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.ES,
                 "2024-01-01",
                 "2024-10-01",
-                ids.subList(0, 2),
-                4, new SimulationValues(0));
+                new CompetitionParametersDTO(0, ids.subList(0, 2), 0),
+                new SimulationValues(0));
 
         given()
                 .port(port)
@@ -338,8 +336,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
-                ids.subList(3, 6),
-                null, new SimulationValues(0));
+                new CompetitionParametersDTO(0, ids.subList(3, 6), 0),
+                new SimulationValues(0));
 
         given()
                 .port(port)
@@ -355,8 +353,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.ES,
                 "2024-01-01",
                 "2024-10-01",
-                ids.subList(3, 4),
-                4, new SimulationValues(0));
+                new CompetitionParametersDTO(4, ids.subList(3, 4), 0),
+                new SimulationValues(0.3, 0.4, 0.1));
 
         given()
                 .port(port)
@@ -371,9 +369,11 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .body("name", equalTo(compRequest.name()))
                 .body("startDate", equalTo(compRequest.startDate()))
                 .body("endDate", equalTo(compRequest.endDate()))
+                .body("season", equalTo("2024"))
                 .body("country", equalTo(compRequest.country().toString()))
-                .body("simulationValues.variance", equalTo(0.0F))
-                .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.0F))
-                .body("simulationValues.drawTriggerChance", equalTo(0.0F));
+                .body("relegationSpots", equalTo(compRequest.parameters().relegationSpots()))
+                .body("simulationValues.variance", equalTo(0.3F))
+                .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.4F))
+                .body("simulationValues.drawTriggerChance", equalTo(0.1F));
     }
 }
