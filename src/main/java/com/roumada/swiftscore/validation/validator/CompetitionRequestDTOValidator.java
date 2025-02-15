@@ -29,6 +29,13 @@ public class CompetitionRequestDTOValidator implements ConstraintValidator<Valid
             return false;
         }
 
+        if (dto.participantsAmount() - 1 <= dto.parameters().relegationSpots()) {
+            context
+                    .buildConstraintViolationWithTemplate("Amount of participants must be at least greater than one than relegateion spots")
+                    .addConstraintViolation();
+            return false;
+        }
+
         boolean isDateMissing = false;
         if (StringUtils.isEmpty(dto.startDate())) {
             context

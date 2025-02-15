@@ -419,7 +419,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition  - with null name - should return error code")
+    @DisplayName("Create competition - with null name - should return error code")
     void createCompetition_withNullName_shouldReturnErrorCode() throws Exception {
         // arrange
         footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
@@ -439,6 +439,30 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // assert
         JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
         assertEquals("Name cannot be null", validationErrors.get(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {3, 4})
+    @DisplayName("Create competition  - invalid relegation spots amount - should return error code")
+    void createCompetition_invalidRelegationSpotsAmount_shouldReturnErrorCode(int relegationSpots) throws Exception {
+        // arrange
+        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
+
+        // act
+        var response = mvc.perform(post("/competition")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("Competition",
+                                CountryCode.GB,
+                                "2025-01-01",
+                                "2025-10-30",
+                                new CompetitionParametersDTO(4, null, relegationSpots),
+                                new SimulationValues(0)))))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertEquals("Amount of participants must be at least greater than one than relegateion spots", validationErrors.get(0));
     }
 
     @Test
