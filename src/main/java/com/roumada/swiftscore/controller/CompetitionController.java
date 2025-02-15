@@ -113,15 +113,11 @@ public class CompetitionController {
     @Operation(summary = "Delete a competition")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competition deleted",
-                    content = @Content),
-            @ApiResponse(responseCode = "204", description = "Competition not found for deletion",
                     content = @Content)})
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCompetition(@PathVariable long id,
                                                     HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
-        var comp = service.findCompetitionById(id);
-        if (comp.isLeft()) return ResponseEntity.noContent().build();
         service.delete(id);
         return ResponseEntity.ok("OK");
     }

@@ -116,16 +116,6 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .delete("/%s".formatted(id))
                 .then()
                 .statusCode(200);
-
-        // STEP 4: attempt to delete non-existent competition and receive 204 code
-        given()
-                .port(port)
-                .contentType(ContentType.JSON)
-                .body(request)
-                .when()
-                .delete("/%s".formatted(id))
-                .then()
-                .statusCode(204);
     }
 
     @Test

@@ -442,20 +442,13 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Delete competition - exists - should return OK")
-    void deleteCompetition_exists_shouldReturnOK() throws Exception {
+    @DisplayName("Delete competition - should return OK")
+    void deleteCompetition_shouldReturnOK() throws Exception {
         // arrange
         var id = competitionDataLayer.save(Competition.builder().build()).getId();
 
         // act
         mvc.perform(delete("/competition/%s".formatted(id))).andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("Delete competition - doesn't exist - should return no content")
-    void deleteCompetition_nonExistent_shouldReturnNoContent() throws Exception {
-        // act
-        mvc.perform(delete("/competition/-1")).andExpect(status().isNoContent());
     }
 
     @Test
