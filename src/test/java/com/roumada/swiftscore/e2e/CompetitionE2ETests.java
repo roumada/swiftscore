@@ -4,6 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
@@ -54,8 +55,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                clubIds,
-                null,
+                new CompetitionParametersDTO(0, clubIds, 0),
                 new SimulationValues(0));
 
         // STEP 1: create competition
@@ -138,8 +138,7 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                clubIds,
-                null,
+                new CompetitionParametersDTO(0, clubIds, 0),
                 new SimulationValues(0));
 
         // STEP 1: create competition
@@ -288,8 +287,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
-                null,
-                4, new SimulationValues(0));
+                new CompetitionParametersDTO(4, null, 0),
+                new SimulationValues(0));
 
         given()
                 .port(port)
@@ -305,8 +304,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
-                ids.subList(0, 2),
-                4, new SimulationValues(0));
+                new CompetitionParametersDTO(4, ids.subList(0, 2), 0),
+                new SimulationValues(0));
 
         given()
                 .port(port)
@@ -322,8 +321,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.ES,
                 "2024-01-01",
                 "2024-10-01",
-                ids.subList(0, 2),
-                4, new SimulationValues(0));
+                new CompetitionParametersDTO(0, ids.subList(0, 2), 0),
+                new SimulationValues(0));
 
         given()
                 .port(port)
@@ -338,8 +337,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
-                ids.subList(3, 6),
-                null, new SimulationValues(0));
+                new CompetitionParametersDTO(0, ids.subList(3, 6), 0),
+                new SimulationValues(0));
 
         given()
                 .port(port)
@@ -355,8 +354,8 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.ES,
                 "2024-01-01",
                 "2024-10-01",
-                ids.subList(3, 4),
-                4, new SimulationValues(0));
+                new CompetitionParametersDTO(4, ids.subList(3, 4), 0),
+                new SimulationValues(0));
 
         given()
                 .port(port)

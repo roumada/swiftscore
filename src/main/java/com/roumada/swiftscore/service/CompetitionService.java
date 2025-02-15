@@ -119,10 +119,6 @@ public class CompetitionService {
     }
 
     private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequestDTO dto) {
-        if (dto.participantsAmount() == 0) {
-            return Either.left("Neither participants nor footballClubIDs have been set");
-        }
-
         List<FootballClub> clubs = new ArrayList<>();
 
         if (dto.participantIds() != null) {

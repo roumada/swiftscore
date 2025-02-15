@@ -5,6 +5,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
@@ -67,9 +68,10 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        null,
-                                        new SimulationValues(0)))))
+                                        new CompetitionParametersDTO(0, ids, 0),
+                                        new SimulationValues(0))
+
+                        )))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
@@ -81,7 +83,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @ParameterizedTest
     @ValueSource(ints = {2, 8})
     @DisplayName("Create competition - with valid football club IDs & set participants - should create")
-    void createCompetition_validIdsAndFillToParticipantsSet_isCreated(int fillToParticipants) throws Exception {
+    void createCompetition_validIdsAndFillToParticipantsSet_isCreated(int participants) throws Exception {
         // arrange
         var ids = FootballClubTestUtils
                 .getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 4);
@@ -94,9 +96,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        fillToParticipants,
-                                        new SimulationValues(0)))))
+                                        new CompetitionParametersDTO(participants, ids, 0),
+                                        new SimulationValues(0))
+                        )))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
@@ -120,9 +122,9 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        8,
-                                        new SimulationValues(0)))))
+                                        new CompetitionParametersDTO(8, ids, 0),
+                                        new SimulationValues(0))
+                        )))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
@@ -145,8 +147,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        7,
+                                        new CompetitionParametersDTO(7, ids, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
 
@@ -168,8 +169,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        ids,
-                                        7,
+                                        new CompetitionParametersDTO(7, ids, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
 
@@ -191,8 +191,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        null,
-                                        8,
+                                        new CompetitionParametersDTO(8, null, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().isOk()).andReturn();
 
@@ -216,8 +215,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-01",
-                                        null,
-                                        7,
+                                        new CompetitionParametersDTO(7, null, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
 
@@ -239,8 +237,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-30",
-                                        List.of(1L, 2L, 3L, 9L),
-                                        null,
+                                        new CompetitionParametersDTO(0, List.of(1L, 2L, 3L, 9L), 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -265,8 +262,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                         CountryCode.GB,
                                         "2025-01-01",
                                         "2025-10-30",
-                                        ids,
-                                        null,
+                                        new CompetitionParametersDTO(0, ids, 0),
                                         new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -288,8 +284,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                List.of(1L, 2L, 3L),
-                                null,
+                                new CompetitionParametersDTO(0, List.of(1L, 2L, 3L), 0),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -313,8 +308,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                ids,
-                                null,
+                                new CompetitionParametersDTO(0, ids, 0),
                                 new SimulationValues(variation, 0.0, 0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -344,8 +338,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-11-10",
-                                ids,
-                                null,
+                                new CompetitionParametersDTO(0, ids, 0),
                                 new SimulationValues(0.0, 0.0, drawTriggerChance)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -375,8 +368,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                ids,
-                                null,
+                                new CompetitionParametersDTO(0, ids, 0),
                                 new SimulationValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -416,8 +408,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 startDate,
                                 endDate,
-                                ids,
-                                null,
+                                new CompetitionParametersDTO(0, ids, 0),
                                 new SimulationValues(0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -440,8 +431,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                List.of(1L, 2L, 3L),
-                                null,
+                                new CompetitionParametersDTO(4, null, 0),
                                 new SimulationValues(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();

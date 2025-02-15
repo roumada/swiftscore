@@ -4,6 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
@@ -39,8 +40,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                clubIds,
-                null,
+                new CompetitionParametersDTO(0, clubIds, 0),
                 new SimulationValues(0));
 
         // STEP 1: create competition
@@ -108,8 +108,7 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                clubIds,
-                null,
+                new CompetitionParametersDTO(0, clubIds, 0),
                 new SimulationValues(0));
 
         // STEP 1: create first competition
