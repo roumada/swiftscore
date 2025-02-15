@@ -1,8 +1,9 @@
 package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.response.CompetitionStandingsResponseDTO;
 import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponseDTO;
-import com.roumada.swiftscore.model.dto.response.StandingsResponseDTO;
+import com.roumada.swiftscore.model.dto.response.FootballClubStandings;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.model.mapper.FootballMatchMapper;
 import com.roumada.swiftscore.model.match.Competition;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -26,16 +28,16 @@ public class StatisticsService {
     private final CompetitionDataLayer competitionDataLayer;
     private final FootballClubDataLayer footballClubDataLayer;
     private final FootballMatchDataLayer footballMatchDataLayer;
-    private Map<Long, StandingsResponseDTO> standingsForFC;
+    private Map<Long, FootballClubStandings> standingsForFC;
 
-    private static void addGoals(FootballMatch match, StandingsResponseDTO standingsForHomeSide, StandingsResponseDTO standingsForAwaySide) {
+    private static void addGoals(FootballMatch match, FootballClubStandings standingsForHomeSide, FootballClubStandings standingsForAwaySide) {
         standingsForHomeSide.addGoalsScored(match.getHomeSideGoalsScored());
         standingsForHomeSide.addGoalsConceded(match.getAwaySideGoalsScored());
         standingsForAwaySide.addGoalsScored(match.getAwaySideGoalsScored());
         standingsForAwaySide.addGoalsConceded(match.getHomeSideGoalsScored());
     }
 
-    public Either<String, List<StandingsResponseDTO>> getForCompetition(Long competitionId, Boolean simplify) {
+    public Either<String, CompetitionStandingsResponseDTO> getForCompetition(Long competitionId, Boolean simplify) {
         Optional<Competition> optCompetition = competitionDataLayer.findCompetitionById(competitionId);
         if (optCompetition.isEmpty()) {
             String warnMsg = "Couldn't find competition with ID [%s]".formatted(competitionId);
@@ -44,9 +46,9 @@ public class StatisticsService {
         }
 
         var comp = optCompetition.get();
-        standingsForFC = new HashMap<>();
+        standingsForFC = new LinkedHashMap<>();
         for (FootballClub fc : comp.getParticipants())
-            standingsForFC.put(fc.getId(), new StandingsResponseDTO(fc.getName()));
+            standingsForFC.put(fc.getId(), new FootballClubStandings(fc.getName()));
 
         for (CompetitionRound cr : comp.getRounds()) {
             for (FootballMatch fm : cr.getMatches()) {
@@ -54,7 +56,7 @@ public class StatisticsService {
             }
         }
 
-        if (!simplify) {
+        if (Boolean.FALSE.equals(simplify)) {
             for (FootballClub fc : comp.getParticipants()) {
                 standingsForFC.get(fc.getId())
                         .setStatistics(footballMatchDataLayer
@@ -65,22 +67,29 @@ public class StatisticsService {
             }
         }
 
-        standingsForFC.values().forEach(StandingsResponseDTO::calculateGoalDifference);
+        standingsForFC.values().forEach(FootballClubStandings::calculateGoalDifference);
 
-        return Either.right(standingsForFC.values()
+        Map<Long, FootballClubStandings> standings = standingsForFC.entrySet()
                 .stream()
-                .sorted(Comparator
-                        .comparingInt(StandingsResponseDTO::getPoints)
-                        .thenComparing(StandingsResponseDTO::getWins)
-                        .thenComparing(StandingsResponseDTO::getDraws)
-                        .thenComparing(StandingsResponseDTO::getGoalDifference)
-                        .reversed())
-                .toList());
+                .sorted(Map.Entry.comparingByValue(Comparator
+                        .comparingInt(FootballClubStandings::getPoints)
+                        .thenComparing(FootballClubStandings::getWins)
+                        .thenComparing(FootballClubStandings::getDraws)
+                        .thenComparing(FootballClubStandings::getGoalDifference)
+                        .reversed()))
+                .collect(LinkedHashMap::new, (map, e) ->
+                        map.put(e.getKey(), e.getValue()), Map::putAll);
+        List<Long> sortedIds = new ArrayList<>(standings.keySet());
+
+        return Either.right(new CompetitionStandingsResponseDTO(new ArrayList<>(standings.values()),
+                sortedIds.subList(0, sortedIds.size() - comp.getRelegationSpots()),
+                sortedIds.subList(sortedIds.size() - comp.getRelegationSpots(), sortedIds.size())
+        ));
     }
 
     private void processMatch(FootballMatch match) {
-        StandingsResponseDTO standingsForHomeSide = standingsForFC.get(match.getHomeSideFootballClub().getId());
-        StandingsResponseDTO standingsForAwaySide = standingsForFC.get(match.getAwaySideFootballClub().getId());
+        FootballClubStandings standingsForHomeSide = standingsForFC.get(match.getHomeSideFootballClub().getId());
+        FootballClubStandings standingsForAwaySide = standingsForFC.get(match.getAwaySideFootballClub().getId());
 
         switch (match.getMatchResult()) {
             case UNFINISHED ->

@@ -81,7 +81,8 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
                         .extract()
                         .response();
 
-        JSONArray statisticsArray = new JSONArray(response.asString());
+        JSONObject standings = new JSONObject(response.asString());
+        JSONArray statisticsArray = standings.getJSONArray("standings");
         assertEquals(4, statisticsArray.length());
         for (int i = 0; i < statisticsArray.length(); i++) {
             JSONObject statisticsJson = statisticsArray.getJSONObject(i);

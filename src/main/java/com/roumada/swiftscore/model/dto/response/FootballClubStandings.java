@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class StandingsResponseDTO {
+public class FootballClubStandings {
     private final String footballClubName;
     private int wins = 0;
     private int draws = 0;
@@ -16,7 +16,7 @@ public class StandingsResponseDTO {
     private int points = 0;
     private List<FootballMatchResponseDTO> lastMatchesStatistics;
 
-    public StandingsResponseDTO(String footballClubName) {
+    public FootballClubStandings(String footballClubName) {
         this.footballClubName = footballClubName;
     }
 
