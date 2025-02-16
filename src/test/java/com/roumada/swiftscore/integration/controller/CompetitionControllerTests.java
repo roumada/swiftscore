@@ -243,7 +243,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Couldn't retrieve all clubs for given IDs and country", errorMsg);
+        assertEquals("Couldn't retrieve all clubs for given IDs and country.", errorMsg);
     }
 
     @Test
@@ -268,7 +268,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Couldn't retrieve all clubs for given IDs and country", errorMsg);
+        assertEquals("Couldn't retrieve all clubs for given IDs and country.", errorMsg);
     }
 
     @Test
@@ -462,7 +462,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
-        assertEquals("Amount of participants must be at least greater than one than relegateion spots", validationErrors.get(0));
+        assertEquals("Amount of participants must be at least greater than two than relegation spots", validationErrors.get(0));
     }
 
     @Test

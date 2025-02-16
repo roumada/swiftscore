@@ -164,7 +164,8 @@ public class CompetitionController {
         if (findResult.isLeft()) return ResponseEntity.badRequest().body(findResult.getLeft());
 
         var competition = findResult.get();
-        return service.simulate(findResult.get(), times).fold(
+        return service.simulate(findResult.get(), times)
+                .fold(
                 error -> ResponseEntity.badRequest().body(error),
                 success -> simplify ?
                         ResponseEntity.ok(new CompetitionSimulationSimpleResponseDTO(competition.getId(),

@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.service;
 
+import com.roumada.swiftscore.logging.Messages;
 import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
@@ -43,7 +44,7 @@ public class CompetitionService {
         return optionalCompetition
                 .map(Either::<String, Competition>right)
                 .orElseGet(() -> {
-                    String warnMsg = "Competition with ID [%s] not found.".formatted(id);
+                    String warnMsg = Messages.COMPETITION_NOT_FOUND.format(id);
                     log.warn(warnMsg);
                     return Either.left(warnMsg);
                 });
@@ -51,13 +52,12 @@ public class CompetitionService {
 
     public Either<String, Competition> generateAndSave(CreateCompetitionRequestDTO dto) {
         if (dto.participantsAmount() % 2 == 1) {
-            var errorMsg = "Failed to generate competition - the amount of clubs participating must be even.";
+            var errorMsg = Messages.COMPETITION_CANNOT_GENERATE_CLUBS_MUST_BE_EVEN.format();
             log.error(errorMsg);
             return Either.left(errorMsg);
         }
 
         var findClubsResult = findClubs(dto);
-
         if (findClubsResult.isLeft()) {
             log.error(findClubsResult.getLeft());
             return Either.left(findClubsResult.getLeft());
@@ -82,40 +82,38 @@ public class CompetitionService {
             round.setId(roundId);
             competitionRoundDataLayer.save(round);
         }
-        competitionDataLayer.save(competition);
 
+        competitionDataLayer.save(competition);
         return Either.right(competition);
     }
 
 
     public Either<String, List<CompetitionRound>> simulate(Competition competition, int times) {
         if (competition.isFullySimulated()) {
-            String errorMsg =
-                    "Cannot simulate competition [%s] further".formatted(competition.getId());
+            String errorMsg = Messages.COMPETITION_CANNOT_SIMULATE.format(competition.getId());
             log.error(errorMsg);
             return Either.left(errorMsg);
         }
 
         times = adjustTimesToSimulate(competition, times);
-
         List<CompetitionRound> simulatedRounds = new ArrayList<>();
         do {
-            Competition compSimulated = simulateCurrentRound(competition);
+            simulateCurrentRound(competition);
             CompetitionRound currRound = competition.currentRound();
-            persistChanges(compSimulated);
+            saveRound(currRound);
             simulatedRounds.add(currRound);
+            competition.incrementCurrentRoundNumber();
             times--;
         } while (times > 0);
 
+        competitionDataLayer.save(competition);
         return Either.right(simulatedRounds);
     }
 
-
-    private Competition simulateCurrentRound(Competition competition) {
+    private void simulateCurrentRound(Competition competition) {
         var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(competition.getSimulationValues()));
         roundSimulator.simulate(competition.currentRound());
-        log.info("Competition with id [{}] simulated.", competition.getId());
-        return competition;
+        log.info(Messages.COMPETITION_SIMULATED.format(competition.getId()));
     }
 
     private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequestDTO dto) {
@@ -125,12 +123,12 @@ public class CompetitionService {
             clubs = new ArrayList<>(footballClubDataLayer.findAllByIdAndCountry(dto.participantIds(), dto.country()));
 
             if (clubs.size() != dto.participantIds().size()) {
-                return Either.left("Couldn't retrieve all clubs for given IDs and country");
+                return Either.left(Messages.FOOTBALL_CLUBS_COULDNT_RETRIEVE_ALL_FROM_IDS.format());
             }
 
             if (dto.participants() <= dto.participantIds().size()) {
-                log.info("Participants parameter [{}] lower than amount of club IDs provided ([{}]). Returning clubs with denoted club IDs only.",
-                        dto.participants(), dto.participantIds().size());
+                log.info(Messages.FOOTBALL_CLUBS_PARTICIPANTS_AMT_LOWER_THAN_FCIDS
+                        .format(dto.participants(), dto.participantIds().size()));
                 return Either.right(clubs);
             }
         }
@@ -139,20 +137,13 @@ public class CompetitionService {
                 .findByIdNotInAndCountryIn(dto.participantIds(), dto.country(), dto.participants() - dto.participantIds().size()));
         return clubs.size() == dto.participantsAmount() ?
                 Either.right(clubs) :
-                Either.left("Couldn't find enough clubs from given country to fill in the league");
-    }
-
-    private void persistChanges(Competition compSimulated) {
-        footballMatchDataLayer.saveAll(compSimulated.currentRound().getMatches());
-        competitionRoundDataLayer.save(compSimulated.currentRound());
-        compSimulated.incrementCurrentRoundNumber();
-        competitionDataLayer.save(compSimulated);
+                Either.left(Messages.FOOTBALL_CLUBS_NOT_ENOUGH_CLUBS_FROM_COUNTRY.format());
     }
 
     public Either<String, Competition> update(long id, UpdateCompetitionRequestDTO dto) {
         var findResult = competitionDataLayer.findCompetitionById(id);
         if (findResult.isEmpty()) {
-            String warnMsg = "Competition with ID [%s] not found.".formatted(id);
+            String warnMsg = Messages.COMPETITION_NOT_FOUND.format(id);
             log.warn(warnMsg);
             return Either.left(warnMsg);
         }
@@ -161,8 +152,8 @@ public class CompetitionService {
 
         if (dto.relegationSpots() != null) {
             if (competition.getParticipants().size() - 1 <= dto.relegationSpots()) {
-                String warnMsg = "New relegation spots amount [%s] exceeds amount of participants in competition [%s] by at least two"
-                        .formatted(dto.relegationSpots(), competition.getParticipants().size());
+                String warnMsg = Messages.COMPETITION_INVALID_RELEGATION_SPOTS_AMOUNT
+                        .format(dto.relegationSpots(), competition.getParticipants().size());
                 log.warn(warnMsg);
                 return Either.left(warnMsg);
             } else competition.setRelegationSpots(dto.relegationSpots());
@@ -185,6 +176,11 @@ public class CompetitionService {
         return Either.right(competitionDataLayer.save(competition));
     }
 
+    private void saveRound(CompetitionRound currRound) {
+        footballMatchDataLayer.saveAll(currRound.getMatches());
+        competitionRoundDataLayer.save(currRound);
+    }
+
     public void delete(long id) {
         footballMatchDataLayer.deleteByCompetitionId(id);
         competitionRoundDataLayer.deleteByCompetitionId(id);
@@ -193,8 +189,8 @@ public class CompetitionService {
 
     private int adjustTimesToSimulate(Competition competition, int times) {
         if (competition.getRounds().size() - competition.getLastSimulatedRound() < times) {
-            log.info("Attempting to simulate a competition [{}] times while the competition has only [{}] rounds left. Simulating the entire competition",
-                    times, competition.getRounds().size() - competition.getLastSimulatedRound());
+            log.info(Messages.COMPETITION_SIMULATED_UNTIL_END.format(
+                    times, competition.getRounds().size() - competition.getLastSimulatedRound()));
             return competition.getRounds().size() - competition.getLastSimulatedRound();
         }
         return times;

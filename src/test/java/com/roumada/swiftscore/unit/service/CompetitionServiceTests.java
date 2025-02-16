@@ -143,7 +143,7 @@ class CompetitionServiceTests {
 
         // assert
         assertTrue(optionalComp.isLeft());
-        assertEquals(String.class, optionalComp.getLeft().getClass());
+        assertEquals("Failed to generate competition - the amount of clubs participating must be even.", optionalComp.getLeft());
     }
 
     @Test
@@ -163,7 +163,7 @@ class CompetitionServiceTests {
 
         // assert
         assertTrue(optionalComp.isLeft());
-        assertEquals(String.class, optionalComp.getLeft().getClass());
+        assertEquals("Failed to generate competition - the amount of clubs participating must be even.", optionalComp.getLeft());
     }
 
     @Test
@@ -186,7 +186,7 @@ class CompetitionServiceTests {
 
         // assert
         assertTrue(optionalComp.isLeft());
-        assertEquals(String.class, optionalComp.getLeft().getClass());
+        assertEquals("Couldn't retrieve all clubs for given IDs and country.", optionalComp.getLeft());
     }
 
     @Test
@@ -207,7 +207,7 @@ class CompetitionServiceTests {
 
         // assert
         assertTrue(optionalComp.isLeft());
-        assertEquals(String.class, optionalComp.getLeft().getClass());
+        assertEquals("Couldn't retrieve all clubs for given IDs and country.", optionalComp.getLeft());
     }
 
     @Test
@@ -229,8 +229,7 @@ class CompetitionServiceTests {
 
         // assert
         assertTrue(optionalComp.isLeft());
-        assertEquals(String.class, optionalComp.getLeft().getClass());
-        assertEquals("Couldn't find enough clubs from given country to fill in the league", optionalComp.getLeft());
+        assertEquals("Couldn't find enough clubs from given country to fill in the league.", optionalComp.getLeft());
     }
 
     @Test
@@ -250,8 +249,7 @@ class CompetitionServiceTests {
 
         // assert
         assertTrue(optionalComp.isLeft());
-        assertEquals(String.class, optionalComp.getLeft().getClass());
-        assertEquals("Couldn't find enough clubs from given country to fill in the league", optionalComp.getLeft());
+        assertEquals("Couldn't find enough clubs from given country to fill in the league.", optionalComp.getLeft());
     }
 
     @ParameterizedTest
