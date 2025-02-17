@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.logging;
+package com.roumada.swiftscore.util;
 
 import java.util.IllegalFormatException;
 

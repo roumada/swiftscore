@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.service;
 
-import com.roumada.swiftscore.logging.Messages;
+import com.roumada.swiftscore.util.Messages;
 import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.creator.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
