@@ -12,8 +12,11 @@ import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -53,20 +56,20 @@ public class CompetitionController {
                             schema = @Schema(implementation = CreateCompetitionRequestDTO.class),
                             examples = @ExampleObject(value = """
                                     {
-                                      "name": "Competition",
-                                      "country": "GB",
-                                      "startDate": "2024-01-01",
-                                      "endDate": "2024-10-01",
-                                      "participantIds": [
-                                        10000, 10001
-                                      ],
-                                      "participants": 6,
-                                      "simulationValues": {
-                                        "variance": 0.1,
-                                        "scoreDifferenceDrawTrigger": 0.2,
-                                        "drawTriggerChance": 0.3
-                                      }
-                                    }
+                                         "name": "Premier Conference",
+                                         "country": "GB",
+                                         "startDate": "2024-07-01",
+                                         "endDate": "2025-05-01",
+                                         "simulationValues": {
+                                           "variance": 0.35,
+                                           "scoreDifferenceDrawTrigger": 0.2,
+                                           "drawTriggerChance": 0.3
+                                         },
+                                         "parameters": {
+                                           "participants": 8,
+                                           "relegationSpots": 6
+                                         }
+                                     }
                                     """)))
             @Valid @RequestBody CreateCompetitionRequestDTO dto,
             HttpServletRequest request) {
@@ -80,7 +83,7 @@ public class CompetitionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competition returned",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Competition.class))}),
+                            schema = @Schema(implementation = CompetitionResponseDTO.class))}),
             @ApiResponse(responseCode = "400", description = "Competition not found",
                     content = @Content)})
     @GetMapping("/{id}")
@@ -111,9 +114,7 @@ public class CompetitionController {
     }
 
     @Operation(summary = "Delete a competition")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Competition deleted",
-                    content = @Content)})
+    @ApiResponse(responseCode = "200", description = "Competition deleted")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCompetition(@PathVariable long id,
                                                     HttpServletRequest request) {
@@ -124,10 +125,20 @@ public class CompetitionController {
 
     @Operation(summary = "Search for competitions")
     @ApiResponse(responseCode = "200", description = "Competitions according to criteria returned",
-            content = @Content)
+            content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = CompetitionResponseDTO.class)))})
+    @Parameters(value = {
+            @Parameter(name = "name", description = "Competition name", example = "LaLiga"),
+            @Parameter(name = "country", description = "Competition country", example = "ES"),
+            @Parameter(name = "season", description = "Competition season", example = "2024/2025"),
+            @Parameter(name = "page", description = "Results page", example = "0"),
+            @Parameter(name = "size", description = "Result size", example = "5")
+    })
     @GetMapping("/search")
     public ResponseEntity<Page<CompetitionResponseDTO>> getAllCompetitions(HttpServletRequest request,
+                                                                           @Parameter(hidden = true)
                                                                            SearchCompetitionCriteriaDTO criteria,
+                                                                           @Parameter(hidden = true)
                                                                            Pageable pageable) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var result = service.search(criteria, pageable);
@@ -164,16 +175,17 @@ public class CompetitionController {
         if (findResult.isLeft()) return ResponseEntity.badRequest().body(findResult.getLeft());
 
         var competition = findResult.get();
-        return service.simulate(findResult.get(), times).fold(
-                error -> ResponseEntity.badRequest().body(error),
-                success -> simplify ?
-                        ResponseEntity.ok(new CompetitionSimulationSimpleResponseDTO(competition.getId(),
-                                competition.getLastSimulatedRound(),
-                                success.stream().map(CompetitionRound::getId).toList())) :
-                        ResponseEntity.ok(new CompetitionSimulationResponseDTO(competition.getId(),
-                                competition.getLastSimulatedRound(),
-                                CompetitionRoundMapper.INSTANCE.roundsToResponseDTOs(success)))
-        );
+        return service.simulate(findResult.get(), times)
+                .fold(
+                        error -> ResponseEntity.badRequest().body(error),
+                        success -> simplify ?
+                                ResponseEntity.ok(new CompetitionSimulationSimpleResponseDTO(competition.getId(),
+                                        competition.getLastSimulatedRound(),
+                                        success.stream().map(CompetitionRound::getId).toList())) :
+                                ResponseEntity.ok(new CompetitionSimulationResponseDTO(competition.getId(),
+                                        competition.getLastSimulatedRound(),
+                                        CompetitionRoundMapper.INSTANCE.roundsToResponseDTOs(success)))
+                );
     }
 
 }

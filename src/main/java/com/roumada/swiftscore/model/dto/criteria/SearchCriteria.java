@@ -5,7 +5,7 @@ public interface SearchCriteria {
     boolean hasOneCriteria();
     SingleCriteriaType getSingleCriteriaType();
 
-    public enum SingleCriteriaType{
+    public enum SingleCriteriaType {
         NAME,
         COUNTRY,
         SEASON,
