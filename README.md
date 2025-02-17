@@ -68,8 +68,8 @@ Swagger UI is also accessible at http://localhost:8090/swagger-ui/index.html#/
 
 ## Instructions
 
-The application loads football club definitions present in the `/src/main/resources/data/footballclubs.json` file if it's present. Their specific IDs can be
-viewed from the `footballClubs/all` endpoint. Clubs can be removed or added to the list according to the existing schema.
+The application loads objects defined in the `resources/data` folder file if they are present (for now football clubs and competitions are supported).
+Objects can be removed or added to the list according to the existing schema.
 The database is cleared from previous data upon application startup (called `swiftscore` by default; name can be changed in the `/src/main/resources/application.properties` file)
 
 Core of simulations are competitions which are simulated according to simulation variations provided.
