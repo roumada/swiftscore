@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Azure League England",
+    "country": "GB",
+    "startDate": "2024-07-01",
+    "endDate": "2025-05-01",
+    "simulationValues": {
+      "variance": 0.35,
+      "scoreDifferenceDrawTrigger": 0.2,
+      "drawTriggerChance": 0.3
+    },
+    "parameters": {
+      "participants": 4,
+      "relegationSpots": 1
+    }
+  },
+  {
+    "name": "Azure League Spain",
+    "country": "ES",
+    "startDate": "2025-01-01",
+    "endDate": "2025-06-01",
+    "simulationValues": {
+      "variance": 0.35,
+      "scoreDifferenceDrawTrigger": 0.2,
+      "drawTriggerChance": 0.3
+    },
+    "parameters": {
+      "participants": 4,
+      "relegationSpots": 1
+    }
+  },
+  {
+    "name": "Azure League Germany",
+    "country": "DE",
+    "startDate": "2024-07-01",
+    "endDate": "2025-05-01",
+    "simulationValues": {
+      "variance": 0.35,
+      "scoreDifferenceDrawTrigger": 0.2,
+      "drawTriggerChance": 0.3
+    },
+    "parameters": {
+      "participants": 4,
+      "relegationSpots": 1
+    }
+  },
+  {
+    "name": "Ruby Conference England",
+    "country": "GB",
+    "startDate": "2025-01-01",
+    "endDate": "2025-06-01",
+    "simulationValues": {
+      "variance": 0.35,
+      "scoreDifferenceDrawTrigger": 0.2,
+      "drawTriggerChance": 0.3
+    },
+    "parameters": {
+      "participants": 4,
+      "relegationSpots": 1
+    }
+  },
+  {
+    "name": "Ruby Conference Spain",
+    "country": "ES",
+    "startDate": "2024-07-01",
+    "endDate": "2025-05-01",
+    "simulationValues": {
+      "variance": 0.35,
+      "scoreDifferenceDrawTrigger": 0.2,
+      "drawTriggerChance": 0.3
+    },
+    "parameters": {
+      "participants": 4,
+      "relegationSpots": 1
+    }
+  },
+  {
+    "name": "Emerald League Germany",
+    "country": "DE",
+    "startDate": "2025-01-01",
+    "endDate": "2025-06-01",
+    "simulationValues": {
+      "variance": 0.35,
+      "scoreDifferenceDrawTrigger": 0.2,
+      "drawTriggerChance": 0.3
+    },
+    "parameters": {
+      "participants": 4,
+      "relegationSpots": 1
+    }
+  }
+]

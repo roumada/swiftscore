@@ -205,7 +205,7 @@ public class CompetitionService {
 
     private Page<Competition> searchWithSingleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
         return switch (criteria.getSingleCriteriaType()) {
-            case NAME -> competitionDataLayer.findByNameContaining(criteria.name(), pageable);
+            case NAME -> competitionDataLayer.findByName(criteria.name(), pageable);
             case COUNTRY -> competitionDataLayer.findByCountry(criteria.country(), pageable);
             case SEASON -> competitionDataLayer.findBySeason(criteria.season(), pageable);
             default -> Page.empty();

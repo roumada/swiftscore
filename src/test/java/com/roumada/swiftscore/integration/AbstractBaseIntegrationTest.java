@@ -1,10 +1,11 @@
 package com.roumada.swiftscore.integration;
 
+import com.roumada.swiftscore.TestDataLoader;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,6 +27,8 @@ public abstract class AbstractBaseIntegrationTest {
     }
 
     @Autowired
+    TestDataLoader dataLoader;
+    @Autowired
     CompetitionRepository competitionRepository;
     @Autowired
     CompetitionRoundRepository competitionRoundRepository;
@@ -39,8 +42,17 @@ public abstract class AbstractBaseIntegrationTest {
         registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
     }
 
-    @BeforeEach
-    void setup() {
+    protected void loadFCs() {
+        dataLoader.saveFCs();
+    }
+
+    protected void loadCompetitionWithFcs() {
+        loadFCs();
+        dataLoader.saveCompetitions();
+    }
+
+    @AfterEach
+    void clear() {
         competitionRepository.deleteAll();
         competitionRoundRepository.deleteAll();
         footballClubRepository.deleteAll();

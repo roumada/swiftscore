@@ -1,0 +1,183 @@
+[
+  {
+    "name": "Northbridge United",
+    "country": "GB",
+    "stadiumName": "Vale Grounds",
+    "victoryChance": 0.77
+  },
+  {
+    "name": "Harrowfield United",
+    "country": "GB",
+    "stadiumName": "Emerald Park",
+    "victoryChance": 0.35
+  },
+  {
+    "name": "Wexford Albion",
+    "country": "GB",
+    "stadiumName": "Albion Arena",
+    "victoryChance": 0.42
+  },
+  {
+    "name": "Dunwich Rovers",
+    "country": "GB",
+    "stadiumName": "Rovers Field",
+    "victoryChance": 0.53
+  },
+  {
+    "name": "Carlington City",
+    "country": "GB",
+    "stadiumName": "City Grounds",
+    "victoryChance": 0.44
+  },
+  {
+    "name": "Springfield Wanderers",
+    "country": "GB",
+    "stadiumName": "Wanderers Stadium",
+    "victoryChance": 0.68
+  },
+  {
+    "name": "Telford Rangers",
+    "country": "GB",
+    "stadiumName": "Rangers Park",
+    "victoryChance": 0.45
+  },
+  {
+    "name": "Grayside FC",
+    "country": "GB",
+    "stadiumName": "Grayside Stadium",
+    "victoryChance": 0.62
+  },
+  {
+    "name": "Harrowgate Hornets",
+    "country": "GB",
+    "stadiumName": "Hornets Field",
+    "victoryChance": 0.41
+  },
+  {
+    "name": "St. Albans FC",
+    "country": "GB",
+    "stadiumName": "Bridgewater",
+    "victoryChance": 0.37
+  },
+  {
+    "name": "Albacete Fútbol",
+    "country": "ES",
+    "stadiumName": "Albacete Field",
+    "victoryChance": 0.65
+  },
+  {
+    "name": "Real Marbella",
+    "country": "ES",
+    "stadiumName": "Costa del Sol",
+    "victoryChance": 0.72
+  },
+  {
+    "name": "Atlético Granada",
+    "country": "ES",
+    "stadiumName": "Nuevo Los Cármenes",
+    "victoryChance": 0.58
+  },
+  {
+    "name": "Valencia Atlético",
+    "country": "ES",
+    "stadiumName": "Mestalla Nuevo",
+    "victoryChance": 0.81
+  },
+  {
+    "name": "RCD Sevilla",
+    "country": "ES",
+    "stadiumName": "Estadio La Palmera",
+    "victoryChance": 0.69
+  },
+  {
+    "name": "Real Gijón Occidental",
+    "country": "ES",
+    "stadiumName": "Estadio El Molinón Nuevo",
+    "victoryChance": 0.47
+  },
+  {
+    "name": "Córdoba FC",
+    "country": "ES",
+    "stadiumName": "Estadio Arcángel",
+    "victoryChance": 0.53
+  },
+  {
+    "name": "Málaga United",
+    "country": "ES",
+    "stadiumName": "Estadio La Rosaleda",
+    "victoryChance": 0.76
+  },
+  {
+    "name": "Real Oviedo del Norte",
+    "country": "ES",
+    "stadiumName": "Estadio Carlos Tartiere",
+    "victoryChance": 0.62
+  },
+  {
+    "name": "Levante del Este",
+    "country": "ES",
+    "stadiumName": "Ciudad de Valencia",
+    "victoryChance": 0.71
+  },
+  {
+    "name": "VfB Eichwald",
+    "country": "DE",
+    "stadiumName": "Hardtwaldstadion",
+    "victoryChance": 0.41
+  },
+  {
+    "name": "FC Rheinbach",
+    "country": "DE",
+    "stadiumName": "Rheinpark Arena",
+    "victoryChance": 0.67
+  },
+  {
+    "name": "SV Eichenwald",
+    "country": "DE",
+    "stadiumName": "Waldstadion Köln",
+    "victoryChance": 0.52
+  },
+  {
+    "name": "VfL Bergstadt",
+    "country": "DE",
+    "stadiumName": "Bergstadt Arena",
+    "victoryChance": 0.38
+  },
+  {
+    "name": "SC Fortuna Kassel",
+    "country": "DE",
+    "stadiumName": "Fortuna-Arena Frankfurt",
+    "victoryChance": 0.69
+  },
+  {
+    "name": "FC Nordlicht Bremen",
+    "country": "DE",
+    "stadiumName": "Nordlicht Arena",
+    "victoryChance": 0.73
+  },
+  {
+    "name": "SV Blau-Weiß Lüneburg",
+    "country": "DE",
+    "stadiumName": "Blau-Weiß Stadion",
+    "victoryChance": 0.45
+  },
+  {
+    "name": "FC Sternenbach",
+    "country": "DE",
+    "stadiumName": "Sternenarena München",
+    "victoryChance": 0.21
+  },
+  {
+    "name": "VfR Wiesental",
+    "country": "DE",
+    "stadiumName": "Wiesental Arena",
+    "victoryChance": 0.49
+  },
+  {
+    "name": "SC Rot-Weiß Koblenz",
+    "country": "DE",
+    "stadiumName": "Rot-Schwarz Arena",
+    "victoryChance": 0.56
+  }
+]
+

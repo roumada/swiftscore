@@ -1,9 +1,7 @@
 package com.roumada.swiftscore.persistence;
 
 import com.neovisionaries.i18n.CountryCode;
-import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
-import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
 import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import lombok.AllArgsConstructor;
@@ -47,14 +45,6 @@ public class CompetitionDataLayer {
         log.info("Competition with ID [{}] deleted.", id);
     }
 
-    public Page<Competition> findByNameContaining(String name, Pageable pageable) {
-        return competitionRepository.findByNameContaining(name, pageable);
-    }
-
-    public Page<Competition> findByCountry(CountryCode country, Pageable pageable) {
-        return competitionRepository.findByCountry(country, pageable);
-    }
-
     public PageImpl<Competition> searchWithMultipleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
         Query query = new Query().with(pageable);
         if (StringUtils.isNotEmpty(criteria.name())) {
@@ -73,5 +63,13 @@ public class CompetitionDataLayer {
 
     public Page<Competition> findBySeason(String season, Pageable pageable) {
         return competitionRepository.findBySeason(season, pageable);
+    }
+
+    public Page<Competition> findByName(String name, Pageable pageable) {
+        return competitionRepository.findByNameContainingIgnoreCase(name, pageable);
+    }
+
+    public Page<Competition> findByCountry(CountryCode country, Pageable pageable) {
+        return competitionRepository.findByCountry(country, pageable);
     }
 }
