@@ -114,7 +114,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
     @DisplayName("Search for competition - by name - should find")
     void searchCompetition_name_shouldFind(){
         // arrange
-        loadCompetitionWithFcs();
+        loadCompetitionsWithFcs();
         var expected = 3;
 
         // act
@@ -130,7 +130,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
     @DisplayName("Search for competition - by country code - should find")
     void searchCompetition_season_shouldFind(){
         // arrange
-        loadCompetitionWithFcs();
+        loadCompetitionsWithFcs();
         var expected = 3;
 
         // act
@@ -146,7 +146,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
     @DisplayName("Search for competition - by season - should find")
     void searchCompetition_countryCode_shouldFind(){
         // arrange
-        loadCompetitionWithFcs();
+        loadCompetitionsWithFcs();
         var expected = 2;
 
         // act
@@ -171,7 +171,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
     @DisplayName("Find competitions - various criteria - should find")
     void findCompetitions_variousCriteria_shouldFind(String name, String country, String season, int expected){
         // arrange
-        loadCompetitionWithFcs();
+        loadCompetitionsWithFcs();
         CountryCode cc = StringUtils.isEmpty(country) ? null : CountryCode.valueOf(country);
         SearchCompetitionCriteriaDTO criteria = new SearchCompetitionCriteriaDTO(name, cc, season);
         Pageable pageable = Pageable.ofSize(10);

@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -27,8 +26,6 @@ import java.util.stream.Collectors;
 @Profile("test")
 public class TestDataLoader {
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
     @Autowired
     private CompetitionService competitionService;
     @Autowired
@@ -55,6 +52,13 @@ public class TestDataLoader {
             cachedClubs = loadFootballClubs();
             fcRepository.saveAll(cachedClubs);
         }
+    }
+
+    public Competition saveCompetition() {
+        cachedCompetitions = new ArrayList<>();
+        var compRequest = loadCompetitionRequests().get(0);
+        cachedCompetitions.add(competitionService.generateAndSave(compRequest).get());
+        return cachedCompetitions.get(0);
     }
 
     public void saveCompetitions() {
@@ -116,6 +120,4 @@ public class TestDataLoader {
                 .map(Map.Entry::getKey)
                 .toList();
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.roumada.swiftscore.integration;
 
 import com.roumada.swiftscore.TestDataLoader;
+import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
@@ -46,9 +47,14 @@ public abstract class AbstractBaseIntegrationTest {
         dataLoader.saveFCs();
     }
 
-    protected void loadCompetitionWithFcs() {
+    protected void loadCompetitionsWithFcs() {
         loadFCs();
         dataLoader.saveCompetitions();
+    }
+
+    protected Competition loadCompetitionWithFcs(){
+        loadFCs();
+        return dataLoader.saveCompetition();
     }
 
     @AfterEach
