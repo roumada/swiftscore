@@ -45,7 +45,7 @@ public class CompetitionDataLayer {
         log.info("Competition with ID [{}] deleted.", id);
     }
 
-    public PageImpl<Competition> searchWithMultipleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
+    public PageImpl<Competition> findByMultipleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
         Query query = new Query().with(pageable);
         if (StringUtils.isNotEmpty(criteria.name())) {
             query.addCriteria(Criteria.where("name").regex(".*" + criteria.name() + ".*", "i"));

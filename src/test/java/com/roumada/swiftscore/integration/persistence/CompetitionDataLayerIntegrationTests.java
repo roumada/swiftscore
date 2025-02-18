@@ -122,7 +122,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
 
         // assert
         assertEquals(3, comps.size());
-        assertEquals(3, comps.stream().filter(x -> x.getName().toLowerCase().contains(name)).toList().size());
+        assertEquals(3, comps.stream().filter(x -> x.getName().toLowerCase().contains(name)).count());
     }
 
     @Test
@@ -137,7 +137,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
 
         // assert
         assertEquals(3, comps.size());
-        assertEquals(3, comps.stream().filter(x -> x.getSeason().equals(season)).toList().size());
+        assertEquals(3, comps.stream().filter(x -> x.getSeason().equals(season)).count());
     }
 
     @Test
@@ -152,7 +152,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
 
         // assert
         assertEquals(2, comps.size());
-        assertEquals(2, comps.stream().filter(x -> x.getCountry() == cc).toList().size());
+        assertEquals(2, comps.stream().filter(x -> x.getCountry() == cc).count());
     }
 
     @ParameterizedTest
@@ -174,13 +174,13 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
         Pageable pageable = Pageable.ofSize(10);
 
         // act
-        List<Competition> found = competitionDataLayer.searchWithMultipleCriteria(criteria, pageable).toList();
+        List<Competition> found = competitionDataLayer.findByMultipleCriteria(criteria, pageable).toList();
 
         // assert
         assertEquals(expected, found.size());
         for(Competition c : found){
             if(StringUtils.isNotEmpty(name)){
-                assertTrue(c.getName().toLowerCase().contains(name));
+                assertTrue(c.getName().toLowerCase().contains(name.toLowerCase()));
             }
             if(StringUtils.isNotEmpty(country)){
                 assertEquals(cc, c.getCountry());

@@ -5,20 +5,12 @@ import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteri
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
-import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -81,7 +73,7 @@ public class FootballClubService {
         if (criteria.hasOneCriteria())
             return searchWithSingleCriteria(criteria, pageable);
 
-        return dataLayer.searchWithMultipleCriteria(criteria, pageable);
+        return dataLayer.findByMultipleCriteria(criteria, pageable);
     }
 
     private Page<FootballClub> searchWithSingleCriteria(SearchFootballClubSearchCriteriaDTO criteria, Pageable pageable) {

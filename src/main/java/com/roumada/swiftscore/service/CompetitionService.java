@@ -200,7 +200,7 @@ public class CompetitionService {
         if (criteria.hasNoCriteria()) return competitionDataLayer.findAllCompetitions(pageable);
         if (criteria.hasOneCriteria()) return searchWithSingleCriteria(criteria, pageable);
 
-        return competitionDataLayer.searchWithMultipleCriteria(criteria, pageable);
+        return competitionDataLayer.findByMultipleCriteria(criteria, pageable);
     }
 
     private Page<Competition> searchWithSingleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {

@@ -36,30 +36,6 @@
     "victoryChance": 0.68
   },
   {
-    "name": "Telford Rangers",
-    "country": "GB",
-    "stadiumName": "Rangers Park",
-    "victoryChance": 0.45
-  },
-  {
-    "name": "Grayside FC",
-    "country": "GB",
-    "stadiumName": "Grayside Stadium",
-    "victoryChance": 0.62
-  },
-  {
-    "name": "Harrowgate Hornets",
-    "country": "GB",
-    "stadiumName": "Hornets Field",
-    "victoryChance": 0.41
-  },
-  {
-    "name": "St. Albans FC",
-    "country": "GB",
-    "stadiumName": "Bridgewater",
-    "victoryChance": 0.37
-  },
-  {
     "name": "Albacete Fútbol",
     "country": "ES",
     "stadiumName": "Albacete Field",
@@ -96,30 +72,6 @@
     "victoryChance": 0.47
   },
   {
-    "name": "Córdoba FC",
-    "country": "ES",
-    "stadiumName": "Estadio Arcángel",
-    "victoryChance": 0.53
-  },
-  {
-    "name": "Málaga United",
-    "country": "ES",
-    "stadiumName": "Estadio La Rosaleda",
-    "victoryChance": 0.76
-  },
-  {
-    "name": "Real Oviedo del Norte",
-    "country": "ES",
-    "stadiumName": "Estadio Carlos Tartiere",
-    "victoryChance": 0.62
-  },
-  {
-    "name": "Levante del Este",
-    "country": "ES",
-    "stadiumName": "Ciudad de Valencia",
-    "victoryChance": 0.71
-  },
-  {
     "name": "VfB Eichwald",
     "country": "DE",
     "stadiumName": "Hardtwaldstadion",
@@ -154,30 +106,6 @@
     "country": "DE",
     "stadiumName": "Nordlicht Arena",
     "victoryChance": 0.73
-  },
-  {
-    "name": "SV Blau-Weiß Lüneburg",
-    "country": "DE",
-    "stadiumName": "Blau-Weiß Stadion",
-    "victoryChance": 0.45
-  },
-  {
-    "name": "FC Sternenbach",
-    "country": "DE",
-    "stadiumName": "Sternenarena München",
-    "victoryChance": 0.21
-  },
-  {
-    "name": "VfR Wiesental",
-    "country": "DE",
-    "stadiumName": "Wiesental Arena",
-    "victoryChance": 0.49
-  },
-  {
-    "name": "SC Rot-Weiß Koblenz",
-    "country": "DE",
-    "stadiumName": "Rot-Schwarz Arena",
-    "victoryChance": 0.56
   }
 ]
 
