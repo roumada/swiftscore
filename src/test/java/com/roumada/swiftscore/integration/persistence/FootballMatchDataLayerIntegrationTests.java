@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +33,7 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
 
 
     @Test
-    @DisplayName("Should save a football match to the database")
+    @DisplayName("Save match - should save")
     void saveMatch_shouldSave() {
         // arrange
         var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
@@ -45,9 +44,9 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
 
         // act
         var saved = dataLayer.save(match);
-        var optionalMatch = dataLayer.findMatchById(saved.getId());
 
         // assert
+        var optionalMatch = dataLayer.findMatchById(saved.getId());
         assertThat(optionalMatch).isPresent();
         var retrievedMatch = optionalMatch.get();
         assertThat(retrievedMatch.getId()).isEqualTo(saved.getId());
@@ -107,7 +106,7 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         var matches = dataLayer.findAllMatchesForClubInCompetition(competitionId, fc1.getId(), 0, false);
 
         // assert
-        assertEquals(2, matches.size());
+        assertThat(matches).hasSize(2);
         assertTrue(matches.stream().noneMatch(m -> m.getMatchResult().equals(FootballMatch.MatchResult.UNFINISHED)));
     }
 
@@ -135,7 +134,7 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         var matches = dataLayer.findAllMatchesForClub(fc1.getId(), 0, 5,true);
 
         // assert
-        assertEquals(3, matches.size());
+        assertThat(matches).hasSize(3);
     }
 
     @Test
@@ -162,7 +161,7 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         var matches = dataLayer.findAllMatchesForClub(fc1.getId(), 0, 5,false);
 
         // assert
-        assertEquals(2, matches.size());
+        assertThat(matches).hasSize(2);
     }
 
     @ParameterizedTest
@@ -173,7 +172,7 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
             "3, 4, 0",
             "0, 11, 10",
     })
-    @DisplayName("Find matches for club - various page numbers and sizes - should find adequate amount")
+    @DisplayName("Find matches for club - various page numbers and sizes, include unresolved - should find adequate amount")
     void findAllMatchesForClub_variousSizes_findAdequateAmount(int number, int size, int expectedAmount) {
         // arrange
         var competitionId = 1L;
@@ -192,7 +191,7 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         var result = dataLayer.findAllMatchesForClub(fc1.getId(), number, size,true);
 
         // assert
-        assertEquals(expectedAmount, result.size());
+        assertThat(result).hasSize(expectedAmount);
     }
 
     @Test
@@ -221,10 +220,8 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
         dataLayer.deleteByCompetitionId(competitionId);
 
         // assert
-        assertEquals(Optional.empty(), dataLayer.findMatchById(savedMatchId));
-        assertEquals(Optional.empty(), dataLayer.findMatchById(savedMatch2Id));
-        assertTrue(dataLayer.findMatchById(savedMatch3Id).isPresent());
+        assertThat(dataLayer.findMatchById(savedMatchId)).isEmpty();
+        assertThat(dataLayer.findMatchById(savedMatch2Id)).isEmpty();
+        assertThat(dataLayer.findMatchById(savedMatch3Id)).isPresent();
     }
-
-
 }

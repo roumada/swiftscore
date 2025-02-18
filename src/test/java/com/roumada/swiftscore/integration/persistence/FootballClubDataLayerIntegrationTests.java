@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,9 +40,9 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
 
         // assert
         var optionalFC = repository.findById(saved.getId());
-        assertTrue(optionalFC.isPresent());
+        assertThat(optionalFC).isPresent();
         var retrievedFC = optionalFC.get();
-        assertEquals(fc.getName(), retrievedFC.getName());
+        assertThat(retrievedFC.getName()).isEqualTo(fc.getName());
     }
 
     @Test
@@ -56,8 +57,8 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
         )).stream().map(FootballClub::getId).toList();
 
         // assert
-        assertEquals(4, savedIds.size());
-        assertEquals(4, repository.findAllById(savedIds).size());
+        assertThat(savedIds).hasSize(4);
+        assertThat(repository.findAllById(savedIds)).hasSize(4);
     }
 
     @Test
@@ -70,9 +71,9 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
         var result = dataLayer.findById(savedId);
 
         // assert
-        assertTrue(result.isPresent());
+        assertThat(result).isPresent();
         var retrievedFC = result.get();
-        assertEquals(savedId, retrievedFC.getId());
+        assertThat(retrievedFC.getId()).isEqualTo(savedId);
     }
 
     @Test
@@ -90,8 +91,8 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
         var foundClubs = dataLayer.findAllByIdAndCountry(savedIds, CountryCode.GB);
 
         // assert
-        assertEquals(savedIds.size(), foundClubs.size());
-        assertEquals(savedIds, foundClubs.stream().map(FootballClub::getId).toList());
+        assertThat(savedIds).hasSameSizeAs(foundClubs);
+        assertThat(foundClubs.stream().map(FootballClub::getId).toList()).isEqualTo(savedIds);
     }
 
     @Test
@@ -107,8 +108,8 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
         var clubs = dataLayer.findByIdNotInAndCountryIn(List.of(excluded), CountryCode.GB, 4);
 
         // assert
-        assertEquals(3, clubs.size());
-        assertEquals(savedIds, clubs.stream().map(FootballClub::getId).toList());
+        assertThat(clubs).hasSize(3);
+        assertThat(clubs.stream().map(FootballClub::getId).toList()).isEqualTo(savedIds);
     }
 
     @Test
@@ -116,15 +117,16 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     void findByCriteria_name_shouldFind(){
         // arrange
         loadFCs();
+        var expected = 2;
 
         // act
         var criteria = "united";
         var clubs = dataLayer.findByNameContainingIgnoreCase(criteria, Pageable.ofSize(10)).getContent();
 
         // assert
-        assertEquals(2, clubs.size());
-        assertEquals(2,
-                clubs.stream().filter(x-> x.getName().toLowerCase().contains(criteria.toLowerCase())).count());
+        assertThat(clubs).hasSize(expected);
+        assertThat(clubs.stream().filter(x-> x.getName().toLowerCase().contains(criteria.toLowerCase())).count())
+                .isEqualTo(expected);
     }
 
     @Test
@@ -132,15 +134,15 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     void findByCriteria_country_shouldFind(){
         // arrange
         loadFCs();
+        var expected = 6;
 
         // act
         var criteria = CountryCode.GB;
         var clubs = dataLayer.findByCountry(criteria, Pageable.ofSize(10)).getContent();
 
         // assert
-        assertEquals(6, clubs.size());
-        assertEquals(6,
-                clubs.stream().filter(x-> x.getCountry() == criteria).count());
+        assertThat(clubs).hasSize(expected);
+        assertThat(clubs.stream().filter(x-> x.getCountry() == criteria).count()).isEqualTo(expected);
     }
 
     @Test
@@ -148,15 +150,16 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     void findByCriteria_stadium_shouldFind(){
         // arrange
         loadFCs();
+        var expected = 2;
 
         // act
         var criteria = "estadio";
         var clubs = dataLayer.findByStadiumNameContainingIgnoreCase(criteria, Pageable.ofSize(20)).getContent();
 
         // assert
-        assertEquals(2, clubs.size());
-        assertEquals(2,
-                clubs.stream().filter(x-> x.getStadiumName().toLowerCase().contains(criteria.toLowerCase())).count());
+        assertThat(clubs).hasSize(expected);
+        assertThat(clubs.stream().filter(x-> x.getStadiumName().toLowerCase().contains(criteria.toLowerCase())).count())
+                .isEqualTo(expected);
     }
 
     @ParameterizedTest
