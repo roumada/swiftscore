@@ -77,7 +77,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.length()).isEqualTo(1);
         assertThat(validationErrors.get(0))
                 .isEqualTo(validationErrorMsg);
@@ -111,7 +111,8 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.length()).isEqualTo(1);
         assertThat(validationErrors.get(0))
                 .isEqualTo("Unable to find football club with given id [%s]".formatted(fcId));
@@ -248,7 +249,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.length()).isEqualTo(1);
         assertThat(validationErrors.get(0))
                 .isEqualTo("Victory chance cannot be lower than 0 or higher than 1");

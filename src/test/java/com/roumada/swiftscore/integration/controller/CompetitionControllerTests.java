@@ -140,7 +140,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.length()).isEqualTo(1);
         assertThat(validationErrors.get(0))
                 .isEqualTo("The amount of clubs participating must be even.");
@@ -180,7 +180,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.length()).isEqualTo(1);
         assertThat(validationErrors.get(0))
                 .isEqualTo("The amount of clubs participating must be even.");
@@ -203,7 +203,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.length()).isEqualTo(1);
         assertThat(validationErrors.get(0))
                 .isEqualTo("Couldn't retrieve all clubs for given IDs and country.");
@@ -226,7 +226,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.length()).isEqualTo(1);
         assertThat(validationErrors.get(0))
                 .isEqualTo("Couldn't retrieve all clubs for given IDs and country.");
@@ -248,7 +248,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.length()).isEqualTo(1);
         assertThat(validationErrors.get(0))
                 .isEqualTo("The amount of clubs participating must be even.");
@@ -281,7 +281,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.get(0)).isEqualTo(validationErrorMsg);
     }
 
@@ -314,7 +314,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.get(0)).isEqualTo(validationErrorMsg);
     }
 
@@ -337,7 +337,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.get(0)).isEqualTo("Name cannot be null");
     }
 
@@ -361,7 +361,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.get(0))
                 .isEqualTo("Amount of participants must be at least greater than two than relegation spots");
     }
@@ -455,7 +455,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.get(0))
                 .isEqualTo("Cannot simulate competition [%s] further.".formatted(competition.getId()));
     }
@@ -680,7 +680,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
     }
 
@@ -760,7 +760,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
     }
 
@@ -840,7 +840,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
     }
 
@@ -901,7 +901,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
     }
 

@@ -56,7 +56,7 @@ class CompetitionRoundControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
         assertThat(validationErrors.length()).isEqualTo(1);
         assertThat(validationErrors.get(0))
                 .isEqualTo("Competition round with ID [%s] not found.".formatted(id));
