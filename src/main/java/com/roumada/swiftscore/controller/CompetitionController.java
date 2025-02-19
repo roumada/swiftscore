@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.controller;
 
+import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
@@ -12,7 +13,6 @@ import com.roumada.swiftscore.model.match.Competition;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -32,6 +32,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -75,7 +77,7 @@ public class CompetitionController {
             HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.generateAndSave(dto).fold(
-                error -> ResponseEntity.badRequest().body(error),
+                error -> ResponseEntity.badRequest().body(new ErrorResponse(List.of(error))),
                 success -> ResponseEntity.ok(CompetitionMapper.INSTANCE.competitionToCompetitionResponseDTO(success)));
     }
 
@@ -177,7 +179,7 @@ public class CompetitionController {
         var competition = findResult.get();
         return service.simulate(findResult.get(), times)
                 .fold(
-                        error -> ResponseEntity.badRequest().body(error),
+                        error -> ResponseEntity.badRequest().body(new ErrorResponse(List.of(error))),
                         success -> simplify ?
                                 ResponseEntity.ok(new CompetitionSimulationSimpleResponseDTO(competition.getId(),
                                         competition.getLastSimulatedRound(),

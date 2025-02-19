@@ -17,7 +17,7 @@ public record CreateFootballClubRequestDTO(
         @NotNull(message = "Stadium name cannot be null")
         String stadiumName,
         @DecimalMin(value = "0.0", message = "Victory chance cannot be lower than 0")
-        @DecimalMax(value = "1.0", message = "Victory chance cannot be higher than 1")
+        @DecimalMax(value = "1.0", message = "Victory chance cannot be greater than 1")
         @NotNull(message = "Victory chance cannot be null")
         double victoryChance) {
 }

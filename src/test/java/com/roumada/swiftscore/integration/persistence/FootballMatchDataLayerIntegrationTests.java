@@ -31,7 +31,6 @@ class FootballMatchDataLayerIntegrationTests extends AbstractBaseIntegrationTest
     @Autowired
     private FootballMatchDataLayer dataLayer;
 
-
     @Test
     @DisplayName("Save match - should save")
     void saveMatch_shouldSave() {

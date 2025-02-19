@@ -51,7 +51,7 @@ public class DataLoader implements CommandLineRunner {
 
     private void dropPrevious() {
         mongoTemplate.getDb().drop();
-        log.info("Previous database dropped");
+        log.info("Database cleared");
     }
 
     private void saveObjects() {

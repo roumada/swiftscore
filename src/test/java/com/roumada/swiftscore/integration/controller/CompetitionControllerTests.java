@@ -1,23 +1,27 @@
 package com.roumada.swiftscore.integration.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
-import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
+import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
+import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponseDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
 import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
-import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
-import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
+import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
+import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
+import com.roumada.swiftscore.util.CompetitionTestUtils;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
+import io.micrometer.common.util.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -30,18 +34,21 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -49,35 +56,30 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @Autowired
     private CompetitionRoundDataLayer competitionRoundDataLayer;
     @Autowired
-    private FootballClubDataLayer footballClubDataLayer;
-    @Autowired
     private FootballMatchDataLayer footballMatchDataLayer;
+
+    @Autowired
+    private CompetitionRepository competitionRepository;
+    @Autowired
+    private FootballClubRepository footballClubRepository;
 
     @Test
     @DisplayName("Create competition - with valid football club IDs & football IDs only - should create")
     void createCompetition_validDataAndIdsOnly_isCreated() throws Exception {
         // arrange
-        var ids = FootballClubTestUtils
-                .getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        var clubs = footballClubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
 
         // act
-        var mvcResult = mvc.perform(post("/competition")
+        var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateCompetitionRequestDTO("",
-                                        CountryCode.GB,
-                                        "2025-01-01",
-                                        "2025-10-01",
-                                        new CompetitionParametersDTO(0, ids, 0),
-                                        new SimulationValues(0))
-
-                        )))
-                .andExpect(status().isOk()).andReturn();
+                                CompetitionTestUtils.getRequest(clubs))))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
 
         // assert
-        var compId = new JSONObject(mvcResult.getResponse().getContentAsString()).getString("id");
-
-        mvc.perform(get("/competition/" + compId)).andExpect(status().isOk());
+        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        assertThat(competitionRepository.findById(dto.id())).isPresent();
     }
 
     @ParameterizedTest
@@ -85,303 +87,202 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - with valid football club IDs & set participants - should create")
     void createCompetition_validIdsAndFillToParticipantsSet_isCreated(int participants) throws Exception {
         // arrange
-        var ids = FootballClubTestUtils
-                .getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 4);
+        var clubs = footballClubRepository.saveAll(FootballClubTestUtils.getTenFootballClubs()).stream().limit(4).toList();
 
         // act
-        var mvcResult = mvc.perform(post("/competition")
+        var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateCompetitionRequestDTO("",
-                                        CountryCode.GB,
-                                        "2025-01-01",
-                                        "2025-10-01",
-                                        new CompetitionParametersDTO(participants, ids, 0),
-                                        new SimulationValues(0))
-                        )))
-                .andExpect(status().isOk()).andReturn();
+                                CompetitionTestUtils.getRequest(participants, clubs))))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
 
         // assert
-        var compId = new JSONObject(mvcResult.getResponse().getContentAsString()).getString("id");
-
-        mvc.perform(get("/competition/" + compId)).andExpect(status().isOk());
+        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        assertThat(competitionRepository.findById(dto.id())).isPresent();
     }
 
     @Test
     @DisplayName("Create competition - with uneven football club IDs amount & even participants - should create")
     void createCompetition_unevenFootballClubIdsButEvenFillToParticipants_isCreated() throws Exception {
         // arrange
-        var ids = FootballClubTestUtils
-                .getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 3);
+        var clubs = footballClubRepository.saveAll(FootballClubTestUtils.getTenFootballClubs()).stream().limit(3).toList();
 
         // act
-        var mvcResult = mvc.perform(post("/competition")
+        var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateCompetitionRequestDTO("",
-                                        CountryCode.GB,
-                                        "2025-01-01",
-                                        "2025-10-01",
-                                        new CompetitionParametersDTO(8, ids, 0),
-                                        new SimulationValues(0))
-                        )))
-                .andExpect(status().isOk()).andReturn();
+                                CompetitionTestUtils.getRequest(8, clubs))))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
 
         // assert
-        var compId = new JSONObject(mvcResult.getResponse().getContentAsString()).getString("id");
-
-        mvc.perform(get("/competition/" + compId)).andExpect(status().isOk());
+        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        assertThat(competitionRepository.findById(dto.id())).isPresent();
     }
 
-    @Test
-    @DisplayName("Create competition - with uneven football club IDs amount & uneven participants - should return error code")
-    void createCompetition_unevenFootballClubIdsButUnevenFillToParticipants_isCreated() throws Exception {
+    @ParameterizedTest
+    @CsvSource({
+            "7, 4",
+            "4, 7"
+    })
+    @DisplayName("Create competition - with uneven total participant amount - should return error code")
+    void createCompetition_unevenFootballClubIdsButUnevenFillToParticipants_isCreated(int clubsAmount, int participants) throws Exception {
         // arrange
-        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 3);
+        var clubs = footballClubRepository.saveAll(FootballClubTestUtils.getTenFootballClubs()).stream().limit(clubsAmount).toList();
 
         // act
-        var errorMsg = mvc.perform(post("/competition")
+        var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateCompetitionRequestDTO("",
-                                        CountryCode.GB,
-                                        "2025-01-01",
-                                        "2025-10-01",
-                                        new CompetitionParametersDTO(7, ids, 0),
-                                        new SimulationValues(0)))))
-                .andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
+                                CompetitionTestUtils.getRequest(participants, clubs))))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Failed to generate competition - the amount of clubs participating must be even.", errorMsg);
-    }
-
-    @Test
-    @DisplayName("Create competition - with even football club IDs amount & uneven participants - should return error code")
-    void createCompetition_evenFootballClubIdsButUnevenFillToParticipants_isCreated() throws Exception {
-        // arrange
-        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()), 4);
-
-        // act
-        var errorMsg = mvc.perform(post("/competition")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                new CreateCompetitionRequestDTO("",
-                                        CountryCode.GB,
-                                        "2025-01-01",
-                                        "2025-10-01",
-                                        new CompetitionParametersDTO(7, ids, 0),
-                                        new SimulationValues(0)))))
-                .andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
-
-        // assert
-        assertEquals("Failed to generate competition - the amount of clubs participating must be even.", errorMsg);
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo("The amount of clubs participating must be even.");
     }
 
     @Test
     @DisplayName("Create competition - with participants parameter only - should create")
     void createCompetition_withFillToParticipantsOnly_isCreated() throws Exception {
         // arrange
-        FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));
+        FootballClubTestUtils.getIdsOfSavedClubs(footballClubRepository.saveAll(FootballClubTestUtils.getTenFootballClubs()));
 
         // act
-        var mvcResult = mvc.perform(post("/competition")
+        var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateCompetitionRequestDTO("",
-                                        CountryCode.GB,
-                                        "2025-01-01",
-                                        "2025-10-01",
-                                        new CompetitionParametersDTO(8, null, 0),
-                                        new SimulationValues(0)))))
-                .andExpect(status().isOk()).andReturn();
+                                CompetitionTestUtils.getRequest(8))))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
 
         // assert
-        var compId = new JSONObject(mvcResult.getResponse().getContentAsString()).getString("id");
-
-        mvc.perform(get("/competition/" + compId)).andExpect(status().isOk());
+        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        assertThat(competitionRepository.findById(dto.id())).isPresent();
     }
 
     @Test
-    @DisplayName("Create competition - with uneven participants parameter only - should create")
-    void createCompetition_withUnevenFillToParticipantsOnly_isCreated() throws Exception {
+    @DisplayName("Create competition - with uneven participants parameter only - should return error code")
+    void createCompetition_withUnevenParticipantsOnly_shouldReturnErrorCode() throws Exception {
         // arrange
-        FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubs()));
+        footballClubRepository.saveAll(FootballClubTestUtils.getTenFootballClubs());
 
         // act
-        var errorMsg = mvc.perform(post("/competition")
+        var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateCompetitionRequestDTO("",
-                                        CountryCode.GB,
-                                        "2025-01-01",
-                                        "2025-10-01",
-                                        new CompetitionParametersDTO(7, null, 0),
-                                        new SimulationValues(0)))))
-                .andExpect(status().is4xxClientError()).andReturn().getResponse().getContentAsString();
+                                CompetitionTestUtils.getRequest(7))))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Failed to generate competition - the amount of clubs participating must be even.", errorMsg);
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo("The amount of clubs participating must be even.");
     }
 
     @Test
     @DisplayName("Create competition - with invalid football club IDs - should return error code")
     void createCompetition_invalidIds_shouldReturnErrorCode() throws Exception {
         // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
+        var clubs = footballClubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false))
+                .stream().limit(2).toList();
+        clubs.get(0).setId(-1L);
 
         // act
-        var errorMsg = mvc.perform(post("/competition")
+        var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateCompetitionRequestDTO("",
-                                        CountryCode.GB,
-                                        "2025-01-01",
-                                        "2025-10-30",
-                                        new CompetitionParametersDTO(0, List.of(1L, 2L, 3L, 9L), 0),
-                                        new SimulationValues(0)))))
+                                CompetitionTestUtils.getRequest(clubs))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Couldn't retrieve all clubs for given IDs and country.", errorMsg);
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo("Couldn't retrieve all clubs for given IDs and country.");
     }
 
     @Test
-    @DisplayName("Create competition - invalid club countries - should return error code")
-    void createCompetition_invalidClubCountries_shouldReturnErrorCode() throws Exception {
+    @DisplayName("Create competition - not enough countries with given country - should return error code")
+    void createCompetition_notEnoughClubsForCountry_shouldReturnErrorCode() throws Exception {
         // arrange
         var clubs = FootballClubTestUtils.getFourFootballClubs(false);
         clubs.get(0).setCountry(CountryCode.ES);
-        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(clubs));
+        footballClubRepository.saveAll(clubs);
 
         // act
-        var errorMsg = mvc.perform(post("/competition")
+        var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateCompetitionRequestDTO("",
-                                        CountryCode.GB,
-                                        "2025-01-01",
-                                        "2025-10-30",
-                                        new CompetitionParametersDTO(0, ids, 0),
-                                        new SimulationValues(0)))))
+                                CompetitionTestUtils.getRequest(clubs))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Couldn't retrieve all clubs for given IDs and country.", errorMsg);
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo("Couldn't retrieve all clubs for given IDs and country.");
     }
 
     @Test
     @DisplayName("Create competition  - with uneven football club ID count - should return error code")
     void createCompetition_invalidIdCount_shouldReturnErrorCode() throws Exception {
         // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
+        var clubs = footballClubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false))
+                .stream().limit(3).toList();
 
         // act
-        var errorMsg = mvc.perform(post("/competition")
+        var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
-                                CountryCode.GB,
-                                "2025-01-01",
-                                "2025-10-30",
-                                new CompetitionParametersDTO(0, List.of(1L, 2L, 3L), 0),
-                                new SimulationValues(0)))))
+                        .content(objectMapper.writeValueAsString(
+                                CompetitionTestUtils.getRequest(clubs))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals("Failed to generate competition - the amount of clubs participating must be even.",
-                errorMsg);
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo("The amount of clubs participating must be even.");
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = {-0.1, 1.1})
+    @CsvSource({
+            "-0.01, 0, 0, 'Variance cannot be lower than 0'",
+            "1.001, 0, 0, 'Variance cannot be greater than 1'",
+            "0, -0.01, 0, 'Score difference draw trigger cannot be lower than 0'",
+            "0, 1.001, 0, 'Score difference draw trigger cannot be greater than 1'",
+            "0, 0, -0.01, 'Draw trigger chance cannot be lower than 0'",
+            "0, 0, 1.001, 'Draw trigger chance cannot be greater than 1'",
+    })
     @DisplayName("Create competition  - with invalid variance value - should return error code")
-    void createCompetition_invalidVarianceNumber_shouldReturnErrorCode(double variation) throws Exception {
+    void createCompetition_invalidVarianceNumber_shouldReturnErrorCode(double variance,
+                                                                       double sddt,
+                                                                       double dtc,
+                                                                       String validationErrorMsg) throws Exception {
         // arrange
-        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        var clubs = footballClubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
+        var simVals = new SimulationValues(variance, sddt, dtc);
 
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
-                                CountryCode.GB,
-                                "2025-01-01",
-                                "2025-10-30",
-                                new CompetitionParametersDTO(0, ids, 0),
-                                new SimulationValues(variation, 0.0, 0.0)))))
+                        .content(objectMapper.writeValueAsString(
+                                CompetitionTestUtils.getRequest(simVals, clubs))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
         // assert
         JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
-        if (variation < 0) {
-            assertEquals("Variance cannot be lower than 0",
-                    validationErrors.get(0));
-        } else {
-            assertEquals("Variance cannot be higher than 1",
-                    validationErrors.get(0));
-        }
-    }
-
-    @ParameterizedTest
-    @ValueSource(doubles = {-0.1, 1.1})
-    @DisplayName("Create competition  - with invalid draw trigger chance value - should return error code")
-    void createCompetition_invalidDrawTriggerChanceValue_shouldReturnErrorCode(double drawTriggerChance) throws Exception {
-        // arrange
-        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
-
-        // act
-        var response = mvc.perform(post("/competition")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
-                                CountryCode.GB,
-                                "2025-01-01",
-                                "2025-11-10",
-                                new CompetitionParametersDTO(0, ids, 0),
-                                new SimulationValues(0.0, 0.0, drawTriggerChance)))))
-                .andExpect(status().is4xxClientError())
-                .andReturn().getResponse().getContentAsString();
-
-        // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
-        if (drawTriggerChance < 0) {
-            assertEquals("Draw trigger chance cannot be lower than 0",
-                    validationErrors.get(0));
-        } else {
-            assertEquals("Draw trigger chance cannot be higher than 1",
-                    validationErrors.get(0));
-        }
-    }
-
-    @ParameterizedTest
-    @ValueSource(doubles = {-0.1, 1.1})
-    @DisplayName("Create competition  - with invalid score diff draw trigger value - should return error code")
-    void createCompetition_invalidScoreDiffDrawTriggerValue_shouldReturnErrorCode(double scoreDifferenceDrawTrigger) throws Exception {
-        // arrange
-        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
-
-        // act
-        var response = mvc.perform(post("/competition")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
-                                CountryCode.GB,
-                                "2025-01-01",
-                                "2025-10-30",
-                                new CompetitionParametersDTO(0, ids, 0),
-                                new SimulationValues(0.0, scoreDifferenceDrawTrigger, 0.0)))))
-                .andExpect(status().is4xxClientError())
-                .andReturn().getResponse().getContentAsString();
-
-        // assert
-        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
-        if (scoreDifferenceDrawTrigger < 0) {
-            assertEquals("Score difference draw trigger cannot be lower than 0",
-                    validationErrors.get(0));
-        } else {
-            assertEquals("Score difference draw trigger cannot be higher than 1",
-                    validationErrors.get(0));
-        }
+        assertThat(validationErrors.get(0)).isEqualTo(validationErrorMsg);
     }
 
     @ParameterizedTest
@@ -399,7 +300,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                                               String endDate,
                                                               String validationErrorMsg) throws Exception {
         // arrange
-        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
+        var ids = FootballClubTestUtils.getIdsOfSavedClubs(footballClubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
 
         // act
         var response = mvc.perform(post("/competition")
@@ -415,14 +316,14 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
-        assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
+        assertThat(validationErrors.get(0)).isEqualTo(validationErrorMsg);
     }
 
     @Test
     @DisplayName("Create competition - with null name - should return error code")
     void createCompetition_withNullName_shouldReturnErrorCode() throws Exception {
         // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
+        footballClubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
 
         // act
         var response = mvc.perform(post("/competition")
@@ -438,7 +339,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
-        assertEquals("Name cannot be null", validationErrors.get(0));
+        assertThat(validationErrors.get(0)).isEqualTo("Name cannot be null");
     }
 
     @ParameterizedTest
@@ -446,7 +347,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create competition - invalid relegation spots amount - should return error code")
     void createCompetition_invalidRelegationSpotsAmount_shouldReturnErrorCode(int relegationSpots) throws Exception {
         // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
+        footballClubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
 
         // act
         var response = mvc.perform(post("/competition")
@@ -462,7 +363,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
-        assertEquals("Amount of participants must be at least greater than two than relegation spots", validationErrors.get(0));
+        assertThat(validationErrors.get(0))
+                .isEqualTo("Amount of participants must be at least greater than two than relegation spots");
     }
 
     @Test
@@ -473,28 +375,25 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // act
         mvc.perform(delete("/competition/%s".formatted(id))).andExpect(status().isOk());
+
+        // assert
+        assertThat(competitionRepository.findById(id)).isEmpty();
     }
 
     @Test
     @DisplayName("Get a competition - with valid ID - should return")
     void getCompetition_withValidID_shouldReturn() throws Exception {
         // arrange
-        var round1 = new CompetitionRound(1, Collections.emptyList());
-        round1 = competitionRoundDataLayer.save(round1);
-        var savedClubs = footballClubDataLayer.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
-        var id = competitionDataLayer.save(Competition.builder()
-                .name("Competition")
-                .simulationValues(new SimulationValues(0))
-                .participants(savedClubs)
-                .rounds(List.of(round1))
-                .build()).getId();
+        var competitionId = loadCompetitionWithFcs().getId();
 
         // act
-        var result = mvc.perform(get("/competition/" + id)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        var resultJSON = new JSONObject(result);
+        var response = mvc.perform(get("/competition/" + competitionId))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
 
         // assert
-        assertEquals(id, resultJSON.getLong("id"));
+        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        assertThat(dto.id()).isEqualTo(competitionId);
     }
 
     @Test
@@ -504,134 +403,62 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         mvc.perform(get("/competition/999")).andExpect(status().is4xxClientError());
     }
 
-    @Test
-    @DisplayName("Simulate competition  - can still be simulated - should simulate and return simulated round")
-    void simulateCompetitionRound_canStillBeSimulated_shouldSimulateAndReturn() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"1", "3"})
+    @DisplayName("Simulate competition  - can be simulated - should simulate set amount of times and return simulated round")
+    void simulateCompetitionRound_canBeSimulated_shouldSimulateMultipleTimesAndReturn(String times) throws Exception {
         // arrange
-        var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
-        var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
-        footballClubDataLayer.save(fc1);
-        footballClubDataLayer.save(fc2);
-        var fm = new FootballMatch(fc1, fc2);
-        fm = footballMatchDataLayer.save(fm);
-
-        var round = new CompetitionRound(null, 1, List.of(fm));
-        competitionRoundDataLayer.save(round);
-
-        var saved = competitionDataLayer.save(Competition.builder()
-                .name("Competition")
-                .startDate(LocalDate.of(2024, 1, 1))
-                .endDate(LocalDate.of(2024, 10, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(List.of(fc1, fc2))
-                .rounds(List.of(round))
-                .build());
+        var competition = loadCompetitionWithFcs();
 
         // act
-        var response = mvc.perform(post("/competition/%s/simulate".formatted(saved.getId()))
-                        .param("times", "1"))
-                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        var response = mvc.perform(post("/competition/%s/simulate".formatted(competition.getId()))
+                        .param("times", times))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
 
         // assert
-        var responseJSON = new JSONObject(response);
+        var dto = objectMapper.readValue(response, CompetitionSimulationResponseDTO.class);
+        assertThat(dto.simulatedUntil()).isEqualTo(Integer.valueOf(times));
+        assertThat(dto.competitionId()).isEqualTo(competition.getId());
+    }
 
-        assertEquals(1, responseJSON.getJSONArray("rounds").length());
+    @ParameterizedTest
+    @ValueSource(strings = {"1", "3"})
+    @DisplayName("Simulate competition  - can be simulated - should simulate set amount of times and return simulated rounds in simple form")
+    void simulateCompetitionRound_canBeSimulated_shouldSimulateMultipleTimesAndReturnInSimpleForm(String times) throws Exception {
+        // arrange
+        var competition = loadCompetitionWithFcs();
+
+        // act
+        var response = mvc.perform(post("/competition/%s/simulate".formatted(competition.getId()))
+                        .param("times", times)
+                        .param("simplify", "true"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        var dto = objectMapper.readValue(response, CompetitionSimulationSimpleResponseDTO.class);
+        assertThat(dto.simulatedUntil()).isEqualTo(Integer.valueOf(times));
+        assertThat(dto.competitionId()).isEqualTo(competition.getId());
     }
 
     @Test
     @DisplayName("Simulate competition  - can be simulated - should return error code when no longer can")
     void simulateCompetitionRound_canBeSimulated_shouldReturnErrorCodeWhenNoLongerCan() throws Exception {
         // arrange
-        var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
-        var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
-        footballClubDataLayer.save(fc1);
-        footballClubDataLayer.save(fc2);
-
-        FootballMatch fm = new FootballMatch(fc1, fc2);
-        fm = footballMatchDataLayer.save(fm);
-
-        var round = new CompetitionRound(1, List.of(fm));
-        competitionRoundDataLayer.save(round);
-
-        var saved = competitionDataLayer.save(Competition.builder()
-                .name("Competition")
-                .startDate(LocalDate.of(2024, 1, 1))
-                .endDate(LocalDate.of(2024, 10, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(List.of(fc1, fc2))
-                .rounds(List.of(round))
-                .build());
+        var competition = loadCompetitionWithFcs();
+        competition.setLastSimulatedRound(competition.getRounds().size());
+        competitionRepository.save(competition);
 
         // act
-        mvc.perform(post("/competition/%s/simulate".formatted(saved.getId())).param("times", "1")).andExpect(status().isOk());
-        mvc.perform(post("/competition/%s/simulate".formatted(saved.getId()))).andExpect(status().is4xxClientError());
-    }
+        var response = mvc.perform(post("/competition/%s/simulate".formatted(competition.getId()))
+                        .param("times", "1"))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
 
-    @Test
-    @DisplayName("Simulate competition  - can be simulated - should simulate multiple times with one request and return simulated round")
-    void simulateCompetitionRound_canBeSimulated_shouldSimulateMultipleTimesAndReturn() throws Exception {
-        // arrange
-        var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
-        var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
-        footballClubDataLayer.save(fc1);
-        footballClubDataLayer.save(fc2);
-        var fm = new FootballMatch(fc1, fc2);
-        fm = footballMatchDataLayer.save(fm);
-
-        var round = new CompetitionRound(null, 1, List.of(fm));
-        competitionRoundDataLayer.save(round);
-
-        var saved = competitionDataLayer.save(Competition.builder()
-                .name("Competition")
-                .startDate(LocalDate.of(2024, 1, 1))
-                .endDate(LocalDate.of(2024, 10, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(List.of(fc1, fc2))
-                .rounds(List.of(round, round, round, round))
-                .build());
-
-        // act
-        var response = mvc.perform(post("/competition/%s/simulate".formatted(saved.getId()))
-                        .param("times", "3"))
-                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-
-        // assert
-        var responseJSON = new JSONObject(response);
-
-        assertEquals(3, responseJSON.getJSONArray("rounds").length());
-    }
-
-    @Test
-    @DisplayName("Simulate competition  - can be simulated - should simulate multiple times with one request and return simulated round in simple form")
-    void simulateCompetitionRound_canBeSimulated_shouldSimulateMultipleTimesAndReturnSimplifiedRequest() throws Exception {
-        // arrange
-        var fc1 = FootballClub.builder().name("FC1").victoryChance(0.3f).build();
-        var fc2 = FootballClub.builder().name("FC2").victoryChance(0.4f).build();
-        footballClubDataLayer.save(fc1);
-        footballClubDataLayer.save(fc2);
-        var fm = new FootballMatch(fc1, fc2);
-        fm = footballMatchDataLayer.save(fm);
-
-        var round = new CompetitionRound(null, 1, List.of(fm));
-        competitionRoundDataLayer.save(round);
-
-        var saved = competitionDataLayer.save(Competition.builder()
-                .name("Competition")
-                .startDate(LocalDate.of(2024, 1, 1))
-                .endDate(LocalDate.of(2024, 10, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(List.of(fc1, fc2))
-                .rounds(List.of(round, round, round, round))
-                .build());
-
-        // act
-        var response = mvc.perform(post("/competition/%s/simulate".formatted(saved.getId()))
-                        .param("times", "3")
-                        .param("simplify", "true"))
-                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-
-        // assert
-        assertDoesNotThrow(() -> objectMapper.readValue(response, CompetitionSimulationSimpleResponseDTO.class));
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("validationErrors");
+        assertThat(validationErrors.get(0))
+                .isEqualTo("Cannot simulate competition [%s] further.".formatted(competition.getId()));
     }
 
     @Test
@@ -645,21 +472,21 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO("New Competition",
                 null,
                 null,
                 null);
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseJSON = new JSONObject(response);
 
         // assert
+        var responseJSON = new JSONObject(response);
         assertEquals(dto.name(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(saved
@@ -693,21 +520,21 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 CountryCode.SE,
                 null,
                 null);
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseJSON = new JSONObject(response);
 
         // assert
+        var responseJSON = new JSONObject(response);
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(dto.country(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(saved
@@ -741,21 +568,21 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
                 null,
                 new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseJSON = new JSONObject(response);
 
         // assert
+        var responseJSON = new JSONObject(response);
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(dto
@@ -790,21 +617,21 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
                 null,
                 new UpdateSimulationValuesDTO(0.1, null, null));
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseJSON = new JSONObject(response);
 
         // assert
+        var responseJSON = new JSONObject(response);
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(dto
@@ -828,7 +655,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @ParameterizedTest
     @CsvSource({
             "-0.1, 'Variance cannot be lower than 0'",
-            "1.1, 'Variance cannot be higher than 1'",})
+            "1.1, 'Variance cannot be greater than 1'",})
     @DisplayName("Update competition - variance only, invalid values - should return error code")
     void updateCompetition_invalidVarianceOnly_shouldReturnErrorCode(double variance, String validationErrorMsg) throws Exception {
         // arrange
@@ -840,12 +667,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
                 null,
                 new UpdateSimulationValuesDTO(variance, null, null));
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -870,21 +697,21 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
                 null,
                 new UpdateSimulationValuesDTO(null, 0.2, null));
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseJSON = new JSONObject(response);
 
         // assert
+        var responseJSON = new JSONObject(response);
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(simVals
@@ -908,7 +735,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @ParameterizedTest
     @CsvSource({
             "-0.1, 'Score difference draw trigger cannot be lower than 0'",
-            "1.1, 'Score difference draw trigger cannot be higher than 1'",})
+            "1.1, 'Score difference draw trigger cannot be greater than 1'",})
     @DisplayName("Update competition - score diff draw trigger only, invalid values - should return error code")
     void updateCompetition_invalidSddt_shouldReturnUpdated(double sddt, String validationErrorMsg) throws Exception {
         // arrange
@@ -920,12 +747,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
                 null,
                 new UpdateSimulationValuesDTO(null, sddt, null));
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -950,21 +777,21 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
                 null,
                 new UpdateSimulationValuesDTO(null, null, 0.2));
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseJSON = new JSONObject(response);
 
         // assert
+        var responseJSON = new JSONObject(response);
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(simVals
@@ -988,7 +815,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @ParameterizedTest
     @CsvSource({
             "-0.1, 'Draw trigger chance cannot be lower than 0'",
-            "1.1, 'Draw trigger chance cannot be higher than 1'",})
+            "1.1, 'Draw trigger chance cannot be greater than 1'",})
     @DisplayName("Update competition - draw trigger chance only, invalid values - should return error code")
     void updateCompetition_invalidDrawTriggerChance_shouldReturnUpdated(double dtc, String validationErrorMsg) throws Exception {
         // arrange
@@ -1000,12 +827,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
                 null,
                 new UpdateSimulationValuesDTO(null, null, dtc));
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -1021,11 +848,13 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @Test
     @DisplayName("Update competition - invalid ID - should return error message")
     void updateCompetition_invalidId_shouldReturnUpdated() throws Exception {
-        // act
+        // arrange
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
                 null,
                 new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
+
+        // act
         var response = mvc.perform(patch("/competition/0")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -1040,11 +869,11 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @ParameterizedTest
     @CsvSource({
             "-0.1, 0.2, 0.2, 'Variance cannot be lower than 0'",
-            "1.1, 0.2, 0.2, 'Variance cannot be higher than 1'",
+            "1.1, 0.2, 0.2, 'Variance cannot be greater than 1'",
             "0.2, -1, 0.2, 'Score difference draw trigger cannot be lower than 0'",
-            "0.2, 1.1, 0.2, 'Score difference draw trigger cannot be higher than 1'",
+            "0.2, 1.1, 0.2, 'Score difference draw trigger cannot be greater than 1'",
             "0.2, 0.2, -1, 'Draw trigger chance cannot be lower than 0'",
-            "0.2, 0.2, 1.1, 'Draw trigger chance cannot be higher than 1'",
+            "0.2, 0.2, 1.1, 'Draw trigger chance cannot be greater than 1'",
     })
     @DisplayName("Update competition - invalid simulation values  - should return error code")
     void updateCompetition_invalidSimValues_shouldReturnErrorCode(double variance,
@@ -1059,12 +888,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-
-        // act
         var dto = new UpdateCompetitionRequestDTO(null,
                 null,
                 null,
                 new UpdateSimulationValuesDTO(variance, sddt, dtc));
+
+        // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -1077,115 +906,42 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         assertTrue(validationErrorMsg.contains(validationErrors.get(0).toString()));
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {2, 3})
+    @Test
     @DisplayName("Search competitions - no criteria - should return all")
-    void searchCompetitions_noCriteria_shouldReturnAll(int pageSize) throws Exception {
+    void searchCompetitions_noCriteria_shouldReturnAll() throws Exception {
         // arrange
-        competitionDataLayer.save(Competition.builder()
-                .name("British League")
-                .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("Deutsche Liga")
-                .country(CountryCode.DE)
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("Spanish Liga")
-                .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
+        loadCompetitionsWithFcs();
 
         // act
         var response = mvc.perform(get("/competition/search")
-                        .param("size", String.valueOf(pageSize))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var resultArray = new JSONObject(response);
 
         // assert
-        assertEquals(pageSize, resultArray.getJSONArray("content").length());
+        var responseJson = new JSONObject(response);
+        assertThat(responseJson.getInt("totalPages")).isEqualTo(1);
+        assertThat(responseJson.getInt("totalElements")).isEqualTo(6);
+        List<CompetitionResponseDTO> competitions = objectMapper.readValue(responseJson.getString("content"),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, CompetitionResponseDTO.class));
+        assertThat(competitions).hasSize(6);
     }
 
     @ParameterizedTest
     @CsvSource({
-            "1,     '',   '',           '3'",
-            "'',    GB,   '',           '2'",
-            "'',    '',   2024/2025,    '3'",
-            "'',    DE,   2024/2025,    '1'",
-            "1,     '',   2024/2025,    '3'",
-            "2,     IT,   2024/2025,    '0'",
-            "2,     GB,   2025,         '1'",
+            "'azure',       '',             '',             3",
+            "'',            'GB',           '',             2",
+            "'',            '',             '2024/2025',    3",
+            "'azure',       'GB',           '',             1",
+            "'',            'GB',           '2024/2025',    1",
+            "'emerald',     '',             '2025',         1",
+            "'ruby',        'ES',           '2024/2025',    1",
     })
     @DisplayName("Search competitions - various criteria - should find expected amount")
     void searchCompetitions_variousCriteria_shouldFind(String name, String country, String season, int expected) throws Exception {
         // arrange
-        competitionDataLayer.save(Competition.builder()
-                .name("Brit League 1")
-                .country(CountryCode.GB)
-                .startDate(LocalDate.of(2024, 7, 1))
-                .endDate(LocalDate.of(2025, 5, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("Brit League 2")
-                .country(CountryCode.GB)
-                .startDate(LocalDate.of(2025, 1, 1))
-                .endDate(LocalDate.of(2025, 10, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-
-        competitionDataLayer.save(Competition.builder()
-                .name("German League 1")
-                .country(CountryCode.DE)
-                .startDate(LocalDate.of(2024, 7, 1))
-                .endDate(LocalDate.of(2025, 5, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("German League 2")
-                .country(CountryCode.DE)
-                .startDate(LocalDate.of(2025, 1, 1))
-                .endDate(LocalDate.of(2025, 10, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-
-        competitionDataLayer.save(Competition.builder()
-                .name("Italian League 1")
-                .country(CountryCode.IT)
-                .startDate(LocalDate.of(2024, 7, 1))
-                .endDate(LocalDate.of(2025, 5, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
-        competitionDataLayer.save(Competition.builder()
-                .name("Italian League 2")
-                .country(CountryCode.IT)
-                .startDate(LocalDate.of(2025, 1, 1))
-                .endDate(LocalDate.of(2025, 10, 1))
-                .simulationValues(new SimulationValues(0))
-                .participants(Collections.emptyList())
-                .rounds(Collections.emptyList())
-                .build());
+        loadCompetitionsWithFcs();
 
         // act
         var response = mvc.perform(get("/competition/search")
@@ -1199,6 +955,19 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         var responseJson = new JSONObject(response);
-        assertEquals(expected, responseJson.getJSONArray("content").length());
+        List<CompetitionResponseDTO> competitions = objectMapper.readValue(responseJson.getString("content"),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, CompetitionResponseDTO.class));
+        assertThat(competitions).hasSize(expected);
+        for (CompetitionResponseDTO c : competitions) {
+            if (StringUtils.isNotEmpty(name)) {
+                assertThat(c.name().toLowerCase()).contains(name.toLowerCase());
+            }
+            if (StringUtils.isNotEmpty(country)) {
+                assertThat(c.country()).isEqualTo(CountryCode.valueOf(country));
+            }
+            if (StringUtils.isNotEmpty(season)) {
+                assertThat(c.season()).isEqualTo(season);
+            }
+        }
     }
 }

@@ -39,7 +39,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
     void saveCompetition_shouldSave() {
         // arrange
         var clubs = clubRepo.saveAll(FootballClubTestUtils.getTwoFootballClubs());
-        var competition = CompetitionTestUtils.getForPersistedClubs(clubs);
+        var competition = CompetitionTestUtils.get(clubs);
         competition.setRounds(Collections.emptyList());
 
         // act
@@ -54,7 +54,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
     void findACompetitionById_shouldFind() {
         // arrange
         var clubs = clubRepo.saveAll(FootballClubTestUtils.getTwoFootballClubs());
-        var competition = CompetitionTestUtils.getForPersistedClubs(clubs);
+        var competition = CompetitionTestUtils.get(clubs);
         competition.setRounds(Collections.emptyList());
         var savedId = competitionRepo.save(competition).getId();
 
@@ -97,7 +97,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
     void deleteCompetition_shouldDelete(){
         // arrange
         var clubs = clubRepo.saveAll(FootballClubTestUtils.getTwoFootballClubs());
-        var competition = CompetitionTestUtils.getForPersistedClubs(clubs);
+        var competition = CompetitionTestUtils.get(clubs);
         competition.setRounds(Collections.emptyList());
         competition = competitionRepo.save(competition);
         // pre-assert

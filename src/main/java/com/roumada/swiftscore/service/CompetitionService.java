@@ -52,7 +52,7 @@ public class CompetitionService {
 
     public Either<String, Competition> generateAndSave(CreateCompetitionRequestDTO dto) {
         if (dto.participantsAmount() % 2 == 1) {
-            var errorMsg = Messages.COMPETITION_CANNOT_GENERATE_CLUBS_MUST_BE_EVEN.format();
+            var errorMsg = Messages.COMPETITION_CANNOT_GENERATE_CLUB_AMT_MUST_BE_EVEN.format();
             log.error(errorMsg);
             return Either.left(errorMsg);
         }
