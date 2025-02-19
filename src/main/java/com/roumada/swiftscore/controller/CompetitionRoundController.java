@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.controller;
 
+import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.service.CompetitionRoundService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -37,7 +40,7 @@ public class CompetitionRoundController {
                                            HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         return service.findById(id).fold(
-                error -> ResponseEntity.badRequest().body(error),
+                error -> ResponseEntity.badRequest().body(new ErrorResponse(List.of(error))),
                 ResponseEntity::ok);
     }
 }

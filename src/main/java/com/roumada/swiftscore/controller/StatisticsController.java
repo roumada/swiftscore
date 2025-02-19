@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.controller;
 
+import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponseDTO;
 import com.roumada.swiftscore.model.dto.response.FootballClubStandings;
 import com.roumada.swiftscore.service.StatisticsService;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -39,7 +42,7 @@ public class StatisticsController {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
 
         return service.getForCompetition(competitionId, simplify).fold(
-                error -> ResponseEntity.badRequest().body(error),
+                error -> ResponseEntity.badRequest().body(new ErrorResponse(List.of(error))),
                 ResponseEntity::ok
         );
     }
@@ -65,7 +68,7 @@ public class StatisticsController {
         if (page == null) page = 0;
 
         return service.getForClub(clubId, page, size, includeUnresolved).fold(
-                error -> ResponseEntity.badRequest().body(error),
+                error -> ResponseEntity.badRequest().body(new ErrorResponse(List.of(error))),
                 ResponseEntity::ok
         );
     }

@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.controller;
 
+import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -38,6 +41,8 @@ public class FootballMatchController {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var findResult = dataLayer.findMatchById(id);
         return findResult.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().body("Couldn't find football match with ID [%s]".formatted(id)));
+                .orElseGet(() -> ResponseEntity.badRequest().body(new ErrorResponse(List.of(
+                        "Couldn't find football match with ID [%s]".formatted(id)
+                ))));
     }
 }

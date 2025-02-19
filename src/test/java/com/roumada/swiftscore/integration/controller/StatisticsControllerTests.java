@@ -10,12 +10,15 @@ import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,8 +43,8 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
                         CountryCode.GB,
                         "2025-01-01",
                         "2025-12-30",
-                new CompetitionParametersDTO(0, ids, 0),
-                new SimulationValues(0)))
+                        new CompetitionParametersDTO(0, ids, 0),
+                        new SimulationValues(0)))
                 .get();
         var compId = compdl.save(comp).getId();
 
@@ -52,8 +55,18 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     @Test
     @DisplayName("Get competition statistics - with invalid competition ID - should return error code")
     void getCompetitionStatistics_invalidCompetitionId_shouldReturnError() throws Exception {
-        // act & assert
-        mvc.perform(get("/statistics/competition/" + -1)).andExpect(status().is4xxClientError());
+        // arrange
+        var compId = 999;
+        // act
+        var response = mvc.perform(get("/statistics/competition/" + compId))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo("Couldn't find competition with ID [%s]".formatted(compId));
     }
 
     @Test
@@ -69,7 +82,17 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     @Test
     @DisplayName("Get club statistics - with invalid club ID - should return error code")
     void getClubStatistics_invalidClubId_shouldReturnError() throws Exception {
-        // act & assert
-        mvc.perform(get("/statistics/club/" + -1)).andExpect(status().is4xxClientError());
+        // arrange
+        var clubId = 999;
+        // act
+        var response = mvc.perform(get("/statistics/club/" + clubId))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo("Couldn't find club with ID [%s]".formatted(clubId));
     }
 }

@@ -4,8 +4,9 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
-import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,69 +34,60 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private FootballClubDataLayer footballClubDataLayer;
+    private FootballClubRepository repository;
 
     @Test
-    @DisplayName("Create football club - with valid data - should save")
-    void createFootballClub_validData_shouldSave() throws Exception {
+    @DisplayName("Create football club - with valid values - should save")
+    void createFootballClub_validValues_shouldSave() throws Exception {
         // arrange
         var dto = new CreateFootballClubRequestDTO("FC1", CountryCode.GB, "", 0.5f);
-        // act & assert
-        mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
+
+        // act
+        var response = mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        var club = objectMapper.readValue(response, FootballClub.class);
+        assertThat(club.getId()).isNotNull();
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = {-0.1, 1.1})
-    @DisplayName("Create football club - with invalid victory chance - should return error code")
-    void createFootballClub_invalidVictoryChance_shouldReturnErrorCode(double victoryChance) throws Exception {
+    @CsvSource({
+            ", 'GB', 'stadiumName', 0.5,          'Name cannot be null'",
+            "'name', , 'stadiumName', 0.5,          'Country cannot be null'",
+            "'name', GB, , 0.5,                   'Stadium name cannot be null'",
+            "'name', GB, 'stadiumName', -0.01,      'Victory chance cannot be lower than 0'",
+            "'name', GB, 'stadiumName', 1.001,      'Victory chance cannot be greater than 1'",
+    })
+    @DisplayName("Create football club - with invalid values - should return error message")
+    void createFootballClub_invalidValues_shouldReturnErrorMessage(String name,
+                                                                   CountryCode country,
+                                                                   String stadiumName,
+                                                                   double victoryChance,
+                                                                   String validationErrorMsg) throws Exception {
         // arrange
-        var dto = new CreateFootballClubRequestDTO("FC1", CountryCode.GB, "", victoryChance);
-        // act & assert
-        mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().is4xxClientError());
-    }
+        var dto = new CreateFootballClubRequestDTO(name, country, stadiumName, victoryChance);
 
-    @Test
-    @DisplayName("Create football club - with null name - should return error code")
-    void createFootballClub_nullName_shouldReturnErrorCode() throws Exception {
-        // arrange
-        var dto = new CreateFootballClubRequestDTO(null, CountryCode.GB, "", 0.5);
-        // act & assert
-        mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
+        // act
+        var response = mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().is4xxClientError());
-    }
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
 
-    @Test
-    @DisplayName("Create football club - with null country code - should return error code")
-    void createFootballClub_nullCountryCode_shouldReturnErrorCode() throws Exception {
-        // arrange
-        var dto = new CreateFootballClubRequestDTO("", null, "", 0.5);
-        // act & assert
-        mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Test
-    @DisplayName("Create football club - with null stadium name - should return error code")
-    void createFootballClub_nullStadiumName_shouldReturnErrorCode() throws Exception {
-        // arrange
-        var dto = new CreateFootballClubRequestDTO("", CountryCode.GB, null, 0.5);
-        // act & assert
-        mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().is4xxClientError());
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo(validationErrorMsg);
     }
 
     @Test
     @DisplayName("Get football club - with valid ID - should return")
     void getFootballClub_validId_shouldReturn() throws Exception {
         // arrange
-        var fcID = footballClubDataLayer.save(FootballClub.builder().name("FC1").victoryChance(0.5).build()).getId();
+        var fcID = repository.save(FootballClub.builder().name("FC1").victoryChance(0.5).build()).getId();
 
         // act
         var response = mvc.perform(get("/footballclub/" + fcID))
@@ -101,27 +96,35 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                 .getResponse().getContentAsString();
 
         // assert
-        assertEquals(fcID, new JSONObject(response).getLong("id"));
+        var club = objectMapper.readValue(response, FootballClub.class);
+        assertThat(club.getId()).isEqualTo(fcID);
     }
 
     @Test
     @DisplayName("Get football club - with invalid ID - should return error code")
     void getFootballClub_invalidId_shouldReturnErrorCode() throws Exception {
         // arrange
-        footballClubDataLayer.save(FootballClub.builder().name("FC1").victoryChance(0.5).build());
+        var fcId = 999;
 
-        // act & assert
-        mvc.perform(get("/footballclub/" + 999))
-                .andExpect(status().is4xxClientError());
+        // act
+        var response = mvc.perform(get("/footballclub/" + fcId))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo("Unable to find football club with given id [%s]".formatted(fcId));
     }
 
     @Test
     @DisplayName("Patch football club - change name -  should return patched")
     void patchFC_name_shouldReturn() throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
+        var fc = repository.save(FootballClubTestUtils.getClub(false));
         var dto = new CreateFootballClubRequestDTO(
-                "FC2",
+                "AAAABBB",
                 null,
                 null,
                 0.0);
@@ -133,9 +136,9 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseFC = new JSONObject(response);
 
         // assert
+        var responseFC = new JSONObject(response);
         assertEquals(fc.getId(), responseFC.getLong("id"));
         assertEquals(dto.name(), responseFC.getString("name"));
         assertEquals(fc.getCountry(), CountryCode.valueOf(responseFC.getString("country")));
@@ -147,7 +150,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Patch football club - change country -  should return patched")
     void patchFC_country_shouldReturn() throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
+        var fc = repository.save(FootballClubTestUtils.getClub(false));
         var dto = new CreateFootballClubRequestDTO(
                 null,
                 CountryCode.PL,
@@ -161,9 +164,9 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseFC = new JSONObject(response);
 
         // assert
+        var responseFC = new JSONObject(response);
         assertEquals(fc.getId(), responseFC.getLong("id"));
         assertEquals(fc.getName(), responseFC.getString("name"));
         assertEquals(dto.country(), CountryCode.valueOf(responseFC.getString("country")));
@@ -175,11 +178,11 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Patch football club - change stadium name - should return patched")
     void patchFC_stadiumName_shouldReturn() throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
+        var fc = repository.save(FootballClubTestUtils.getClub(false));
         var dto = new CreateFootballClubRequestDTO(
                 null,
                 null,
-                "FC Park",
+                "BBBBCCCC",
                 0.0);
 
         // act
@@ -189,9 +192,9 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseFC = new JSONObject(response);
 
         // assert
+        var responseFC = new JSONObject(response);
         assertEquals(fc.getId(), responseFC.getLong("id"));
         assertEquals(fc.getName(), responseFC.getString("name"));
         assertEquals(fc.getCountry(), CountryCode.valueOf(responseFC.getString("country")));
@@ -203,12 +206,12 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Patch football club - change victory chance - should return patched")
     void patchFC_victoryChance_shouldReturn() throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
+        var fc = repository.save(FootballClubTestUtils.getClub(false));
         var dto = new CreateFootballClubRequestDTO(
                 null,
                 null,
                 null,
-                0.7);
+                0.9181);
 
         // act
         var response = mvc.perform(patch("/footballclub/%s".formatted(fc.getId()))
@@ -217,9 +220,9 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseFC = new JSONObject(response);
 
         // assert
+        var responseFC = new JSONObject(response);
         assertEquals(fc.getId(), responseFC.getLong("id"));
         assertEquals(fc.getName(), responseFC.getString("name"));
         assertEquals(fc.getCountry(), CountryCode.valueOf(responseFC.getString("country")));
@@ -232,17 +235,24 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Patch football club - with invalid victory chance - should return error")
     void patchFC_invalidVictoryChance_shouldReturnError(double victoryChance) throws Exception {
         // arrange
-        var fc = footballClubDataLayer.save(FootballClubTestUtils.getClub(false));
+        var fc = repository.save(FootballClubTestUtils.getClub(false));
         var dto = new CreateFootballClubRequestDTO(
                 null,
                 null,
                 null, victoryChance);
 
         // act
-        mvc.perform(patch("/footballclub/%s".formatted(fc.getId()))
+        var response = mvc.perform(patch("/footballclub/%s".formatted(fc.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
+        assertThat(validationErrors.length()).isEqualTo(1);
+        assertThat(validationErrors.get(0))
+                .isEqualTo("Victory chance cannot be lower than 0 or higher than 1");
     }
 
     @ParameterizedTest
@@ -260,9 +270,13 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
             "'9', GB, '9', '1', '1'",
     })
     @DisplayName("Search football clubs - various criteria - should return expected amount")
-    void searchFootballClubs_variousCriteria_shouldReturnExpectedAmount(String name, String country, String stadiumName, int pageSize, int expected) throws Exception {
+    void searchFootballClubs_variousCriteria_shouldReturnExpectedAmount(String name,
+                                                                        String country,
+                                                                        String stadiumName,
+                                                                        int pageSize,
+                                                                        int expected) throws Exception {
         // arrange
-        footballClubDataLayer.saveAll(FootballClubTestUtils.getTenFootballClubsWithVariousCountries());
+        repository.saveAll(FootballClubTestUtils.getTenFootballClubsWithVariousCountries());
 
         // act
         var response = mvc.perform(get("/footballclub/search")
@@ -274,9 +288,12 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
-        var responseJSON = new JSONObject(response);
+
 
         // assert
-        assertEquals(expected, responseJSON.getJSONArray("content").length());
+        var responseJson = new JSONObject(response);
+        List<FootballClub> competitions = objectMapper.readValue(responseJson.getString("content"),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, FootballClub.class));
+        assertThat(competitions).hasSize(expected);
     }
 }

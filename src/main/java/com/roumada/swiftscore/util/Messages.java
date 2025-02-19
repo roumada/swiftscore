@@ -17,7 +17,7 @@ public enum Messages {
     COMPETITION_INVALID_RELEGATION_SPOTS_AMOUNT(
             "New relegation spots amount [%s] exceeds amount of participants in competition [%s] by at least two."),
     COMPETITION_CANNOT_SIMULATE("Cannot simulate competition [%s] further."),
-    COMPETITION_CANNOT_GENERATE_CLUBS_MUST_BE_EVEN("Failed to generate competition - the amount of clubs participating must be even.");
+    COMPETITION_CANNOT_GENERATE_CLUB_AMT_MUST_BE_EVEN("The amount of clubs participating must be even.");
 
     private final String message;
 

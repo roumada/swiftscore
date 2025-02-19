@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @CompoundIndex(def = "{'name': 1, 'country': 1, 'stadiumName': 1}")
 public class FootballClub {
 
+    private FootballClub(){}
+
     @Id
     private Long id = null;
     private String name;
