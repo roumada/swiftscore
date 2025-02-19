@@ -34,8 +34,6 @@ public class TestDataLoader {
     private CompetitionRepository competitionRepository;
     @Autowired
     private Validator validator;
-    private List<FootballClub> cachedClubs;
-    private List<Competition> cachedCompetitions;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -46,31 +44,18 @@ public class TestDataLoader {
     private Resource competitionsResource;
 
     public void saveFCs() {
-        if (cachedClubs != null) {
-            fcRepository.saveAll(cachedClubs);
-        } else {
-            cachedClubs = loadFootballClubs();
-            fcRepository.saveAll(cachedClubs);
-        }
+        fcRepository.saveAll(loadFootballClubs());
     }
 
     public Competition saveCompetition() {
-        cachedCompetitions = new ArrayList<>();
         var compRequest = loadCompetitionRequests().get(0);
-        cachedCompetitions.add(competitionService.generateAndSave(compRequest).get());
-        return cachedCompetitions.get(0);
+        return competitionService.generateAndSave(compRequest).get();
     }
 
     public void saveCompetitions() {
-        if (cachedCompetitions != null) {
-            competitionRepository.saveAll(cachedCompetitions);
-        } else {
-            List<Competition> comps = new ArrayList<>();
-            var competitionRequests = loadCompetitionRequests();
-            for (CreateCompetitionRequestDTO request : competitionRequests) {
-                comps.add(competitionService.generateAndSave(request).get());
-            }
-            cachedCompetitions = comps;
+        var competitionRequests = loadCompetitionRequests();
+        for (CreateCompetitionRequestDTO request : competitionRequests) {
+            competitionService.generateAndSave(request);
         }
     }
 

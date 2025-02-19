@@ -143,7 +143,7 @@ class CompetitionServiceTests {
 
         // assert
         assertTrue(optionalComp.isLeft());
-        assertEquals("Failed to generate competition - the amount of clubs participating must be even.", optionalComp.getLeft());
+        assertEquals("The amount of clubs participating must be even.", optionalComp.getLeft());
     }
 
     @Test
@@ -163,7 +163,7 @@ class CompetitionServiceTests {
 
         // assert
         assertTrue(optionalComp.isLeft());
-        assertEquals("Failed to generate competition - the amount of clubs participating must be even.", optionalComp.getLeft());
+        assertEquals("The amount of clubs participating must be even.", optionalComp.getLeft());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.roumada.swiftscore.controller;
 
+import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Slf4j
@@ -43,7 +46,7 @@ public class FootballClubController {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var findResult = service.findById(id);
         return findResult.fold(
-                error -> ResponseEntity.badRequest().body(error),
+                error -> ResponseEntity.badRequest().body(new ErrorResponse(List.of(error))),
                 ResponseEntity::ok);
     }
 
@@ -81,7 +84,7 @@ public class FootballClubController {
                                                      HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.update(id, dto).fold(
-                error -> ResponseEntity.badRequest().body(error),
+                error -> ResponseEntity.badRequest().body(new ErrorResponse(List.of(error))),
                 ResponseEntity::ok);
     }
 }
