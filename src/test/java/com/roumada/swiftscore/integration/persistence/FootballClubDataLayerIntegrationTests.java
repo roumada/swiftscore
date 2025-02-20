@@ -116,7 +116,7 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     @DisplayName("Find by criteria - name - should find")
     void findByCriteria_name_shouldFind(){
         // arrange
-        loadFCs();
+        loadFootballClubs();
         var expected = 2;
 
         // act
@@ -133,7 +133,7 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     @DisplayName("Find by criteria - country - should find")
     void findByCriteria_country_shouldFind(){
         // arrange
-        loadFCs();
+        loadFootballClubs();
         var expected = 6;
 
         // act
@@ -149,7 +149,7 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     @DisplayName("Find by criteria - stadium name - should find")
     void findByCriteria_stadium_shouldFind(){
         // arrange
-        loadFCs();
+        loadFootballClubs();
         var expected = 2;
 
         // act
@@ -177,7 +177,7 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     void findFootballClubs_variousCriteria_shouldFind(String name, String country, String stadiumName,
                                                       int pagesize, int expected){
         // arrange
-        loadFCs();
+        loadFootballClubs();
 
         // act
         var cc = StringUtils.isEmpty(country) ? null : CountryCode.valueOf(country);

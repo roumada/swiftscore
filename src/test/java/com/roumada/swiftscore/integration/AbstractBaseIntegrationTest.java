@@ -43,17 +43,17 @@ public abstract class AbstractBaseIntegrationTest {
         registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
     }
 
-    protected void loadFCs() {
+    protected void loadFootballClubs() {
         dataLoader.saveFCs();
     }
 
     protected void loadCompetitionsWithFcs() {
-        loadFCs();
+        loadFootballClubs();
         dataLoader.saveCompetitions();
     }
 
     protected Competition loadCompetitionWithFcs(){
-        loadFCs();
+        loadFootballClubs();
         return dataLoader.saveCompetition();
     }
 

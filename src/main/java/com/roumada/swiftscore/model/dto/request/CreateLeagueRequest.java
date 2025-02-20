@@ -1,12 +1,14 @@
 package com.roumada.swiftscore.model.dto.request;
 
 import com.neovisionaries.i18n.CountryCode;
+import com.roumada.swiftscore.validation.annotation.ValidCreateLeagueRequest;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
+@ValidCreateLeagueRequest
 public record CreateLeagueRequest(
         @NotEmpty(message = "League name must not be empty")
         String name,
