@@ -10,5 +10,4 @@ public class LeagueCompetitionParameters {
     private int tier;
     private int relegationSpots;
     private List<Long> previousCompetitions;
-
 }
