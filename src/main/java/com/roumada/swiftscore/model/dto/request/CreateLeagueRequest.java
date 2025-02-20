@@ -13,6 +13,6 @@ public record CreateLeagueRequest(
         @NotEmpty(message = "End date must not be empty")
         String endDate,
         @Size(min = 2, message = "League must have at least two competition defined")
-        List<CreateCompetitionRequestDTO> competitions
+        List<CreateCompetitionRequest> competitions
 ) {
 }

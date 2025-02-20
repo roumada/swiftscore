@@ -5,14 +5,13 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
-import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
-import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
-import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponseDTO;
-import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
+import com.roumada.swiftscore.model.SimulationParameters;
+import com.roumada.swiftscore.model.dto.CompetitionParameters;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
+import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequest;
+import com.roumada.swiftscore.model.dto.response.CompetitionResponse;
+import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponse;
+import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponse;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
@@ -78,7 +77,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        var dto = objectMapper.readValue(response, CompetitionResponse.class);
         assertThat(competitionRepository.findById(dto.id())).isPresent();
     }
 
@@ -98,7 +97,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        var dto = objectMapper.readValue(response, CompetitionResponse.class);
         assertThat(competitionRepository.findById(dto.id())).isPresent();
     }
 
@@ -117,7 +116,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        var dto = objectMapper.readValue(response, CompetitionResponse.class);
         assertThat(competitionRepository.findById(dto.id())).isPresent();
     }
 
@@ -161,7 +160,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        var dto = objectMapper.readValue(response, CompetitionResponse.class);
         assertThat(competitionRepository.findById(dto.id())).isPresent();
     }
 
@@ -270,13 +269,13 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                                                                        String validationErrorMsg) throws Exception {
         // arrange
         var clubs = footballClubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
-        var simVals = new SimulationValues(variance, sddt, dtc);
+        var simParameters = new SimulationParameters(variance, sddt, dtc);
 
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                CompetitionTestUtils.getRequest(simVals, clubs))))
+                                CompetitionTestUtils.getRequest(simParameters, clubs))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
@@ -304,12 +303,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("",
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequest("",
                                 CountryCode.GB,
                                 startDate,
                                 endDate,
-                                new CompetitionParametersDTO(0, ids, 0),
-                                new SimulationValues(0.0)))))
+                                new CompetitionParameters(0, ids, 0),
+                                new SimulationParameters(0.0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
@@ -327,12 +326,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO(null,
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequest(null,
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                new CompetitionParametersDTO(4, null, 0),
-                                new SimulationValues(0)))))
+                                new CompetitionParameters(4, null, 0),
+                                new SimulationParameters(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
@@ -351,12 +350,12 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequestDTO("Competition",
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequest("Competition",
                                 CountryCode.GB,
                                 "2025-01-01",
                                 "2025-10-30",
-                                new CompetitionParametersDTO(4, null, relegationSpots),
-                                new SimulationValues(0)))))
+                                new CompetitionParameters(4, null, relegationSpots),
+                                new SimulationParameters(0)))))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
@@ -391,7 +390,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        var dto = objectMapper.readValue(response, CompetitionResponseDTO.class);
+        var dto = objectMapper.readValue(response, CompetitionResponse.class);
         assertThat(dto.id()).isEqualTo(competitionId);
     }
 
@@ -416,7 +415,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        var dto = objectMapper.readValue(response, CompetitionSimulationResponseDTO.class);
+        var dto = objectMapper.readValue(response, CompetitionSimulationResponse.class);
         assertThat(dto.simulatedUntil()).isEqualTo(Integer.valueOf(times));
         assertThat(dto.competitionId()).isEqualTo(competition.getId());
     }
@@ -436,7 +435,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         // assert
-        var dto = objectMapper.readValue(response, CompetitionSimulationSimpleResponseDTO.class);
+        var dto = objectMapper.readValue(response, CompetitionSimulationSimpleResponse.class);
         assertThat(dto.simulatedUntil()).isEqualTo(Integer.valueOf(times));
         assertThat(dto.competitionId()).isEqualTo(competition.getId());
     }
@@ -467,11 +466,11 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
+                .simulationParameters(new SimulationParameters(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO("New Competition",
+        var dto = new UpdateCompetitionRequest("New Competition",
                 null,
                 null,
                 null);
@@ -489,22 +488,22 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         assertEquals(dto.name(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(saved
-                        .getSimulationValues()
+                        .getSimulationParameters()
                         .variance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("variance"));
         assertEquals(saved
-                        .getSimulationValues()
+                        .getSimulationParameters()
                         .drawTriggerChance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("drawTriggerChance"));
         assertEquals(saved
-                        .getSimulationValues()
+                        .getSimulationParameters()
                         .scoreDifferenceDrawTrigger(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("scoreDifferenceDrawTrigger"));
     }
 
@@ -515,11 +514,11 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
+                .simulationParameters(new SimulationParameters(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 CountryCode.SE,
                 null,
                 null);
@@ -537,40 +536,40 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(dto.country(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(saved
-                        .getSimulationValues()
+                        .getSimulationParameters()
                         .variance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("variance"));
         assertEquals(saved
-                        .getSimulationValues()
+                        .getSimulationParameters()
                         .drawTriggerChance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("drawTriggerChance"));
         assertEquals(saved
-                        .getSimulationValues()
+                        .getSimulationParameters()
                         .scoreDifferenceDrawTrigger(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("scoreDifferenceDrawTrigger"));
     }
 
     @Test
     @DisplayName("Update competition - simulation values only - should return updated")
-    void updateCompetition_simValues_shouldReturnUpdated() throws Exception {
+    void updateCompetition_simParameters_shouldReturnUpdated() throws Exception {
         // arrange
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
+                .simulationParameters(new SimulationParameters(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 null,
                 null,
-                new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
+                new SimulationParameters(0.1, 0.2, 0.3));
 
         // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -585,22 +584,22 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(dto
-                        .simulationValues()
+                        .simulationParameters()
                         .variance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("variance"));
         assertEquals(dto
-                        .simulationValues()
+                        .simulationParameters()
                         .drawTriggerChance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("drawTriggerChance"));
         assertEquals(dto
-                        .simulationValues()
+                        .simulationParameters()
                         .scoreDifferenceDrawTrigger(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("scoreDifferenceDrawTrigger"));
     }
 
@@ -608,18 +607,18 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - variance only - should return updated")
     void updateCompetition_variance_shouldReturnUpdated() throws Exception {
         // arrange
-        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var simParameters = new SimulationParameters(0.6, 0.6, 0.6);
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(simVals)
+                .simulationParameters(simParameters)
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 null,
                 null,
-                new UpdateSimulationValuesDTO(0.1, null, null));
+                new SimulationParameters(0.1, null, null));
 
         // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -634,20 +633,20 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
         assertEquals(dto
-                        .simulationValues()
+                        .simulationParameters()
                         .variance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("variance"));
-        assertEquals(simVals
+        assertEquals(simParameters
                         .scoreDifferenceDrawTrigger(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("scoreDifferenceDrawTrigger"));
-        assertEquals(simVals
+        assertEquals(simParameters
                         .drawTriggerChance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("drawTriggerChance"));
     }
 
@@ -658,18 +657,18 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - variance only, invalid values - should return error code")
     void updateCompetition_invalidVarianceOnly_shouldReturnErrorCode(double variance, String validationErrorMsg) throws Exception {
         // arrange
-        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var simParameters = new SimulationParameters(0.6, 0.6, 0.6);
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(simVals)
+                .simulationParameters(simParameters)
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 null,
                 null,
-                new UpdateSimulationValuesDTO(variance, null, null));
+                new SimulationParameters(variance, null, null));
 
         // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -688,18 +687,18 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - score diff draw trigger only - should return updated")
     void updateCompetition_sddt_shouldReturnUpdated() throws Exception {
         // arrange
-        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var simParameters = new SimulationParameters(0.6, 0.6, 0.6);
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(simVals)
+                .simulationParameters(simParameters)
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 null,
                 null,
-                new UpdateSimulationValuesDTO(null, 0.2, null));
+                new SimulationParameters(null, 0.2, null));
 
         // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -713,21 +712,21 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var responseJSON = new JSONObject(response);
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
-        assertEquals(simVals
+        assertEquals(simParameters
                         .variance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("variance"));
-        assertEquals(simVals
+        assertEquals(simParameters
                         .drawTriggerChance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("drawTriggerChance"));
         assertEquals(dto
-                        .simulationValues()
+                        .simulationParameters()
                         .scoreDifferenceDrawTrigger(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("scoreDifferenceDrawTrigger"));
     }
 
@@ -738,18 +737,18 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - score diff draw trigger only, invalid values - should return error code")
     void updateCompetition_invalidSddt_shouldReturnUpdated(double sddt, String validationErrorMsg) throws Exception {
         // arrange
-        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var simParameters = new SimulationParameters(0.6, 0.6, 0.6);
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(simVals)
+                .simulationParameters(simParameters)
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 null,
                 null,
-                new UpdateSimulationValuesDTO(null, sddt, null));
+                new SimulationParameters(null, sddt, null));
 
         // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -768,18 +767,18 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - draw trigger chance only - should return updated")
     void updateCompetition_dtc_shouldReturnUpdated() throws Exception {
         // arrange
-        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var simParameters = new SimulationParameters(0.6, 0.6, 0.6);
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(simVals)
+                .simulationParameters(simParameters)
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 null,
                 null,
-                new UpdateSimulationValuesDTO(null, null, 0.2));
+                new SimulationParameters(null, null, 0.2));
 
         // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -793,21 +792,21 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var responseJSON = new JSONObject(response);
         assertEquals(saved.getName(), responseJSON.getString("name"));
         assertEquals(saved.getCountry(), CountryCode.valueOf(responseJSON.getString("country")));
-        assertEquals(simVals
+        assertEquals(simParameters
                         .variance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("variance"));
         assertEquals(dto
-                        .simulationValues()
+                        .simulationParameters()
                         .drawTriggerChance(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("drawTriggerChance"));
-        assertEquals(simVals
+        assertEquals(simParameters
                         .scoreDifferenceDrawTrigger(),
                 responseJSON
-                        .getJSONObject("simulationValues")
+                        .getJSONObject("simulationParameters")
                         .getDouble("scoreDifferenceDrawTrigger"));
     }
 
@@ -818,18 +817,18 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - draw trigger chance only, invalid values - should return error code")
     void updateCompetition_invalidDrawTriggerChance_shouldReturnUpdated(double dtc, String validationErrorMsg) throws Exception {
         // arrange
-        var simVals = new SimulationValues(0.6, 0.6, 0.6);
+        var simParameters = new SimulationParameters(0.6, 0.6, 0.6);
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(simVals)
+                .simulationParameters(simParameters)
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 null,
                 null,
-                new UpdateSimulationValuesDTO(null, null, dtc));
+                new SimulationParameters(null, null, dtc));
 
         // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -848,10 +847,10 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Update competition - invalid ID - should return error message")
     void updateCompetition_invalidId_shouldReturnUpdated() throws Exception {
         // arrange
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 null,
                 null,
-                new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
+                new SimulationParameters(0.1, 0.2, 0.3));
 
         // act
         var response = mvc.perform(patch("/competition/0")
@@ -875,7 +874,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
             "0.2, 0.2, 1.1, 'Draw trigger chance cannot be greater than 1'",
     })
     @DisplayName("Update competition - invalid simulation values  - should return error code")
-    void updateCompetition_invalidSimValues_shouldReturnErrorCode(double variance,
+    void updateCompetition_invalidsimParameters_shouldReturnErrorCode(double variance,
                                                                   double sddt,
                                                                   double dtc,
                                                                   String validationErrorMsg) throws Exception {
@@ -883,14 +882,14 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var saved = competitionDataLayer.save(Competition.builder()
                 .name("Competition")
                 .country(CountryCode.GB)
-                .simulationValues(new SimulationValues(0))
+                .simulationParameters(new SimulationParameters(0))
                 .participants(Collections.emptyList())
                 .rounds(Collections.emptyList())
                 .build());
-        var dto = new UpdateCompetitionRequestDTO(null,
+        var dto = new UpdateCompetitionRequest(null,
                 null,
                 null,
-                new UpdateSimulationValuesDTO(variance, sddt, dtc));
+                new SimulationParameters(variance, sddt, dtc));
 
         // act
         var response = mvc.perform(patch("/competition/%s".formatted(saved.getId()))
@@ -922,8 +921,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         var responseJson = new JSONObject(response);
         assertThat(responseJson.getInt("totalPages")).isEqualTo(1);
         assertThat(responseJson.getInt("totalElements")).isEqualTo(6);
-        List<CompetitionResponseDTO> competitions = objectMapper.readValue(responseJson.getString("content"),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, CompetitionResponseDTO.class));
+        List<CompetitionResponse> competitions = objectMapper.readValue(responseJson.getString("content"),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, CompetitionResponse.class));
         assertThat(competitions).hasSize(6);
     }
 
@@ -954,10 +953,10 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         var responseJson = new JSONObject(response);
-        List<CompetitionResponseDTO> competitions = objectMapper.readValue(responseJson.getString("content"),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, CompetitionResponseDTO.class));
+        List<CompetitionResponse> competitions = objectMapper.readValue(responseJson.getString("content"),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, CompetitionResponse.class));
         assertThat(competitions).hasSize(expected);
-        for (CompetitionResponseDTO c : competitions) {
+        for (CompetitionResponse c : competitions) {
             if (StringUtils.isNotEmpty(name)) {
                 assertThat(c.name().toLowerCase()).contains(name.toLowerCase());
             }

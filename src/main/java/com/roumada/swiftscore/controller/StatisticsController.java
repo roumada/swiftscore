@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.ErrorResponse;
-import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponseDTO;
+import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponse;
 import com.roumada.swiftscore.model.dto.response.FootballClubStandings;
 import com.roumada.swiftscore.service.StatisticsService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
@@ -51,7 +51,7 @@ public class StatisticsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Standings generated and returned",
                     content = {@Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = FootballClubStatisticsResponseDTO.class)))}),
+                            array = @ArraySchema(schema = @Schema(implementation = FootballClubStatisticsResponse.class)))}),
             @ApiResponse(responseCode = "400", description = "Club not found",
                     content = @Content)})
     @GetMapping("club/{clubId}")

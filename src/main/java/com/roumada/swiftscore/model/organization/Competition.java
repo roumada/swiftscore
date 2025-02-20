@@ -2,7 +2,7 @@ package com.roumada.swiftscore.model.organization;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.SimulationParameters;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -26,7 +26,7 @@ public class Competition {
     private LocalDate endDate;
     private String season;
     private int lastSimulatedRound = 0;
-    private SimulationValues simulationValues;
+    private SimulationParameters simulationParameters;
     private LeagueCompetitionParameters leagueCompetitionParameters;
     private int relegationSpots;
     @DBRef
@@ -39,7 +39,7 @@ public class Competition {
                         CountryCode country,
                         LocalDate startDate,
                         LocalDate endDate,
-                        SimulationValues simulationValues,
+                        SimulationParameters simulationParameters,
                         List<FootballClub> participants,
                         int relegationSpots,
                         List<CompetitionRound> rounds) {
@@ -47,7 +47,7 @@ public class Competition {
         this.country = country;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.simulationValues = simulationValues;
+        this.simulationParameters = simulationParameters;
         this.relegationSpots = relegationSpots;
         this.participants = participants;
         this.rounds = rounds;

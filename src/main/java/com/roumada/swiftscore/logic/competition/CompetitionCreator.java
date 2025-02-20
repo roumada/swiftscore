@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.logic.competition;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -19,7 +19,7 @@ public class CompetitionCreator {
     private CompetitionCreator() {
     }
 
-    public static Either<String, Competition> createFromRequest(CreateCompetitionRequestDTO dto, List<FootballClub> footballClubs) {
+    public static Either<String, Competition> createFromRequest(CreateCompetitionRequest dto, List<FootballClub> footballClubs) {
         var generationResult = CompetitionRoundsCreator.create(footballClubs);
         if (generationResult.isLeft()) {
             return Either.left(generationResult.getLeft());
@@ -33,14 +33,14 @@ public class CompetitionCreator {
                 .country(dto.country())
                 .startDate(LocalDate.parse(dto.startDate()))
                 .endDate(LocalDate.parse(dto.endDate()))
-                .simulationValues(dto.simulationValues())
-                .relegationSpots(dto.parameters().relegationSpots())
+                .simulationParameters(dto.simulationParameters())
+                .relegationSpots(dto.competitionParameters().relegationSpots())
                 .participants(footballClubs)
                 .rounds(rounds)
                 .build());
     }
 
-    private static CompetitionDatesProvider createProvider(CreateCompetitionRequestDTO dto) {
+    private static CompetitionDatesProvider createProvider(CreateCompetitionRequest dto) {
         var provider = new CompetitionDatesProvider(
                 LocalDate.parse(dto.startDate()),
                 LocalDate.parse(dto.endDate()),

@@ -3,9 +3,9 @@ package com.roumada.swiftscore.e2e;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.SimulationParameters;
+import com.roumada.swiftscore.model.dto.CompetitionParameters;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import io.restassured.http.ContentType;
@@ -36,12 +36,12 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
     void shouldCorrectlyGenerateStatisticsForCompetition() throws JSONException {
         // arrange
         var clubIds = FootballClubTestUtils.getIdsOfSavedClubs(clubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
-        CreateCompetitionRequestDTO request = new CreateCompetitionRequestDTO("Competition",
+        CreateCompetitionRequest request = new CreateCompetitionRequest("Competition",
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                new CompetitionParametersDTO(0, clubIds, 0),
-                new SimulationValues(0));
+                new CompetitionParameters(0, clubIds, 0),
+                new SimulationParameters(0));
 
         // STEP 1: create competition
         Response response =
@@ -104,12 +104,12 @@ class StatisticsE2ETests extends AbstractBaseIntegrationTest {
         var fc1 = FootballClubTestUtils.getTwoFootballClubs().get(0);
         var clubIds
                 = clubRepository.saveAll(FootballClubTestUtils.getTwoFootballClubs()).stream().map(FootballClub::getId).toList();
-        CreateCompetitionRequestDTO request = new CreateCompetitionRequestDTO("Competition",
+        CreateCompetitionRequest request = new CreateCompetitionRequest("Competition",
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                new CompetitionParametersDTO(0, clubIds, 0),
-                new SimulationValues(0));
+                new CompetitionParameters(0, clubIds, 0),
+                new SimulationParameters(0));
 
         // STEP 1: create first competition
         Response response = given()

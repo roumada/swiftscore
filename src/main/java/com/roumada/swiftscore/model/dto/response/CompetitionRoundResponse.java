@@ -7,7 +7,7 @@ import java.util.List;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
-public record CompetitionRoundResponseDTO(long id,
-                                          int round,
-                                          List<FootballMatchResponseDTO> matches) {
+public record CompetitionRoundResponse(long id,
+                                       int round,
+                                       List<FootballMatchResponse> matches) {
 }

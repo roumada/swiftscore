@@ -1,8 +1,8 @@
 package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
-import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteria;
+import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import io.vavr.control.Either;
@@ -28,11 +28,11 @@ public class FootballClubService {
         } else return Either.right(findResult.get());
     }
 
-    public FootballClub save(CreateFootballClubRequestDTO dto) {
+    public FootballClub save(CreateFootballClubRequest dto) {
         return dataLayer.save(FootballClubMapper.INSTANCE.requestToObject(dto));
     }
 
-    public Either<String, FootballClub> update(Long id, CreateFootballClubRequestDTO dto) {
+    public Either<String, FootballClub> update(Long id, CreateFootballClubRequest dto) {
         var findResult = dataLayer.findById(id);
         if (findResult.isEmpty()) {
             String errorMsg = "Unable to find football club with given id [%s]".formatted(id);
@@ -52,7 +52,7 @@ public class FootballClubService {
         return Either.right(dataLayer.save(footballClub));
     }
 
-    private void updateFields(CreateFootballClubRequestDTO dto, FootballClub footballClub) {
+    private void updateFields(CreateFootballClubRequest dto, FootballClub footballClub) {
         if (dto.name() != null) {
             footballClub.setName(dto.name());
         }
@@ -67,7 +67,7 @@ public class FootballClubService {
         }
     }
 
-    public Page<FootballClub> searchClubs(SearchFootballClubSearchCriteriaDTO criteria, Pageable pageable) {
+    public Page<FootballClub> searchClubs(SearchFootballClubSearchCriteria criteria, Pageable pageable) {
         if (criteria.hasNoCriteria())
             return dataLayer.findAll(pageable);
         if (criteria.hasOneCriteria())
@@ -76,7 +76,7 @@ public class FootballClubService {
         return dataLayer.findByMultipleCriteria(criteria, pageable);
     }
 
-    private Page<FootballClub> searchWithSingleCriteria(SearchFootballClubSearchCriteriaDTO criteria, Pageable pageable) {
+    private Page<FootballClub> searchWithSingleCriteria(SearchFootballClubSearchCriteria criteria, Pageable pageable) {
         return switch (criteria.getSingleCriteriaType()) {
             case NAME -> dataLayer.findByNameContainingIgnoreCase(criteria.name(), pageable);
             case STADIUM_NAME -> dataLayer.findByStadiumNameContainingIgnoreCase(criteria.stadiumName(), pageable);

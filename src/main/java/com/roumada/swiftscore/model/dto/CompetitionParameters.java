@@ -7,7 +7,7 @@ import java.util.List;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
-public record CompetitionParametersDTO(
+public record CompetitionParameters(
         int participants,
         List<Long> participantIds,
         int relegationSpots

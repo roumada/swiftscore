@@ -1,8 +1,8 @@
 package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.response.CompetitionStandingsResponseDTO;
-import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponseDTO;
+import com.roumada.swiftscore.model.dto.response.CompetitionStandingsResponse;
+import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponse;
 import com.roumada.swiftscore.model.dto.response.FootballClubStandings;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.model.mapper.FootballMatchMapper;
@@ -36,7 +36,7 @@ public class StatisticsService {
         standingsForAwaySide.addGoalsConceded(match.getHomeSideGoalsScored());
     }
 
-    public Either<String, CompetitionStandingsResponseDTO> getForCompetition(Long competitionId, Boolean simplify) {
+    public Either<String, CompetitionStandingsResponse> getForCompetition(Long competitionId, Boolean simplify) {
         Optional<Competition> optCompetition = competitionDataLayer.findCompetitionById(competitionId);
         if (optCompetition.isEmpty()) {
             String warnMsg = "Couldn't find competition with ID [%s]".formatted(competitionId);
@@ -80,7 +80,7 @@ public class StatisticsService {
                         map.put(e.getKey(), e.getValue()), Map::putAll);
         List<Long> sortedIds = new ArrayList<>(standings.keySet());
 
-        return Either.right(new CompetitionStandingsResponseDTO(new ArrayList<>(standings.values()),
+        return Either.right(new CompetitionStandingsResponse(new ArrayList<>(standings.values()),
                 sortedIds.subList(0, sortedIds.size() - comp.getRelegationSpots()),
                 sortedIds.subList(sortedIds.size() - comp.getRelegationSpots(), sortedIds.size())
         ));
@@ -111,8 +111,8 @@ public class StatisticsService {
         }
     }
 
-    public Either<String, FootballClubStatisticsResponseDTO> getForClub(long clubId, int page, int size,
-                                                                        boolean includeUnresolved) {
+    public Either<String, FootballClubStatisticsResponse> getForClub(long clubId, int page, int size,
+                                                                     boolean includeUnresolved) {
         var optionalFC = footballClubDataLayer.findById(clubId);
         if (optionalFC.isEmpty()) {
             String errorMsg = "Couldn't find club with ID [%s]".formatted(clubId);
@@ -127,6 +127,6 @@ public class StatisticsService {
                 .map(FootballMatchMapper.INSTANCE::matchToMatchResponse)
                 .toList();
         var fcDTO = FootballClubMapper.INSTANCE.objectToRequest(fc);
-        return Either.right(new FootballClubStatisticsResponseDTO(fcDTO, statsDTO));
+        return Either.right(new FootballClubStatisticsResponse(fcDTO, statsDTO));
     }
 }

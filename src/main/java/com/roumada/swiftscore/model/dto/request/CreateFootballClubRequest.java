@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
-public record CreateFootballClubRequestDTO(
+public record CreateFootballClubRequest(
         @NotNull(message = "Name cannot be null")
         String name,
         @NotNull(message = "Country cannot be null")

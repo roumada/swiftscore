@@ -2,7 +2,7 @@ package com.roumada.swiftscore.persistence;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteria;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,7 @@ public class FootballClubDataLayer {
         return repository.findByIdNotInAndCountryIn(footballClubIds, country, pageable);
     }
 
-    public Page<FootballClub> findByMultipleCriteria(SearchFootballClubSearchCriteriaDTO criteria, Pageable pageable) {
+    public Page<FootballClub> findByMultipleCriteria(SearchFootballClubSearchCriteria criteria, Pageable pageable) {
         Query query = new Query().with(pageable);
         if (StringUtils.isNotEmpty(criteria.name())) {
             query.addCriteria(Criteria.where("name").regex(".*" + criteria.name() + ".*", "i"));

@@ -3,9 +3,9 @@ package com.roumada.swiftscore.integration.controller;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.SimulationParameters;
+import com.roumada.swiftscore.model.dto.CompetitionParameters;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
@@ -39,12 +39,12 @@ class StatisticsControllerTests extends AbstractBaseIntegrationTest {
     void getCompetitionStatistics_validCompetitionId_shouldReturn() throws Exception {
         // arrange
         var ids = FootballClubTestUtils.getIdsOfSavedClubs(fcdl.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
-        var comp = compService.generateAndSave(new CreateCompetitionRequestDTO("",
+        var comp = compService.generateAndSave(new CreateCompetitionRequest("",
                         CountryCode.GB,
                         "2025-01-01",
                         "2025-12-30",
-                        new CompetitionParametersDTO(0, ids, 0),
-                        new SimulationValues(0)))
+                        new CompetitionParameters(0, ids, 0),
+                        new SimulationParameters(0)))
                 .get();
         var compId = compdl.save(comp).getId();
 

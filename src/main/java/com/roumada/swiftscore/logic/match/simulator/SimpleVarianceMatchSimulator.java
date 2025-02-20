@@ -2,7 +2,7 @@ package com.roumada.swiftscore.logic.match.simulator;
 
 import com.roumada.swiftscore.logic.match.resolver.extra.ExtraScoreResolverFactory;
 import com.roumada.swiftscore.logic.match.resolver.score.ScoreResolverFactory;
-import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,14 +11,14 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class SimpleVarianceMatchSimulator implements MatchSimulator {
 
-    private final SimulationValues simValues;
+    private final SimulationParameters simParameters;
 
-    private SimpleVarianceMatchSimulator(SimulationValues simValues) {
-        this.simValues = simValues;
+    private SimpleVarianceMatchSimulator(SimulationParameters simParameters) {
+        this.simParameters = simParameters;
     }
 
-    public static SimpleVarianceMatchSimulator withValues(SimulationValues simValues) {
-        return new SimpleVarianceMatchSimulator(simValues);
+    public static SimpleVarianceMatchSimulator withValues(SimulationParameters simParameters) {
+        return new SimpleVarianceMatchSimulator(simParameters);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
         footballMatch.setHomeSideCalculatedVictoryChance(homeSideVictoryChance);
         footballMatch.setAwaySideCalculatedVictoryChance(awaySideVictoryChance);
 
-        if (simValues.variance() != 0) {
+        if (simParameters.variance() != 0) {
             log.debug("Home side base victory chance: [{}]. New victory chance: [{}]",
                     footballMatch.getHomeSideVictoryChance(),
                     String.format("%.3f", homeSideVictoryChance));
@@ -62,16 +62,16 @@ public class SimpleVarianceMatchSimulator implements MatchSimulator {
     }
 
     private boolean canDrawChanceTrigger(double homeSideVictoryChance, double awaySideVictoryChance) {
-        return Math.abs(homeSideVictoryChance - awaySideVictoryChance) <= simValues.scoreDifferenceDrawTrigger();
+        return Math.abs(homeSideVictoryChance - awaySideVictoryChance) <= simParameters.scoreDifferenceDrawTrigger();
     }
 
     private boolean drawChanceTriggers() {
-        return simValues.drawTriggerChance() > ThreadLocalRandom.current().nextDouble();
+        return simParameters.drawTriggerChance() > ThreadLocalRandom.current().nextDouble();
     }
 
     private double calculateVariant() {
-        if (simValues.variance() == 0) return 0;
+        if (simParameters.variance() == 0) return 0;
         return ((double) ThreadLocalRandom.current()
-                .nextInt(1, (int) (simValues.variance() * 2 * 100)) / 100) - simValues.variance();
+                .nextInt(1, (int) (simParameters.variance() * 2 * 100)) / 100) - simParameters.variance();
     }
 }

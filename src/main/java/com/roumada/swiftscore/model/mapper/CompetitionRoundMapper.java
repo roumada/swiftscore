@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.model.mapper;
 
-import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponseDTO;
+import com.roumada.swiftscore.model.dto.response.CompetitionRoundResponse;
 import com.roumada.swiftscore.model.organization.CompetitionRound;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -11,6 +11,6 @@ import java.util.List;
 public interface CompetitionRoundMapper {
     CompetitionRoundMapper INSTANCE = Mappers.getMapper(CompetitionRoundMapper.class);
 
-    CompetitionRoundResponseDTO roundToResponseDTO(CompetitionRound round);
-    List<CompetitionRoundResponseDTO> roundsToResponseDTOs(List<CompetitionRound> rounds);
+    CompetitionRoundResponse roundToResponseDTO(CompetitionRound round);
+    List<CompetitionRoundResponse> roundsToResponseDTOs(List<CompetitionRound> rounds);
 }

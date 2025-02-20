@@ -2,8 +2,8 @@ package com.roumada.swiftscore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
+import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
@@ -61,7 +61,7 @@ public class DataLoader implements CommandLineRunner {
             log.info("Football clubs saved");
         }
         var competitionRequests = loadCompetitionRequests();
-        for (CreateCompetitionRequestDTO request : competitionRequests) {
+        for (CreateCompetitionRequest request : competitionRequests) {
             competitionService.generateAndSave(request);
             log.info("Competitions saved");
         }
@@ -69,10 +69,10 @@ public class DataLoader implements CommandLineRunner {
     }
 
     public List<FootballClub> loadFootballClubs() {
-        Map<CreateFootballClubRequestDTO, Boolean> validClubDTOs = new HashMap<>();
+        Map<CreateFootballClubRequest, Boolean> validClubDTOs = new HashMap<>();
         try {
-            List<CreateFootballClubRequestDTO> clubDTOs = objectMapper.readValue(footballClubsResource.getInputStream(),
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, CreateFootballClubRequestDTO.class));
+            List<CreateFootballClubRequest> clubDTOs = objectMapper.readValue(footballClubsResource.getInputStream(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, CreateFootballClubRequest.class));
             validClubDTOs = clubDTOs.stream()
                     .collect(Collectors.toMap(club -> club, club -> false));
         } catch (IOException e) {
@@ -93,11 +93,11 @@ public class DataLoader implements CommandLineRunner {
                 .toList();
     }
 
-    private List<CreateCompetitionRequestDTO> loadCompetitionRequests() {
-        Map<CreateCompetitionRequestDTO, Boolean> validCompetitionDTOs = new HashMap<>();
+    private List<CreateCompetitionRequest> loadCompetitionRequests() {
+        Map<CreateCompetitionRequest, Boolean> validCompetitionDTOs = new HashMap<>();
         try {
-            List<CreateCompetitionRequestDTO> competitionDTOs = objectMapper.readValue(competitionsResource.getInputStream(),
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, CreateCompetitionRequestDTO.class));
+            List<CreateCompetitionRequest> competitionDTOs = objectMapper.readValue(competitionsResource.getInputStream(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, CreateCompetitionRequest.class));
             validCompetitionDTOs = competitionDTOs.stream()
                     .collect(Collectors.toMap(comp -> comp, comp -> false));
         } catch (IOException e) {

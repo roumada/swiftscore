@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.model.mapper;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
+import com.roumada.swiftscore.model.dto.response.CompetitionResponse;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.CompetitionRound;
 import org.mapstruct.Mapper;
@@ -18,7 +18,7 @@ public interface CompetitionMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "participants", target = "participantIds", qualifiedByName = "participantsToIds")
     @Mapping(source = "rounds", target = "roundIds", qualifiedByName = "roundsToIds")
-    CompetitionResponseDTO competitionToCompetitionResponseDTO(Competition competition);
+    CompetitionResponse competitionToCompetitionResponseDTO(Competition competition);
 
     @Named(value = "participantsToIds")
     default List<Long> participantsToIds(List<FootballClub> participants) {

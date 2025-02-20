@@ -1,12 +1,12 @@
 package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.ErrorResponse;
-import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
-import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponseDTO;
-import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteria;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
+import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequest;
+import com.roumada.swiftscore.model.dto.response.CompetitionResponse;
+import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponse;
+import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponse;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;
 import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
 import com.roumada.swiftscore.model.organization.Competition;
@@ -47,7 +47,7 @@ public class CompetitionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competition created",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CompetitionResponseDTO.class))}),
+                            schema = @Schema(implementation = CompetitionResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Competition not created",
                     content = @Content)})
     @PostMapping(consumes = "application/json")
@@ -55,14 +55,14 @@ public class CompetitionController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Competition to create", required = true,
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CreateCompetitionRequestDTO.class),
+                            schema = @Schema(implementation = CreateCompetitionRequest.class),
                             examples = @ExampleObject(value = """
                                     {
                                          "name": "Premier Conference",
                                          "country": "GB",
                                          "startDate": "2024-07-01",
                                          "endDate": "2025-05-01",
-                                         "simulationValues": {
+                                         "simulationParameters": {
                                            "variance": 0.35,
                                            "scoreDifferenceDrawTrigger": 0.2,
                                            "drawTriggerChance": 0.3
@@ -73,7 +73,7 @@ public class CompetitionController {
                                          }
                                      }
                                     """)))
-            @Valid @RequestBody CreateCompetitionRequestDTO dto,
+            @Valid @RequestBody CreateCompetitionRequest dto,
             HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.generateAndSave(dto).fold(
@@ -85,7 +85,7 @@ public class CompetitionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Competition returned",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CompetitionResponseDTO.class))}),
+                            schema = @Schema(implementation = CompetitionResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Competition not found",
                     content = @Content)})
     @GetMapping("/{id}")
@@ -107,7 +107,7 @@ public class CompetitionController {
                     content = @Content)})
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateCompetition(@PathVariable long id,
-                                                    @Valid @RequestBody UpdateCompetitionRequestDTO dto,
+                                                    @Valid @RequestBody UpdateCompetitionRequest dto,
                                                     HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.update(id, dto).fold(
@@ -128,7 +128,7 @@ public class CompetitionController {
     @Operation(summary = "Search for competitions")
     @ApiResponse(responseCode = "200", description = "Competitions according to criteria returned",
             content = {@Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = CompetitionResponseDTO.class)))})
+                    array = @ArraySchema(schema = @Schema(implementation = CompetitionResponse.class)))})
     @Parameters(value = {
             @Parameter(name = "name", description = "Competition name", example = "LaLiga"),
             @Parameter(name = "country", description = "Competition country", example = "ES"),
@@ -137,10 +137,10 @@ public class CompetitionController {
             @Parameter(name = "size", description = "Result size", example = "5")
     })
     @GetMapping("/search")
-    public ResponseEntity<Page<CompetitionResponseDTO>> getAllCompetitions(HttpServletRequest request,
-                                                                           @Parameter(hidden = true)
-                                                                           SearchCompetitionCriteriaDTO criteria,
-                                                                           @Parameter(hidden = true)
+    public ResponseEntity<Page<CompetitionResponse>> getAllCompetitions(HttpServletRequest request,
+                                                                        @Parameter(hidden = true)
+                                                                           SearchCompetitionCriteria criteria,
+                                                                        @Parameter(hidden = true)
                                                                            Pageable pageable) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         var result = service.search(criteria, pageable);
@@ -159,8 +159,8 @@ public class CompetitionController {
             @ApiResponse(responseCode = "200", description = "Competition simulated",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(oneOf = {
-                                    CompetitionSimulationSimpleResponseDTO.class,
-                                    CompetitionSimulationResponseDTO.class}))}),
+                                    CompetitionSimulationSimpleResponse.class,
+                                    CompetitionSimulationResponse.class}))}),
             @ApiResponse(responseCode = "400", description = "Competition not found",
                     content = @Content)})
     @PostMapping("/{id}/simulate")
@@ -181,10 +181,10 @@ public class CompetitionController {
                 .fold(
                         error -> ResponseEntity.badRequest().body(new ErrorResponse(List.of(error))),
                         success -> simplify ?
-                                ResponseEntity.ok(new CompetitionSimulationSimpleResponseDTO(competition.getId(),
+                                ResponseEntity.ok(new CompetitionSimulationSimpleResponse(competition.getId(),
                                         competition.getLastSimulatedRound(),
                                         success.stream().map(CompetitionRound::getId).toList())) :
-                                ResponseEntity.ok(new CompetitionSimulationResponseDTO(competition.getId(),
+                                ResponseEntity.ok(new CompetitionSimulationResponse(competition.getId(),
                                         competition.getLastSimulatedRound(),
                                         CompetitionRoundMapper.INSTANCE.roundsToResponseDTOs(success)))
                 );

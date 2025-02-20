@@ -3,8 +3,8 @@ package com.roumada.swiftscore.unit.service;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
-import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteria;
+import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
 import com.roumada.swiftscore.service.FootballClubService;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
@@ -61,7 +61,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
         when(dataLayer.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(FootballClubTestUtils.getFourFootballClubs(true)));
 
         // act
-        var searchResult = service.searchClubs(new SearchFootballClubSearchCriteriaDTO(null, null, null), Pageable.ofSize(20));
+        var searchResult = service.searchClubs(new SearchFootballClubSearchCriteria(null, null, null), Pageable.ofSize(20));
         var clubs = searchResult.getContent();
 
         // assert
@@ -78,7 +78,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var fc = service.save(
-                new CreateFootballClubRequestDTO("FC", CountryCode.GB, "FC Stadium", 0.5)
+                new CreateFootballClubRequest("FC", CountryCode.GB, "FC Stadium", 0.5)
         );
 
         // assert
@@ -96,7 +96,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(0L,
-                new CreateFootballClubRequestDTO("FC2", null, null, 0.0));
+                new CreateFootballClubRequest("FC2", null, null, 0.0));
 
         // assert
         assertTrue(updateResult.isLeft());
@@ -119,7 +119,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(id,
-                new CreateFootballClubRequestDTO("FC2", null, null, 0.0));
+                new CreateFootballClubRequest("FC2", null, null, 0.0));
 
         // assert
         assertTrue(updateResult.isRight());
@@ -144,7 +144,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(id,
-                new CreateFootballClubRequestDTO(null, CountryCode.PL, null, 0.0));
+                new CreateFootballClubRequest(null, CountryCode.PL, null, 0.0));
 
         // assert
         assertTrue(updateResult.isRight());
@@ -169,7 +169,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(id,
-                new CreateFootballClubRequestDTO(null, null, "FC Park", 0.0));
+                new CreateFootballClubRequest(null, null, "FC Park", 0.0));
 
         // assert
         assertTrue(updateResult.isRight());
@@ -194,7 +194,7 @@ class FootballClubServiceTests extends AbstractBaseIntegrationTest {
 
         // act
         var updateResult = service.update(id,
-                new CreateFootballClubRequestDTO(null, null, null, 0.2));
+                new CreateFootballClubRequest(null, null, null, 0.2));
 
         // assert
         assertTrue(updateResult.isRight());

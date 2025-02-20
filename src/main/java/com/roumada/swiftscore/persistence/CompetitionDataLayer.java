@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.persistence;
 
 import com.neovisionaries.i18n.CountryCode;
-import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
+import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteria;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import lombok.AllArgsConstructor;
@@ -45,7 +45,7 @@ public class CompetitionDataLayer {
         log.info("Competition with ID [{}] deleted.", id);
     }
 
-    public PageImpl<Competition> findByMultipleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
+    public PageImpl<Competition> findByMultipleCriteria(SearchCompetitionCriteria criteria, Pageable pageable) {
         Query query = new Query().with(pageable);
         if (StringUtils.isNotEmpty(criteria.name())) {
             query.addCriteria(Criteria.where("name").regex(".*" + criteria.name() + ".*", "i"));

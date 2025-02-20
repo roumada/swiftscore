@@ -5,10 +5,10 @@ import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
+import com.roumada.swiftscore.model.SimulationParameters;
+import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteria;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
+import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequest;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
@@ -50,7 +50,7 @@ public class CompetitionService {
                 });
     }
 
-    public Either<String, Competition> generateAndSave(CreateCompetitionRequestDTO dto) {
+    public Either<String, Competition> generateAndSave(CreateCompetitionRequest dto) {
         if (dto.participantsAmount() % 2 == 1) {
             var errorMsg = Messages.COMPETITION_CANNOT_GENERATE_CLUB_AMT_MUST_BE_EVEN.format();
             log.error(errorMsg);
@@ -111,12 +111,12 @@ public class CompetitionService {
     }
 
     private void simulateCurrentRound(Competition competition) {
-        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(competition.getSimulationValues()));
+        var roundSimulator = CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(competition.getSimulationParameters()));
         roundSimulator.simulate(competition.currentRound());
         log.info(Messages.COMPETITION_SIMULATED.format(competition.getId()));
     }
 
-    private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequestDTO dto) {
+    private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequest dto) {
         List<FootballClub> clubs = new ArrayList<>();
 
         if (dto.participantIds() != null) {
@@ -140,7 +140,7 @@ public class CompetitionService {
                 Either.left(Messages.FOOTBALL_CLUBS_NOT_ENOUGH_CLUBS_FROM_COUNTRY.format());
     }
 
-    public Either<String, Competition> update(long id, UpdateCompetitionRequestDTO dto) {
+    public Either<String, Competition> update(long id, UpdateCompetitionRequest dto) {
         var findResult = competitionDataLayer.findCompetitionById(id);
         if (findResult.isEmpty()) {
             String warnMsg = Messages.COMPETITION_NOT_FOUND.format(id);
@@ -161,17 +161,17 @@ public class CompetitionService {
 
         if (dto.name() != null) competition.setName(dto.name());
         if (dto.country() != null) competition.setCountry(dto.country());
-        if (dto.simulationValues() != null) {
-            var variance = ObjectUtils.defaultIfNull(dto.simulationValues().variance(),
-                    competition.getSimulationValues().variance());
+        if (dto.simulationParameters() != null) {
+            var variance = ObjectUtils.defaultIfNull(dto.simulationParameters().variance(),
+                    competition.getSimulationParameters().variance());
 
-            var sddt = ObjectUtils.defaultIfNull(dto.simulationValues().scoreDifferenceDrawTrigger(),
-                    competition.getSimulationValues().scoreDifferenceDrawTrigger());
+            var sddt = ObjectUtils.defaultIfNull(dto.simulationParameters().scoreDifferenceDrawTrigger(),
+                    competition.getSimulationParameters().scoreDifferenceDrawTrigger());
 
-            var dtc = ObjectUtils.defaultIfNull(dto.simulationValues().drawTriggerChance(),
-                    competition.getSimulationValues().drawTriggerChance());
+            var dtc = ObjectUtils.defaultIfNull(dto.simulationParameters().drawTriggerChance(),
+                    competition.getSimulationParameters().drawTriggerChance());
 
-            competition.setSimulationValues(new SimulationValues(variance, sddt, dtc));
+            competition.setSimulationParameters(new SimulationParameters(variance, sddt, dtc));
         }
         return Either.right(competitionDataLayer.save(competition));
     }
@@ -196,14 +196,14 @@ public class CompetitionService {
         return times;
     }
 
-    public Page<Competition> search(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
+    public Page<Competition> search(SearchCompetitionCriteria criteria, Pageable pageable) {
         if (criteria.hasNoCriteria()) return competitionDataLayer.findAllCompetitions(pageable);
         if (criteria.hasOneCriteria()) return searchWithSingleCriteria(criteria, pageable);
 
         return competitionDataLayer.findByMultipleCriteria(criteria, pageable);
     }
 
-    private Page<Competition> searchWithSingleCriteria(SearchCompetitionCriteriaDTO criteria, Pageable pageable) {
+    private Page<Competition> searchWithSingleCriteria(SearchCompetitionCriteria criteria, Pageable pageable) {
         return switch (criteria.getSingleCriteriaType()) {
             case NAME -> competitionDataLayer.findByName(criteria.name(), pageable);
             case COUNTRY -> competitionDataLayer.findByCountry(criteria.country(), pageable);

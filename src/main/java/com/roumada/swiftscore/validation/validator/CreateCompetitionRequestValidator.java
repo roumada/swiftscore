@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.validation.validator;
 
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
-import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
+import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequest;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -11,25 +11,25 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
-public class CompetitionRequestDTOValidator implements ConstraintValidator<ValidCompetitionRequestDTO, CreateCompetitionRequestDTO> {
+public class CreateCompetitionRequestValidator implements ConstraintValidator<ValidCompetitionRequest, CreateCompetitionRequest> {
 
     @Value("${application.maximum_competition_duration}")
     private int MAXIMUM_COMPETITION_DURATION;
 
     @Override
-    public boolean isValid(CreateCompetitionRequestDTO dto, ConstraintValidatorContext context) {
-        if (dto.parameters() == null) {
+    public boolean isValid(CreateCompetitionRequest request, ConstraintValidatorContext context) {
+        if (request.competitionParameters() == null) {
             return false;
         }
 
-        if (dto.participantsAmount() == 0) {
+        if (request.participantsAmount() == 0) {
             context
                     .buildConstraintViolationWithTemplate("Neither participants nor footballClubIDs have been set")
                     .addConstraintViolation();
             return false;
         }
 
-        if (dto.participantsAmount() - 1 <= dto.parameters().relegationSpots()) {
+        if (request.participantsAmount() - 1 <= request.competitionParameters().relegationSpots()) {
             context
                     .buildConstraintViolationWithTemplate("Amount of participants must be at least greater than two than relegation spots")
                     .addConstraintViolation();
@@ -37,13 +37,13 @@ public class CompetitionRequestDTOValidator implements ConstraintValidator<Valid
         }
 
         boolean isDateMissing = false;
-        if (StringUtils.isEmpty(dto.startDate())) {
+        if (StringUtils.isEmpty(request.startDate())) {
             context
                     .buildConstraintViolationWithTemplate("Start date must be present")
                     .addConstraintViolation();
             isDateMissing = true;
         }
-        if (StringUtils.isEmpty(dto.endDate())) {
+        if (StringUtils.isEmpty(request.endDate())) {
             context
                     .buildConstraintViolationWithTemplate("End date must be present")
                     .addConstraintViolation();
@@ -54,8 +54,8 @@ public class CompetitionRequestDTOValidator implements ConstraintValidator<Valid
         LocalDate start;
         LocalDate end;
         try {
-            start = LocalDate.parse(dto.startDate());
-            end = LocalDate.parse(dto.endDate());
+            start = LocalDate.parse(request.startDate());
+            end = LocalDate.parse(request.endDate());
         } catch (DateTimeParseException e) {
             context
                     .buildConstraintViolationWithTemplate(
@@ -70,10 +70,10 @@ public class CompetitionRequestDTOValidator implements ConstraintValidator<Valid
             return false;
         }
 
-        if (ChronoUnit.DAYS.between(start, end) + 1 < dto.participantsAmount() * 2L - 2) {
+        if (ChronoUnit.DAYS.between(start, end) + 1 < request.participantsAmount() * 2L - 2) {
             context
                     .buildConstraintViolationWithTemplate("Competition needs at least %s days for a competition with %s clubs."
-                            .formatted(dto.participantsAmount() * 2L - 2, dto.participantsAmount()))
+                            .formatted(request.participantsAmount() * 2L - 2, request.participantsAmount()))
                     .addConstraintViolation();
             return false;
         }

@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.model.mapper;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 public interface FootballClubMapper {
     FootballClubMapper INSTANCE = Mappers.getMapper(FootballClubMapper.class);
 
-    FootballClub requestToObject(CreateFootballClubRequestDTO dto);
+    FootballClub requestToObject(CreateFootballClubRequest dto);
 
-    CreateFootballClubRequestDTO objectToRequest(FootballClub footballClub);
+    CreateFootballClubRequest objectToRequest(FootballClub footballClub);
 }
