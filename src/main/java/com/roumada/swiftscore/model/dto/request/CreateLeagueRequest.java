@@ -1,6 +1,8 @@
 package com.roumada.swiftscore.model.dto.request;
 
+import com.neovisionaries.i18n.CountryCode;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -8,13 +10,13 @@ import java.util.List;
 public record CreateLeagueRequest(
         @NotEmpty(message = "League name must not be empty")
         String name,
-        @NotEmpty(message = "Country code must not be empty")
-        String countryCode,
+        @NotNull(message = "Country code must not be empty")
+        CountryCode countryCode,
         @NotEmpty(message = "Start date must not be empty")
         String startDate,
         @NotEmpty(message = "End date must not be empty")
         String endDate,
         @Size(min = 2, message = "League must have at least two competition defined")
-        List<CreateCompetitionRequest> competitions
+        List<CreateLeagueCompetitionRequest> competitions
 ) {
 }
