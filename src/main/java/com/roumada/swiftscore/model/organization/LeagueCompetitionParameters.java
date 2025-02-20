@@ -4,15 +4,11 @@ import lombok.Builder;
 
 import java.util.List;
 
+@Builder
 public class LeagueCompetitionParameters {
     private long leagueId;
+    private int tier;
     private int relegationSpots;
     private List<Long> previousCompetitions;
 
-    @Builder
-    public LeagueCompetitionParameters(long leagueId, int relegationSpots, List<Long> previousCompetitions) {
-        this.leagueId = leagueId;
-        this.relegationSpots = relegationSpots;
-        this.previousCompetitions = previousCompetitions;
-    }
 }
