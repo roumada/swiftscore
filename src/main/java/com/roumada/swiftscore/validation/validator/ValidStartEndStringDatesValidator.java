@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.validation.validator;
 
-import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
-import com.roumada.swiftscore.validation.annotation.ValidCreateLeagueRequest;
+import com.roumada.swiftscore.model.dto.StartEndStringDates;
+import com.roumada.swiftscore.validation.annotation.ValidStartEndStringDates;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -9,18 +9,20 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class CreateLeagueRequestValidator implements ConstraintValidator<ValidCreateLeagueRequest, CreateLeagueRequest> {
+public class ValidStartEndStringDatesValidator implements ConstraintValidator<ValidStartEndStringDates, StartEndStringDates> {
 
     @Override
-    public boolean isValid(CreateLeagueRequest request, ConstraintValidatorContext context) {
+    public boolean isValid(StartEndStringDates dateHolder, ConstraintValidatorContext context) {
+        String startDate = dateHolder.getStartDate();
+        String endDate = dateHolder.getEndDate();
         boolean isDateMissing = false;
-        if (StringUtils.isEmpty(request.startDate())) {
+        if (StringUtils.isEmpty(startDate)) {
             context
                     .buildConstraintViolationWithTemplate("Start date must be present")
                     .addConstraintViolation();
             isDateMissing = true;
         }
-        if (StringUtils.isEmpty(request.endDate())) {
+        if (StringUtils.isEmpty(endDate)) {
             context
                     .buildConstraintViolationWithTemplate("End date must be present")
                     .addConstraintViolation();
@@ -31,8 +33,8 @@ public class CreateLeagueRequestValidator implements ConstraintValidator<ValidCr
         LocalDate start;
         LocalDate end;
         try {
-            start = LocalDate.parse(request.startDate());
-            end = LocalDate.parse(request.endDate());
+            start = LocalDate.parse(startDate);
+            end = LocalDate.parse(endDate);
         } catch (DateTimeParseException e) {
             context
                     .buildConstraintViolationWithTemplate(
