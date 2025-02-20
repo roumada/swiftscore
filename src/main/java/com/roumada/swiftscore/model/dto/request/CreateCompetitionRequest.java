@@ -19,19 +19,14 @@ import java.util.List;
 public record CreateCompetitionRequest(
         @NotNull(message = "Name cannot be null")
         String name,
-
         @NotNull(message = "Country code cannot be null")
         CountryCode country,
-
         @NotNull(message = "Start date cannot be null")
         String startDate,
-
         @NotNull(message = "End date cannot be null")
         String endDate,
-
         @NotNull(message = "Competition competitionParameters cannot be null")
         CompetitionParameters competitionParameters,
-
         @Valid
         @NotNull(message = "Simulation competitionParameters cannot be null")
         SimulationParameters simulationParameters
