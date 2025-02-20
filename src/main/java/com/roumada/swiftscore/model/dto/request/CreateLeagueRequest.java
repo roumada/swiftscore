@@ -8,6 +8,8 @@ import java.util.List;
 public record CreateLeagueRequest(
         @NotEmpty(message = "League name must not be empty")
         String name,
+        @NotEmpty(message = "Country code must not be empty")
+        String countryCode,
         @NotEmpty(message = "Start date must not be empty")
         String startDate,
         @NotEmpty(message = "End date must not be empty")

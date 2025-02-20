@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.CompetitionParameters;
-import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequest;
+import com.roumada.swiftscore.validation.annotation.ValidCreateCompetitionRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.ObjectUtils;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
-@ValidCompetitionRequest
+@ValidCreateCompetitionRequest
 public record CreateCompetitionRequest(
         @NotNull(message = "Name cannot be null")
         String name,
@@ -25,10 +25,10 @@ public record CreateCompetitionRequest(
         String startDate,
         @NotNull(message = "End date cannot be null")
         String endDate,
-        @NotNull(message = "Competition competitionParameters cannot be null")
+        @NotNull(message = "Competition parameters cannot be null")
         CompetitionParameters competitionParameters,
         @Valid
-        @NotNull(message = "Simulation competitionParameters cannot be null")
+        @NotNull(message = "Simulation parameters cannot be null")
         SimulationParameters simulationParameters
 ) {
     public Integer participants() {

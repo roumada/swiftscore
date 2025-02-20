@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.validation.validator;
 
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
-import com.roumada.swiftscore.validation.annotation.ValidCompetitionRequest;
+import com.roumada.swiftscore.validation.annotation.ValidCreateCompetitionRequest;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
-public class CreateCompetitionRequestValidator implements ConstraintValidator<ValidCompetitionRequest, CreateCompetitionRequest> {
+public class CreateCompetitionRequestValidator implements ConstraintValidator<ValidCreateCompetitionRequest, CreateCompetitionRequest> {
 
     @Value("${application.maximum_competition_duration}")
     private int MAXIMUM_COMPETITION_DURATION;
