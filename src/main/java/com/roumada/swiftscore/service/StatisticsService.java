@@ -6,8 +6,8 @@ import com.roumada.swiftscore.model.dto.response.FootballClubStatisticsResponseD
 import com.roumada.swiftscore.model.dto.response.FootballClubStandings;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
 import com.roumada.swiftscore.model.mapper.FootballMatchMapper;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.organization.Competition;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.FootballClubDataLayer;
@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

@@ -2,8 +2,8 @@ package com.roumada.swiftscore.model.mapper;
 
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.organization.Competition;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

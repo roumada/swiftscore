@@ -4,7 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.SimulationValues;
 import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
-import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;

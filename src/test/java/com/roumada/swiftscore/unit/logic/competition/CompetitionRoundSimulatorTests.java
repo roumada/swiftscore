@@ -4,8 +4,8 @@ import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

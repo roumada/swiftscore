@@ -1,10 +1,9 @@
-package com.roumada.swiftscore.logic.creator;
+package com.roumada.swiftscore.logic.competition;
 
-import com.roumada.swiftscore.logic.CompetitionDatesProvider;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.organization.Competition;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import io.vavr.control.Either;
 import lombok.extern.slf4j.Slf4j;

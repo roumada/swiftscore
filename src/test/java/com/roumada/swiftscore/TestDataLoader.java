@@ -5,7 +5,7 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
-import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.service.CompetitionService;
@@ -18,7 +18,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j

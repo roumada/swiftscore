@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.model.match;
+package com.roumada.swiftscore.model.organization;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
@@ -20,13 +20,14 @@ public class Competition {
 
     @Id
     private Long id = null;
-    private int lastSimulatedRound = 0;
     private String name;
     private CountryCode country;
     private LocalDate startDate;
     private LocalDate endDate;
     private String season;
+    private int lastSimulatedRound = 0;
     private SimulationValues simulationValues;
+    private LeagueCompetitionParameters leagueCompetitionParameters;
     private int relegationSpots;
     @DBRef
     private List<FootballClub> participants;

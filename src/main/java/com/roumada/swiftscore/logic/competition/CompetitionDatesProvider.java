@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.logic;
+package com.roumada.swiftscore.logic.competition;
 
 import lombok.Getter;
 

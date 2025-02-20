@@ -9,8 +9,8 @@ import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponseDT
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;
 import com.roumada.swiftscore.model.mapper.CompetitionRoundMapper;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.organization.Competition;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
 import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
 import io.swagger.v3.oas.annotations.Operation;

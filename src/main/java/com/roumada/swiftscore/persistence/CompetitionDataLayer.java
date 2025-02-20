@@ -2,7 +2,7 @@ package com.roumada.swiftscore.persistence;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
-import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

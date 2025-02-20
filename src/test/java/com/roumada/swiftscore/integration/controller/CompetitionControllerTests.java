@@ -13,7 +13,7 @@ import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionResponseDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationResponseDTO;
 import com.roumada.swiftscore.model.dto.response.CompetitionSimulationSimpleResponseDTO;
-import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.persistence.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
 import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
