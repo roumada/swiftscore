@@ -3,8 +3,8 @@ package com.roumada.swiftscore.integration.persistence;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
-import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteria;
+import com.roumada.swiftscore.persistence.datalayer.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import io.micrometer.common.util.StringUtils;
@@ -116,7 +116,7 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     @DisplayName("Find by criteria - name - should find")
     void findByCriteria_name_shouldFind(){
         // arrange
-        loadFCs();
+        loadFootballClubs();
         var expected = 2;
 
         // act
@@ -133,7 +133,7 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     @DisplayName("Find by criteria - country - should find")
     void findByCriteria_country_shouldFind(){
         // arrange
-        loadFCs();
+        loadFootballClubs();
         var expected = 6;
 
         // act
@@ -149,7 +149,7 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     @DisplayName("Find by criteria - stadium name - should find")
     void findByCriteria_stadium_shouldFind(){
         // arrange
-        loadFCs();
+        loadFootballClubs();
         var expected = 2;
 
         // act
@@ -177,11 +177,11 @@ class FootballClubDataLayerIntegrationTests extends AbstractBaseIntegrationTest 
     void findFootballClubs_variousCriteria_shouldFind(String name, String country, String stadiumName,
                                                       int pagesize, int expected){
         // arrange
-        loadFCs();
+        loadFootballClubs();
 
         // act
         var cc = StringUtils.isEmpty(country) ? null : CountryCode.valueOf(country);
-        var criteria = new SearchFootballClubSearchCriteriaDTO(name, cc, stadiumName);
+        var criteria = new SearchFootballClubSearchCriteria(name, cc, stadiumName);
         var clubs = dataLayer.findByMultipleCriteria(criteria, Pageable.ofSize(pagesize)).getContent();
 
         // assert

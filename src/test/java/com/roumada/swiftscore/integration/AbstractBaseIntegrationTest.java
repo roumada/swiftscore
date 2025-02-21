@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.integration;
 
 import com.roumada.swiftscore.TestDataLoader;
-import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
@@ -43,17 +43,17 @@ public abstract class AbstractBaseIntegrationTest {
         registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
     }
 
-    protected void loadFCs() {
+    protected void loadFootballClubs() {
         dataLoader.saveFCs();
     }
 
     protected void loadCompetitionsWithFcs() {
-        loadFCs();
+        loadFootballClubs();
         dataLoader.saveCompetitions();
     }
 
     protected Competition loadCompetitionWithFcs(){
-        loadFCs();
+        loadFootballClubs();
         return dataLoader.saveCompetition();
     }
 

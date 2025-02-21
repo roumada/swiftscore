@@ -3,11 +3,10 @@ package com.roumada.swiftscore.e2e;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.CompetitionParametersDTO;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.UpdateSimulationValuesDTO;
+import com.roumada.swiftscore.model.SimulationParameters;
+import com.roumada.swiftscore.model.dto.CompetitionParameters;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
+import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequest;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
@@ -64,12 +63,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         // arrange
         var clubIds = FootballClubTestUtils.getIdsOfSavedClubs(
                 clubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false)));
-        CreateCompetitionRequestDTO request = new CreateCompetitionRequestDTO("Competition",
+        CreateCompetitionRequest request = new CreateCompetitionRequest("Competition",
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                new CompetitionParametersDTO(0, clubIds, 1),
-                new SimulationValues(0.3, 0.4, 0.1));
+                new CompetitionParameters(0, clubIds, 1),
+                new SimulationParameters(0.3, 0.4, 0.1));
 
         // STEP 1: create competition
         Response createCompetitionResponse =
@@ -88,10 +87,10 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .body("endDate", equalTo(request.endDate()))
                         .body("season", equalTo("2025"))
                         .body("country", equalTo(request.country().toString()))
-                        .body("relegationSpots", equalTo(request.parameters().relegationSpots()))
-                        .body("simulationValues.variance", equalTo(0.3F))
-                        .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.4F))
-                        .body("simulationValues.drawTriggerChance", equalTo(0.1F))
+                        .body("relegationSpots", equalTo(request.competitionParameters().relegationSpots()))
+                        .body("simulationParameters.variance", equalTo(0.3F))
+                        .body("simulationParameters.scoreDifferenceDrawTrigger", equalTo(0.4F))
+                        .body("simulationParameters.drawTriggerChance", equalTo(0.1F))
                         .extract()
                         .response();
 
@@ -102,12 +101,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         assertEquals(4, responseJson.getList("participantIds").size());
 
         // STEP 2: update competition
-        UpdateCompetitionRequestDTO updateRequest
-                = new UpdateCompetitionRequestDTO(
+        UpdateCompetitionRequest updateRequest
+                = new UpdateCompetitionRequest(
                 "New Competition",
                 CountryCode.AN,
                 null,
-                new UpdateSimulationValuesDTO(0.1, 0.2, 0.3));
+                new SimulationParameters(0.1, 0.2, 0.3));
 
         given()
                 .port(port)
@@ -122,12 +121,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .body("startDate", equalTo(request.startDate()))
                 .body("endDate", equalTo(request.endDate()))
                 .body("season", equalTo("2025"))
-                .body("relegationSpots", equalTo(request.parameters().relegationSpots()))
+                .body("relegationSpots", equalTo(request.competitionParameters().relegationSpots()))
                 .body("name", equalTo(updateRequest.name()))
                 .body("country", equalTo(updateRequest.country().toString()))
-                .body("simulationValues.variance", equalTo(0.1F))
-                .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.2F))
-                .body("simulationValues.drawTriggerChance", equalTo(0.3F))
+                .body("simulationParameters.variance", equalTo(0.1F))
+                .body("simulationParameters.scoreDifferenceDrawTrigger", equalTo(0.2F))
+                .body("simulationParameters.drawTriggerChance", equalTo(0.3F))
                 .extract()
                 .response();
 
@@ -154,12 +153,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
         var clubIds = FootballClubTestUtils.getIdsOfSavedClubs(clubRepository.saveAll(
                 FootballClubTestUtils.getTwoFootballClubs()
         ));
-        CreateCompetitionRequestDTO request = new CreateCompetitionRequestDTO("Competition",
+        CreateCompetitionRequest request = new CreateCompetitionRequest("Competition",
                 CountryCode.GB,
                 "2025-01-01",
                 "2025-10-30",
-                new CompetitionParametersDTO(0, clubIds, 0),
-                new SimulationValues(0.3, 0.4, 0.1));
+                new CompetitionParameters(0, clubIds, 0),
+                new SimulationParameters(0.3, 0.4, 0.1));
 
         // STEP 1: create competition
         Response createCompetitionResponse =
@@ -178,10 +177,10 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                         .body("endDate", equalTo(request.endDate()))
                         .body("season", equalTo("2025"))
                         .body("country", equalTo(request.country().toString()))
-                        .body("relegationSpots", equalTo(request.parameters().relegationSpots()))
-                        .body("simulationValues.variance", equalTo(0.3F))
-                        .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.4F))
-                        .body("simulationValues.drawTriggerChance", equalTo(0.1F))
+                        .body("relegationSpots", equalTo(request.competitionParameters().relegationSpots()))
+                        .body("simulationParameters.variance", equalTo(0.3F))
+                        .body("simulationParameters.scoreDifferenceDrawTrigger", equalTo(0.4F))
+                        .body("simulationParameters.drawTriggerChance", equalTo(0.1F))
                         .extract()
                         .response();
 
@@ -282,12 +281,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 )));
 
         // STEP 1 - not enough clubs to fill for given country - should fail
-        var compRequest = new CreateCompetitionRequestDTO("Competition",
+        var compRequest = new CreateCompetitionRequest("Competition",
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
-                new CompetitionParametersDTO(4, null, 0),
-                new SimulationValues(0));
+                new CompetitionParameters(4, null, 0),
+                new SimulationParameters(0));
 
         given()
                 .port(port)
@@ -299,12 +298,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .statusCode(400);
 
         // STEP 2 - not enough clubs to fill even with IDs - should fail
-        compRequest = new CreateCompetitionRequestDTO("Competition",
+        compRequest = new CreateCompetitionRequest("Competition",
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
-                new CompetitionParametersDTO(4, ids.subList(0, 2), 0),
-                new SimulationValues(0));
+                new CompetitionParameters(4, ids.subList(0, 2), 0),
+                new SimulationParameters(0));
 
         given()
                 .port(port)
@@ -316,12 +315,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .statusCode(400);
 
         // STEP 3 - enough clubs to fill but can't mix countries - should fail
-        compRequest = new CreateCompetitionRequestDTO("Competition",
+        compRequest = new CreateCompetitionRequest("Competition",
                 CountryCode.ES,
                 "2024-01-01",
                 "2024-10-01",
-                new CompetitionParametersDTO(0, ids.subList(0, 2), 0),
-                new SimulationValues(0));
+                new CompetitionParameters(0, ids.subList(0, 2), 0),
+                new SimulationParameters(0));
 
         given()
                 .port(port)
@@ -332,12 +331,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .then()
                 .statusCode(400);
 
-        compRequest = new CreateCompetitionRequestDTO("Competition",
+        compRequest = new CreateCompetitionRequest("Competition",
                 CountryCode.GB,
                 "2024-01-01",
                 "2024-10-01",
-                new CompetitionParametersDTO(0, ids.subList(3, 6), 0),
-                new SimulationValues(0));
+                new CompetitionParameters(0, ids.subList(3, 6), 0),
+                new SimulationParameters(0));
 
         given()
                 .port(port)
@@ -349,12 +348,12 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .statusCode(400);
 
         // STEP 4 - enough clubs - should succeed
-        compRequest = new CreateCompetitionRequestDTO("Competition",
+        compRequest = new CreateCompetitionRequest("Competition",
                 CountryCode.ES,
                 "2024-01-01",
                 "2024-10-01",
-                new CompetitionParametersDTO(4, ids.subList(3, 4), 0),
-                new SimulationValues(0.3, 0.4, 0.1));
+                new CompetitionParameters(4, ids.subList(3, 4), 0),
+                new SimulationParameters(0.3, 0.4, 0.1));
 
         given()
                 .port(port)
@@ -371,9 +370,9 @@ class CompetitionE2ETests extends AbstractBaseIntegrationTest {
                 .body("endDate", equalTo(compRequest.endDate()))
                 .body("season", equalTo("2024"))
                 .body("country", equalTo(compRequest.country().toString()))
-                .body("relegationSpots", equalTo(compRequest.parameters().relegationSpots()))
-                .body("simulationValues.variance", equalTo(0.3F))
-                .body("simulationValues.scoreDifferenceDrawTrigger", equalTo(0.4F))
-                .body("simulationValues.drawTriggerChance", equalTo(0.1F));
+                .body("relegationSpots", equalTo(compRequest.competitionParameters().relegationSpots()))
+                .body("simulationParameters.variance", equalTo(0.3F))
+                .body("simulationParameters.scoreDifferenceDrawTrigger", equalTo(0.4F))
+                .body("simulationParameters.drawTriggerChance", equalTo(0.1F));
     }
 }

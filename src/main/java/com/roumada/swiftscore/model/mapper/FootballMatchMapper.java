@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.model.mapper;
 
-import com.roumada.swiftscore.model.dto.response.FootballMatchResponseDTO;
+import com.roumada.swiftscore.model.dto.response.FootballMatchResponse;
 import com.roumada.swiftscore.model.match.FootballMatch;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,5 +12,5 @@ public interface FootballMatchMapper {
 
     @Mapping(source = "homeSideFootballClub", target = "homeSide")
     @Mapping(source = "awaySideFootballClub", target = "awaySide")
-    FootballMatchResponseDTO matchToMatchResponse(FootballMatch match);
+    FootballMatchResponse matchToMatchResponse(FootballMatch match);
 }

@@ -2,11 +2,11 @@ package com.roumada.swiftscore.unit.service;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.persistence.CompetitionDataLayer;
-import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
+import com.roumada.swiftscore.model.organization.Competition;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
+import com.roumada.swiftscore.persistence.datalayer.CompetitionDataLayer;
+import com.roumada.swiftscore.persistence.datalayer.FootballMatchDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
 import com.roumada.swiftscore.service.StatisticsService;
 import com.roumada.swiftscore.util.FootballClubTestUtils;

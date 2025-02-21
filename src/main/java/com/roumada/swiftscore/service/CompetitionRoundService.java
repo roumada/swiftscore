@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.service;
 
-import com.roumada.swiftscore.model.match.CompetitionRound;
-import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
+import com.roumada.swiftscore.persistence.datalayer.CompetitionRoundDataLayer;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

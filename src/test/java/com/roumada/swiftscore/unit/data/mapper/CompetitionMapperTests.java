@@ -1,10 +1,10 @@
 package com.roumada.swiftscore.unit.data.mapper;
 
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.SimulationValues;
+import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.mapper.CompetitionMapper;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.organization.Competition;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +32,7 @@ class CompetitionMapperTests {
                 .name("Competition")
                 .startDate(LocalDate.of(2024, 1, 1))
                 .endDate(LocalDate.of(2024, 10, 1))
-                .simulationValues(new SimulationValues(0))
+                .simulationParameters(new SimulationParameters(0))
                 .participants(List.of(fc1, fc2))
                 .rounds(List.of(cr1, cr2))
                 .build();

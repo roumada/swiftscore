@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.ErrorResponse;
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
 import com.roumada.swiftscore.service.CompetitionRoundService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
 import io.swagger.v3.oas.annotations.Operation;

@@ -2,7 +2,7 @@ package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
+import com.roumada.swiftscore.persistence.datalayer.FootballMatchDataLayer;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

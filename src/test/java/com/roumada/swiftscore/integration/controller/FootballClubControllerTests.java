@@ -3,7 +3,7 @@ package com.roumada.swiftscore.integration.controller;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.json.JSONArray;
@@ -40,7 +40,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create football club - with valid values - should save")
     void createFootballClub_validValues_shouldSave() throws Exception {
         // arrange
-        var dto = new CreateFootballClubRequestDTO("FC1", CountryCode.GB, "", 0.5f);
+        var dto = new CreateFootballClubRequest("FC1", CountryCode.GB, "", 0.5f);
 
         // act
         var response = mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +68,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
                                                                    double victoryChance,
                                                                    String validationErrorMsg) throws Exception {
         // arrange
-        var dto = new CreateFootballClubRequestDTO(name, country, stadiumName, victoryChance);
+        var dto = new CreateFootballClubRequest(name, country, stadiumName, victoryChance);
 
         // act
         var response = mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
@@ -123,7 +123,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_name_shouldReturn() throws Exception {
         // arrange
         var fc = repository.save(FootballClubTestUtils.getClub(false));
-        var dto = new CreateFootballClubRequestDTO(
+        var dto = new CreateFootballClubRequest(
                 "AAAABBB",
                 null,
                 null,
@@ -151,7 +151,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_country_shouldReturn() throws Exception {
         // arrange
         var fc = repository.save(FootballClubTestUtils.getClub(false));
-        var dto = new CreateFootballClubRequestDTO(
+        var dto = new CreateFootballClubRequest(
                 null,
                 CountryCode.PL,
                 null,
@@ -179,7 +179,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_stadiumName_shouldReturn() throws Exception {
         // arrange
         var fc = repository.save(FootballClubTestUtils.getClub(false));
-        var dto = new CreateFootballClubRequestDTO(
+        var dto = new CreateFootballClubRequest(
                 null,
                 null,
                 "BBBBCCCC",
@@ -207,7 +207,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_victoryChance_shouldReturn() throws Exception {
         // arrange
         var fc = repository.save(FootballClubTestUtils.getClub(false));
-        var dto = new CreateFootballClubRequestDTO(
+        var dto = new CreateFootballClubRequest(
                 null,
                 null,
                 null,
@@ -236,7 +236,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     void patchFC_invalidVictoryChance_shouldReturnError(double victoryChance) throws Exception {
         // arrange
         var fc = repository.save(FootballClubTestUtils.getClub(false));
-        var dto = new CreateFootballClubRequestDTO(
+        var dto = new CreateFootballClubRequest(
                 null,
                 null,
                 null, victoryChance);

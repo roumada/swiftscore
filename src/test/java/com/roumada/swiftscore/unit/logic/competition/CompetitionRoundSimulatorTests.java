@@ -3,9 +3,9 @@ package com.roumada.swiftscore.unit.logic.competition;
 import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.match.FootballMatch;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CompetitionRoundSimulatorTests {
 
     private final CompetitionRoundSimulator competitionRoundSimulator =
-            CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(new SimulationValues(0.0)));
+            CompetitionRoundSimulator.withMatchSimulator(SimpleVarianceMatchSimulator.withValues(new SimulationParameters(0.0)));
 
     @Test
     @DisplayName("Should simulate an entire match week and change match statuses")

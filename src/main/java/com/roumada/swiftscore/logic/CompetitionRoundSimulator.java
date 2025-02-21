@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.logic;
 
 import com.roumada.swiftscore.logic.match.simulator.MatchSimulator;
-import com.roumada.swiftscore.model.match.CompetitionRound;
+import com.roumada.swiftscore.model.organization.CompetitionRound;
 import com.roumada.swiftscore.model.match.FootballMatch;
 
 public class CompetitionRoundSimulator {

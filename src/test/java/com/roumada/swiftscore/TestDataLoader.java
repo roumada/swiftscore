@@ -2,10 +2,10 @@ package com.roumada.swiftscore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequestDTO;
-import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
+import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
+import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
-import com.roumada.swiftscore.model.match.Competition;
+import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.service.CompetitionService;
@@ -18,7 +18,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,16 +57,16 @@ public class TestDataLoader {
 
     public void saveCompetitions() {
         var competitionRequests = loadCompetitionRequests();
-        for (CreateCompetitionRequestDTO request : competitionRequests) {
+        for (CreateCompetitionRequest request : competitionRequests) {
             competitionService.generateAndSave(request);
         }
     }
 
     private List<FootballClub> loadFootballClubs() {
-        Map<CreateFootballClubRequestDTO, Boolean> validClubDTOs = new HashMap<>();
+        Map<CreateFootballClubRequest, Boolean> validClubDTOs = new HashMap<>();
         try {
-            List<CreateFootballClubRequestDTO> clubDTOs = objectMapper.readValue(footballClubsResource.getInputStream(),
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, CreateFootballClubRequestDTO.class));
+            List<CreateFootballClubRequest> clubDTOs = objectMapper.readValue(footballClubsResource.getInputStream(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, CreateFootballClubRequest.class));
             validClubDTOs = clubDTOs.stream()
                     .collect(Collectors.toMap(club -> club, club -> false));
         } catch (IOException e) {
@@ -83,11 +86,11 @@ public class TestDataLoader {
                 .toList();
     }
 
-    private List<CreateCompetitionRequestDTO> loadCompetitionRequests() {
-        Map<CreateCompetitionRequestDTO, Boolean> validCompetitionDTOs = new HashMap<>();
+    private List<CreateCompetitionRequest> loadCompetitionRequests() {
+        Map<CreateCompetitionRequest, Boolean> validCompetitionDTOs = new HashMap<>();
         try {
-            List<CreateCompetitionRequestDTO> competitionDTOs = objectMapper.readValue(competitionsResource.getInputStream(),
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, CreateCompetitionRequestDTO.class));
+            List<CreateCompetitionRequest> competitionDTOs = objectMapper.readValue(competitionsResource.getInputStream(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, CreateCompetitionRequest.class));
             validCompetitionDTOs = competitionDTOs.stream()
                     .collect(Collectors.toMap(comp -> comp, comp -> false));
         } catch (IOException e) {

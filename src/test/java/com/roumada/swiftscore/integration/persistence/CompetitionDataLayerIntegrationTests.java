@@ -2,10 +2,10 @@ package com.roumada.swiftscore.integration.persistence;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
-import com.roumada.swiftscore.model.SimulationValues;
-import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteriaDTO;
-import com.roumada.swiftscore.model.match.Competition;
-import com.roumada.swiftscore.persistence.CompetitionDataLayer;
+import com.roumada.swiftscore.model.SimulationParameters;
+import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteria;
+import com.roumada.swiftscore.model.organization.Competition;
+import com.roumada.swiftscore.persistence.datalayer.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.CompetitionTestUtils;
@@ -74,12 +74,12 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
         var fcs = clubRepo.saveAll(FootballClubTestUtils.getTwoFootballClubs());
         var ids = competitionRepo.saveAll(List.of(Competition.builder()
                 .name("Competition")
-                .simulationValues(new SimulationValues(0))
+                .simulationParameters(new SimulationParameters(0))
                 .participants(fcs)
                 .rounds(Collections.emptyList())
                 .build(), Competition.builder()
                 .name("Competition 2")
-                .simulationValues(new SimulationValues(0))
+                .simulationParameters(new SimulationParameters(0))
                 .participants(fcs)
                 .rounds(Collections.emptyList())
                 .build())).stream().map(Competition::getId).toList();
@@ -173,7 +173,7 @@ class CompetitionDataLayerIntegrationTests extends AbstractBaseIntegrationTest {
         // arrange
         loadCompetitionsWithFcs();
         CountryCode cc = StringUtils.isEmpty(country) ? null : CountryCode.valueOf(country);
-        SearchCompetitionCriteriaDTO criteria = new SearchCompetitionCriteriaDTO(name, cc, season);
+        SearchCompetitionCriteria criteria = new SearchCompetitionCriteria(name, cc, season);
         Pageable pageable = Pageable.ofSize(10);
 
         // act

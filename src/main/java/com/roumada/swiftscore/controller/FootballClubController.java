@@ -2,9 +2,8 @@ package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.FootballClub;
-import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteriaDTO;
-import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequestDTO;
-import com.roumada.swiftscore.model.mapper.CompetitionMapper;
+import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteria;
+import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
 import com.roumada.swiftscore.service.FootballClubService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,8 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +52,7 @@ public class FootballClubController {
             content = {@Content(mediaType = "application/json")})
     @GetMapping("/search")
     public ResponseEntity<Object> searchClubs(HttpServletRequest request,
-                                              SearchFootballClubSearchCriteriaDTO criteria,
+                                              SearchFootballClubSearchCriteria criteria,
                                               Pageable pageable) {
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         return ResponseEntity.ok(service.searchClubs(criteria, pageable));
@@ -65,7 +62,7 @@ public class FootballClubController {
     @ApiResponse(responseCode = "200", description = "Football club created",
             content = {@Content(mediaType = "application/json")})
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<Object> createFootballClub(@Valid @RequestBody CreateFootballClubRequestDTO dto,
+    public ResponseEntity<Object> createFootballClub(@Valid @RequestBody CreateFootballClubRequest dto,
                                                      HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return ResponseEntity.ok(service.save(dto));
@@ -80,7 +77,7 @@ public class FootballClubController {
                     content = @Content)})
     @PatchMapping(value = "/{id}", consumes = "application/json")
     public ResponseEntity<Object> updateFootballClub(@PathVariable long id,
-                                                     @RequestBody CreateFootballClubRequestDTO dto,
+                                                     @RequestBody CreateFootballClubRequest dto,
                                                      HttpServletRequest request) {
         log.info(LoggingMessageTemplates.getForEndpointWithBody(request, dto));
         return service.update(id, dto).fold(
