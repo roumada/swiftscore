@@ -1,20 +1,19 @@
 package com.roumada.swiftscore.validation.validator;
 
 import com.roumada.swiftscore.model.dto.StartEndStringDates;
-import com.roumada.swiftscore.validation.annotation.ValidStartEndStringDates;
 import io.micrometer.common.util.StringUtils;
-import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class ValidStartEndStringDatesValidator implements ConstraintValidator<ValidStartEndStringDates, StartEndStringDates> {
+public class StartEndStringDatesValidator {
 
-    @Override
-    public boolean isValid(StartEndStringDates dateHolder, ConstraintValidatorContext context) {
-        String startDate = dateHolder.getStartDate();
-        String endDate = dateHolder.getEndDate();
+    private StartEndStringDatesValidator(){}
+
+    public static boolean isValid(StartEndStringDates dateHolder, ConstraintValidatorContext context) {
+        String startDate = dateHolder.startDate();
+        String endDate = dateHolder.endDate();
         boolean isDateMissing = false;
         if (StringUtils.isEmpty(startDate)) {
             context

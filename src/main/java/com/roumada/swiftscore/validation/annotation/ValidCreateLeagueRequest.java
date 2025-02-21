@@ -1,6 +1,6 @@
 package com.roumada.swiftscore.validation.annotation;
 
-import com.roumada.swiftscore.validation.validator.ValidStartEndStringDatesValidator;
+import com.roumada.swiftscore.validation.validator.CreateLeagueRequestValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -9,10 +9,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = ValidStartEndStringDatesValidator.class)
+@Constraint(validatedBy = CreateLeagueRequestValidator.class)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidStartEndStringDates {
+public @interface ValidCreateLeagueRequest {
     String message() default "Invalid object";
 
     Class<?>[] groups() default {};

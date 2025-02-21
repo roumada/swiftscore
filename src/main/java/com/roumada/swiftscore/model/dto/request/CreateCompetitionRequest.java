@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.CompetitionParameters;
+import com.roumada.swiftscore.model.dto.StartEndStringDates;
 import com.roumada.swiftscore.validation.annotation.ValidCreateCompetitionRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -30,7 +31,7 @@ public record CreateCompetitionRequest(
         @Valid
         @NotNull(message = "Simulation parameters cannot be null")
         SimulationParameters simulationParameters
-) {
+) implements StartEndStringDates {
     public Integer participants() {
         return ObjectUtils.defaultIfNull(competitionParameters.participants(), 0);
     }

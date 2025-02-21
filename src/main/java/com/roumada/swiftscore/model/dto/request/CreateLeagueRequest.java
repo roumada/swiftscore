@@ -2,14 +2,14 @@ package com.roumada.swiftscore.model.dto.request;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.dto.StartEndStringDates;
-import com.roumada.swiftscore.validation.annotation.ValidStartEndStringDates;
+import com.roumada.swiftscore.validation.annotation.ValidCreateLeagueRequest;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-@ValidStartEndStringDates
+@ValidCreateLeagueRequest
 public record CreateLeagueRequest(
         @NotEmpty(message = "League name must not be empty")
         String name,
@@ -22,13 +22,4 @@ public record CreateLeagueRequest(
         @Size(min = 2, message = "League must have at least two competition defined")
         List<CreateLeagueCompetitionRequest> competitions
 ) implements StartEndStringDates {
-    @Override
-    public String getStartDate() {
-        return startDate;
-    }
-
-    @Override
-    public String getEndDate() {
-        return endDate;
-    }
 }
