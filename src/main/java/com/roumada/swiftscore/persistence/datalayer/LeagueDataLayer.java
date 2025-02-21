@@ -12,14 +12,17 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 public class LeagueDataLayer {
-
     private final LeagueRepository repository;
 
     public League save(League league){
         return repository.save(league);
     }
 
-    public Optional<League> findbyId(Long id){
+    public Optional<League> findById(Long id){
         return repository.findById(id);
+    }
+
+    public void deleteById(Long id){
+        repository.deleteById(id);
     }
 }

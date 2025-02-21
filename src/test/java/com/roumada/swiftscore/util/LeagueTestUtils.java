@@ -5,10 +5,16 @@ import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.CompetitionParameters;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
+import com.roumada.swiftscore.model.organization.league.League;
 
+import java.util.Collections;
 import java.util.List;
 
 public class LeagueTestUtils {
+
+    public static League getEmpty(){
+        return new League("League", Collections.emptyList());
+    }
     public static CreateLeagueRequest getCreateLeagueRequest(int participants1, int participants2) {
         return new CreateLeagueRequest(
                 "League",

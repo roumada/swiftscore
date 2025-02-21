@@ -129,7 +129,7 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
         var leagueId = repository.save(new League("League", Collections.emptyList())).getId();
 
         // act
-        var response = mvc.perform(get("/search/" + leagueId)
+        var response = mvc.perform(get("/" + leagueId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
@@ -147,7 +147,7 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
         var invalidId = 999;
 
         // act
-        var response = mvc.perform(get("/search/" + invalidId)
+        var response = mvc.perform(get("/" + invalidId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
@@ -155,5 +155,20 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
         // assert
         var result = objectMapper.readValue(response, ErrorResponse.class);
         assertThat(result.requestErrors()).contains("aaa");
+    }
+
+    @Test
+    @DisplayName("Delete league with ID - should return OK")
+    void deleteLeagueWithId_shouldReturnOK() throws Exception {
+        // arrange
+        var leagueId = repository.save(new League("League", Collections.emptyList())).getId();
+
+        // act
+        mvc.perform(get("/delete/" + leagueId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        // assert
+        assertThat(repository.findById(leagueId)).isEmpty();
     }
 }

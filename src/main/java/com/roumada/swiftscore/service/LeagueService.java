@@ -7,6 +7,7 @@ import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
 import com.roumada.swiftscore.model.organization.league.League;
 import com.roumada.swiftscore.model.organization.league.LeagueSeason;
 import com.roumada.swiftscore.persistence.datalayer.LeagueDataLayer;
+import io.vavr.collection.Foldable;
 import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class LeagueService {
         var createdCompetitionIds = new ArrayList<Long>();
 
         for (CreateLeagueCompetitionRequest competitionRequest : leagueRequest.competitions()) {
-            var generationResult = competitionService.generateAndSave(map(leagueRequest, competitionRequest));
+            var generationResult = competitionService.generateAndSave(mergeRequests(leagueRequest, competitionRequest));
             generationResult.fold(
                     errors::add,
                     competition -> createdCompetitionIds.add(competition.getId())
@@ -42,8 +43,8 @@ public class LeagueService {
         return Either.right(leagueDataLayer.save(league));
     }
 
-    private CreateCompetitionRequest map(CreateLeagueRequest leagueRequest,
-                                         CreateLeagueCompetitionRequest competitionRequest){
+    private CreateCompetitionRequest mergeRequests(CreateLeagueRequest leagueRequest,
+                                                   CreateLeagueCompetitionRequest competitionRequest){
         return new CreateCompetitionRequest(
                 competitionRequest.name(),
                 leagueRequest.countryCode(),
@@ -52,5 +53,13 @@ public class LeagueService {
                 competitionRequest.competitionParameters(),
                 competitionRequest.simulationParameters()
         );
+    }
+
+    public Either<ErrorResponse, League> findById(long id) {
+        return null;
+    }
+
+    public void deleteById(long id) {
+
     }
 }
