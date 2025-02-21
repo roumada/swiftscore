@@ -32,6 +32,18 @@ public record CreateCompetitionRequest(
         @NotNull(message = "Simulation parameters cannot be null")
         SimulationParameters simulationParameters
 ) implements StartEndStringDates {
+    public static CreateCompetitionRequest fromMergedRequests(CreateLeagueRequest leagueRequest,
+                                                              CreateLeagueCompetitionRequest competitionRequest){
+        return new CreateCompetitionRequest(
+                competitionRequest.name(),
+                leagueRequest.countryCode(),
+                leagueRequest.startDate(),
+                leagueRequest.endDate(),
+                competitionRequest.competitionParameters(),
+                competitionRequest.simulationParameters()
+        );
+    }
+
     public Integer participants() {
         return ObjectUtils.defaultIfNull(competitionParameters.participants(), 0);
     }

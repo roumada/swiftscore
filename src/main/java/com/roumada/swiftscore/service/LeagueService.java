@@ -1,19 +1,20 @@
 package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.ErrorResponse;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
 import com.roumada.swiftscore.model.organization.league.League;
 import com.roumada.swiftscore.model.organization.league.LeagueSeason;
 import com.roumada.swiftscore.persistence.datalayer.LeagueDataLayer;
-import io.vavr.collection.Foldable;
+import com.roumada.swiftscore.util.Messages;
 import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest.fromMergedRequests;
 
 @Service
 @AllArgsConstructor
@@ -27,7 +28,7 @@ public class LeagueService {
         var createdCompetitionIds = new ArrayList<Long>();
 
         for (CreateLeagueCompetitionRequest competitionRequest : leagueRequest.competitions()) {
-            var generationResult = competitionService.generateAndSave(mergeRequests(leagueRequest, competitionRequest));
+            var generationResult = competitionService.generateAndSave(fromMergedRequests(leagueRequest, competitionRequest));
             generationResult.fold(
                     errors::add,
                     competition -> createdCompetitionIds.add(competition.getId())
@@ -38,28 +39,19 @@ public class LeagueService {
             return Either.left(new ErrorResponse(errors));
         }
 
-        var leagueSeason = new LeagueSeason("", createdCompetitionIds);
+        var leagueSeason = new LeagueSeason(leagueRequest.name(), createdCompetitionIds);
         var league = new League(leagueRequest.name(), List.of(leagueSeason));
         return Either.right(leagueDataLayer.save(league));
     }
 
-    private CreateCompetitionRequest mergeRequests(CreateLeagueRequest leagueRequest,
-                                                   CreateLeagueCompetitionRequest competitionRequest){
-        return new CreateCompetitionRequest(
-                competitionRequest.name(),
-                leagueRequest.countryCode(),
-                leagueRequest.startDate(),
-                leagueRequest.endDate(),
-                competitionRequest.competitionParameters(),
-                competitionRequest.simulationParameters()
-        );
-    }
-
     public Either<ErrorResponse, League> findById(long id) {
-        return null;
+        var result = leagueDataLayer.findById(id);
+        return result.isPresent() ?
+                Either.right(result.get()) :
+                Either.left(new ErrorResponse(List.of(Messages.LEAGUE_NOT_FOUND.format(id))));
     }
 
     public void deleteById(long id) {
-
+        leagueDataLayer.deleteById(id);
     }
 }

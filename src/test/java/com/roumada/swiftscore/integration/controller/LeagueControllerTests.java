@@ -23,8 +23,7 @@ import java.util.Collections;
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueCompetitionRequests;
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueRequest;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -129,7 +128,7 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
         var leagueId = repository.save(new League("League", Collections.emptyList())).getId();
 
         // act
-        var response = mvc.perform(get("/" + leagueId)
+        var response = mvc.perform(get("/league/" + leagueId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
@@ -147,14 +146,14 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
         var invalidId = 999;
 
         // act
-        var response = mvc.perform(get("/" + invalidId)
+        var response = mvc.perform(get("/league/" + invalidId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
 
         // assert
         var result = objectMapper.readValue(response, ErrorResponse.class);
-        assertThat(result.requestErrors()).contains("aaa");
+        assertThat(result.requestErrors()).contains("Competition with ID [%s] not found.".formatted(invalidId));
     }
 
     @Test
@@ -164,7 +163,7 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
         var leagueId = repository.save(new League("League", Collections.emptyList())).getId();
 
         // act
-        mvc.perform(get("/delete/" + leagueId)
+        mvc.perform(delete("/league/" + leagueId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
