@@ -4,7 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteria;
-import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.persistence.datalayer.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import io.micrometer.common.util.StringUtils;

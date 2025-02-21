@@ -5,7 +5,7 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
-import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.persistence.datalayer.FootballClubDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;

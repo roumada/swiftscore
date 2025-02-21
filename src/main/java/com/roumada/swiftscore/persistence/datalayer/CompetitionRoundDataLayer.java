@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.persistence;
+package com.roumada.swiftscore.persistence.datalayer;
 
 import com.roumada.swiftscore.model.organization.CompetitionRound;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;

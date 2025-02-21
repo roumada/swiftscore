@@ -4,7 +4,7 @@ import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteria;
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
 import com.roumada.swiftscore.model.mapper.FootballClubMapper;
-import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.persistence.datalayer.FootballClubDataLayer;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

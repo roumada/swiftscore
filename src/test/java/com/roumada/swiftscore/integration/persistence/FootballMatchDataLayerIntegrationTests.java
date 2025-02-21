@@ -3,7 +3,7 @@ package com.roumada.swiftscore.integration.persistence;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.match.FootballMatch;
-import com.roumada.swiftscore.persistence.FootballMatchDataLayer;
+import com.roumada.swiftscore.persistence.datalayer.FootballMatchDataLayer;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.persistence.repository.FootballMatchRepository;
 import org.apache.commons.collections4.CollectionUtils;

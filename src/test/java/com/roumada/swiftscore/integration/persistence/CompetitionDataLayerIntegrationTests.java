@@ -5,7 +5,7 @@ import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteria;
 import com.roumada.swiftscore.model.organization.Competition;
-import com.roumada.swiftscore.persistence.CompetitionDataLayer;
+import com.roumada.swiftscore.persistence.datalayer.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.FootballClubRepository;
 import com.roumada.swiftscore.util.CompetitionTestUtils;

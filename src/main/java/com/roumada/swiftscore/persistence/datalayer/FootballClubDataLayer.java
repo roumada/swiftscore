@@ -1,4 +1,4 @@
-package com.roumada.swiftscore.persistence;
+package com.roumada.swiftscore.persistence.datalayer;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.model.FootballClub;

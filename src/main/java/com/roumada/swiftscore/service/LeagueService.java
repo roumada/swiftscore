@@ -6,6 +6,7 @@ import com.roumada.swiftscore.model.dto.request.CreateLeagueCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
 import com.roumada.swiftscore.model.organization.league.League;
 import com.roumada.swiftscore.model.organization.league.LeagueSeason;
+import com.roumada.swiftscore.persistence.datalayer.LeagueDataLayer;
 import io.vavr.control.Either;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 public class LeagueService {
 
     private final CompetitionService competitionService;
+    private final LeagueDataLayer leagueDataLayer;
 
     public Either<ErrorResponse, League> createFromRequest(CreateLeagueRequest leagueRequest) {
         var errors = new ArrayList<String>();
@@ -36,7 +38,8 @@ public class LeagueService {
         }
 
         var leagueSeason = new LeagueSeason("", createdCompetitionIds);
-        return Either.right(new League(leagueRequest.name(), List.of(leagueSeason)));
+        var league = new League(leagueRequest.name(), List.of(leagueSeason));
+        return Either.right(leagueDataLayer.save(league));
     }
 
     private CreateCompetitionRequest map(CreateLeagueRequest leagueRequest,

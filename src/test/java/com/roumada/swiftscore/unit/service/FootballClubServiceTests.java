@@ -5,7 +5,7 @@ import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteria;
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
-import com.roumada.swiftscore.persistence.FootballClubDataLayer;
+import com.roumada.swiftscore.persistence.datalayer.FootballClubDataLayer;
 import com.roumada.swiftscore.service.FootballClubService;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.junit.jupiter.api.DisplayName;

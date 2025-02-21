@@ -1,7 +1,7 @@
 package com.roumada.swiftscore.unit.service;
 
 import com.roumada.swiftscore.model.organization.CompetitionRound;
-import com.roumada.swiftscore.persistence.CompetitionRoundDataLayer;
+import com.roumada.swiftscore.persistence.datalayer.CompetitionRoundDataLayer;
 import com.roumada.swiftscore.service.CompetitionRoundService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

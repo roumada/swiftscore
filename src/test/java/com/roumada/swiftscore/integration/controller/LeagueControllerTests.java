@@ -8,6 +8,7 @@ import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
 import com.roumada.swiftscore.model.organization.league.League;
+import com.roumada.swiftscore.persistence.repository.LeagueRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,9 +18,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueCompetitionRequests;
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueRequest;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +33,8 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
     private final ObjectMapper objectMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
+    @Autowired
+    private LeagueRepository repository;
     @Autowired
     private MockMvc mvc;
 
@@ -114,5 +120,40 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
         // assert
         var errors = objectMapper.readValue(response, ErrorResponse.class);
         assertThat(errors.requestErrors()).contains(errorMsg);
+    }
+
+    @Test
+    @DisplayName("Find league by ID - should find")
+    void findLeagueById_shouldFind() throws Exception {
+        // arrange
+        var leagueId = repository.save(new League("League", Collections.emptyList())).getId();
+
+        // act
+        var response = mvc.perform(get("/search/" + leagueId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        var result = objectMapper.readValue(response, League.class);
+        assertThat(result.getId()).isEqualTo(leagueId);
+    }
+
+
+    @Test
+    @DisplayName("Find league by ID - invalid ID - should return error message")
+    void findLeagueById_invalidId_shouldReturnErrorMessage() throws Exception {
+        // arrange
+        var invalidId = 999;
+
+        // act
+        var response = mvc.perform(get("/search/" + invalidId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        var result = objectMapper.readValue(response, ErrorResponse.class);
+        assertThat(result.requestErrors()).contains("aaa");
     }
 }
