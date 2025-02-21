@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @ValidCreateLeagueRequest
@@ -22,4 +23,10 @@ public record CreateLeagueRequest(
         @Size(min = 2, message = "League must have at least two competition defined")
         List<CreateLeagueCompetitionRequest> competitions
 ) implements StartEndStringDates {
+
+    public String determineSeason(){
+        return LocalDate.parse(startDate).getYear() == LocalDate.parse(endDate).getYear() ? String.valueOf(LocalDate.parse(startDate).getYear()) :
+                "%s/%s".formatted(LocalDate.parse(startDate).getYear(), LocalDate.parse(endDate).getYear());
+    }
+
 }

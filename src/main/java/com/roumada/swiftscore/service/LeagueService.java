@@ -39,7 +39,7 @@ public class LeagueService {
             return Either.left(new ErrorResponse(errors));
         }
 
-        var leagueSeason = new LeagueSeason(leagueRequest.name(), createdCompetitionIds);
+        var leagueSeason = new LeagueSeason(leagueRequest.determineSeason(), createdCompetitionIds);
         var league = new League(leagueRequest.name(), List.of(leagueSeason));
         return Either.right(leagueDataLayer.save(league));
     }
