@@ -1,6 +1,5 @@
 package com.roumada.swiftscore.service;
 
-import com.roumada.swiftscore.util.Messages;
 import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
@@ -9,14 +8,15 @@ import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteria;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequest;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.CompetitionRound;
-import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.datalayer.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.datalayer.CompetitionRoundDataLayer;
 import com.roumada.swiftscore.persistence.datalayer.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.datalayer.FootballMatchDataLayer;
 import com.roumada.swiftscore.persistence.sequence.PrimarySequenceService;
+import com.roumada.swiftscore.util.Messages;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +87,42 @@ public class CompetitionService {
         return Either.right(competition);
     }
 
+    public Either<String, Competition> generateAndSave(CreateCompetitionRequest dto, List<Long> excludedClubIds) {
+        if (dto.participantsAmount() % 2 == 1) {
+            var errorMsg = Messages.COMPETITION_CANNOT_GENERATE_CLUB_AMT_MUST_BE_EVEN.format();
+            log.error(errorMsg);
+            return Either.left(errorMsg);
+        }
+
+        var findClubsResult = findClubs(dto, excludedClubIds);
+        if (findClubsResult.isLeft()) {
+            log.error(findClubsResult.getLeft());
+            return Either.left(findClubsResult.getLeft());
+        }
+
+        var creationResult = CompetitionCreator.createFromRequest(dto, findClubsResult.get());
+        if (creationResult.isLeft()) {
+            return Either.left(creationResult.getLeft());
+        }
+        Long compId = sequenceService.getNextValue();
+        Competition competition = creationResult.get();
+        competition.setId(compId);
+
+        for (CompetitionRound round : competition.getRounds()) {
+            Long roundId = sequenceService.getNextValue();
+            for (FootballMatch match : round.getMatches()) {
+                match.setCompetitionId(compId);
+                match.setCompetitionRoundId(roundId);
+                footballMatchDataLayer.save(match);
+            }
+            round.setCompetitionId(compId);
+            round.setId(roundId);
+            competitionRoundDataLayer.save(round);
+        }
+
+        competitionDataLayer.save(competition);
+        return Either.right(competition);
+    }
 
     public Either<String, List<CompetitionRound>> simulate(Competition competition, int times) {
         if (competition.isFullySimulated()) {
@@ -135,6 +171,32 @@ public class CompetitionService {
 
         clubs.addAll(footballClubDataLayer
                 .findByIdNotInAndCountryIn(dto.participantIds(), dto.country(), dto.participants() - dto.participantIds().size()));
+        return clubs.size() == dto.participantsAmount() ?
+                Either.right(clubs) :
+                Either.left(Messages.FOOTBALL_CLUBS_NOT_ENOUGH_CLUBS_FROM_COUNTRY.format());
+    }
+
+    private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequest dto, List<Long> excludedClubIds) {
+        List<FootballClub> clubs = new ArrayList<>();
+
+        if (dto.participantIds() != null) {
+            clubs = new ArrayList<>(footballClubDataLayer.findAllByIdAndCountry(dto.participantIds(), dto.country()));
+
+            if (clubs.size() != dto.participantIds().size()) {
+                return Either.left(Messages.FOOTBALL_CLUBS_COULDNT_RETRIEVE_ALL_FROM_IDS.format());
+            }
+
+            if (dto.participants() <= dto.participantIds().size()) {
+                log.info(Messages.FOOTBALL_CLUBS_PARTICIPANTS_AMT_LOWER_THAN_FCIDS
+                        .format(dto.participants(), dto.participantIds().size()));
+                return Either.right(clubs);
+            }
+        }
+
+        excludedClubIds.addAll(dto.participantIds());
+
+        clubs.addAll(footballClubDataLayer
+                .findByIdNotInAndCountryIn(excludedClubIds, dto.country(), dto.participants() - dto.participantIds().size()));
         return clubs.size() == dto.participantsAmount() ?
                 Either.right(clubs) :
                 Either.left(Messages.FOOTBALL_CLUBS_NOT_ENOUGH_CLUBS_FROM_COUNTRY.format());
@@ -211,4 +273,6 @@ public class CompetitionService {
             default -> Page.empty();
         };
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.ErrorResponse;
+import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
 import com.roumada.swiftscore.model.organization.league.League;
@@ -26,12 +27,17 @@ public class LeagueService {
     public Either<ErrorResponse, League> createFromRequest(CreateLeagueRequest leagueRequest) {
         var errors = new ArrayList<String>();
         var createdCompetitionIds = new ArrayList<Long>();
+        var participatingClubIds = new ArrayList<Long>();
 
         for (CreateLeagueCompetitionRequest competitionRequest : leagueRequest.competitions()) {
-            var generationResult = competitionService.generateAndSave(fromMergedRequests(leagueRequest, competitionRequest));
+            var generationResult = competitionService.generateAndSave(fromMergedRequests(leagueRequest, competitionRequest), participatingClubIds);
             generationResult.fold(
                     errors::add,
-                    competition -> createdCompetitionIds.add(competition.getId())
+                    competition -> {
+                        createdCompetitionIds.add(competition.getId());
+                        participatingClubIds.addAll(competition.getParticipants().stream().map(FootballClub::getId).toList());
+                        return competition;
+                    }
             );
         }
 
