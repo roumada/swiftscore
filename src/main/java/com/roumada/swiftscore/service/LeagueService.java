@@ -30,6 +30,10 @@ public class LeagueService {
         var participatingClubIds = new ArrayList<Long>();
 
         for (CreateLeagueCompetitionRequest competitionRequest : leagueRequest.competitions()) {
+            participatingClubIds.addAll(competitionRequest.participantIds());
+        }
+
+        for (CreateLeagueCompetitionRequest competitionRequest : leagueRequest.competitions()) {
             var generationResult = competitionService.generateAndSave(fromMergedRequests(leagueRequest, competitionRequest), participatingClubIds);
             generationResult.fold(
                     errors::add,

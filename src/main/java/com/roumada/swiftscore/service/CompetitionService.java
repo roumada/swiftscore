@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -51,40 +52,7 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CreateCompetitionRequest dto) {
-        if (dto.participantsAmount() % 2 == 1) {
-            var errorMsg = Messages.COMPETITION_CANNOT_GENERATE_CLUB_AMT_MUST_BE_EVEN.format();
-            log.error(errorMsg);
-            return Either.left(errorMsg);
-        }
-
-        var findClubsResult = findClubs(dto);
-        if (findClubsResult.isLeft()) {
-            log.error(findClubsResult.getLeft());
-            return Either.left(findClubsResult.getLeft());
-        }
-
-        var creationResult = CompetitionCreator.createFromRequest(dto, findClubsResult.get());
-        if (creationResult.isLeft()) {
-            return Either.left(creationResult.getLeft());
-        }
-        Long compId = sequenceService.getNextValue();
-        Competition competition = creationResult.get();
-        competition.setId(compId);
-
-        for (CompetitionRound round : competition.getRounds()) {
-            Long roundId = sequenceService.getNextValue();
-            for (FootballMatch match : round.getMatches()) {
-                match.setCompetitionId(compId);
-                match.setCompetitionRoundId(roundId);
-                footballMatchDataLayer.save(match);
-            }
-            round.setCompetitionId(compId);
-            round.setId(roundId);
-            competitionRoundDataLayer.save(round);
-        }
-
-        competitionDataLayer.save(competition);
-        return Either.right(competition);
+        return generateAndSave(dto, Collections.emptyList());
     }
 
     public Either<String, Competition> generateAndSave(CreateCompetitionRequest dto, List<Long> excludedClubIds) {
@@ -152,30 +120,6 @@ public class CompetitionService {
         log.info(Messages.COMPETITION_SIMULATED.format(competition.getId()));
     }
 
-    private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequest dto) {
-        List<FootballClub> clubs = new ArrayList<>();
-
-        if (dto.participantIds() != null) {
-            clubs = new ArrayList<>(footballClubDataLayer.findAllByIdAndCountry(dto.participantIds(), dto.country()));
-
-            if (clubs.size() != dto.participantIds().size()) {
-                return Either.left(Messages.FOOTBALL_CLUBS_COULDNT_RETRIEVE_ALL_FROM_IDS.format());
-            }
-
-            if (dto.participants() <= dto.participantIds().size()) {
-                log.info(Messages.FOOTBALL_CLUBS_PARTICIPANTS_AMT_LOWER_THAN_FCIDS
-                        .format(dto.participants(), dto.participantIds().size()));
-                return Either.right(clubs);
-            }
-        }
-
-        clubs.addAll(footballClubDataLayer
-                .findByIdNotInAndCountryIn(dto.participantIds(), dto.country(), dto.participants() - dto.participantIds().size()));
-        return clubs.size() == dto.participantsAmount() ?
-                Either.right(clubs) :
-                Either.left(Messages.FOOTBALL_CLUBS_NOT_ENOUGH_CLUBS_FROM_COUNTRY.format());
-    }
-
     private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequest dto, List<Long> excludedClubIds) {
         List<FootballClub> clubs = new ArrayList<>();
 
@@ -193,10 +137,12 @@ public class CompetitionService {
             }
         }
 
-        excludedClubIds.addAll(dto.participantIds());
+        List<Long> excludedTotalIds = new ArrayList<>();
+        excludedTotalIds.addAll(excludedClubIds);
+        excludedTotalIds.addAll((dto.participantIds()));
 
         clubs.addAll(footballClubDataLayer
-                .findByIdNotInAndCountryIn(excludedClubIds, dto.country(), dto.participants() - dto.participantIds().size()));
+                .findByIdNotInAndCountryIn(excludedTotalIds, dto.country(), dto.participants() - dto.participantIds().size()));
         return clubs.size() == dto.participantsAmount() ?
                 Either.right(clubs) :
                 Either.left(Messages.FOOTBALL_CLUBS_NOT_ENOUGH_CLUBS_FROM_COUNTRY.format());

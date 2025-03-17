@@ -16,12 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueCompetitionRequests;
 import static com.roumada.swiftscore.util.LeagueTestUtils.getEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,8 +44,10 @@ class LeagueServiceTests {
         var leagueId = 10L;
         Competition c1 = Competition.builder().build();
         c1.setId(c1id);
+        c1.setParticipants(Collections.emptyList());
         Competition c2 = Competition.builder().build();
         c2.setId(c2id);
+        c2.setParticipants(Collections.emptyList());
         var leagueRequest = new CreateLeagueRequest(
                 "Name",
                 CountryCode.GB,
@@ -53,22 +56,23 @@ class LeagueServiceTests {
                 getCreateLeagueCompetitionRequests(4, 6)
         );
 
-        when(competitionService.generateAndSave(new CreateCompetitionRequest(
-                leagueRequest.competitions().get(0).name(),
-                leagueRequest.countryCode(),
-                leagueRequest.startDate(),
-                leagueRequest.endDate(),
-                leagueRequest.competitions().get(0).competitionParameters(),
-                leagueRequest.competitions().get(0).simulationParameters()
-        ))).thenReturn(Either.right(c1));
-        when(competitionService.generateAndSave(new CreateCompetitionRequest(
-                leagueRequest.competitions().get(1).name(),
-                leagueRequest.countryCode(),
-                leagueRequest.startDate(),
-                leagueRequest.endDate(),
-                leagueRequest.competitions().get(1).competitionParameters(),
-                leagueRequest.competitions().get(1).simulationParameters()
-        ))).thenReturn(Either.right(c2));
+        when(competitionService.generateAndSave(eq(new CreateCompetitionRequest(
+                        leagueRequest.competitions().get(0).name(),
+                        leagueRequest.countryCode(),
+                        leagueRequest.startDate(),
+                        leagueRequest.endDate(),
+                        leagueRequest.competitions().get(0).competitionParameters(),
+                        leagueRequest.competitions().get(0).simulationParameters())),
+                anyList())).thenReturn(Either.right(c1));
+        when(competitionService.generateAndSave(
+                eq(new CreateCompetitionRequest(
+                        leagueRequest.competitions().get(1).name(),
+                        leagueRequest.countryCode(),
+                        leagueRequest.startDate(),
+                        leagueRequest.endDate(),
+                        leagueRequest.competitions().get(1).competitionParameters(),
+                        leagueRequest.competitions().get(1).simulationParameters())),
+                anyList())).thenReturn(Either.right(c2));
         when(dataLayer.save(any())).thenAnswer(invocation -> {
             League league = invocation.getArgument(0);
             league.setId(leagueId);
@@ -99,22 +103,22 @@ class LeagueServiceTests {
                 "2020-06-01",
                 getCreateLeagueCompetitionRequests(4, 6)
         );
-        when(competitionService.generateAndSave(new CreateCompetitionRequest(
+        when(competitionService.generateAndSave(eq(new CreateCompetitionRequest(
                 leagueRequest.competitions().get(0).name(),
                 leagueRequest.countryCode(),
                 leagueRequest.startDate(),
                 leagueRequest.endDate(),
                 leagueRequest.competitions().get(0).competitionParameters(),
                 leagueRequest.competitions().get(0).simulationParameters()
-        ))).thenReturn(Either.left(errorMsg1));
-        when(competitionService.generateAndSave(new CreateCompetitionRequest(
+        )), anyList())).thenReturn(Either.left(errorMsg1));
+        when(competitionService.generateAndSave(eq(new CreateCompetitionRequest(
                 leagueRequest.competitions().get(1).name(),
                 leagueRequest.countryCode(),
                 leagueRequest.startDate(),
                 leagueRequest.endDate(),
                 leagueRequest.competitions().get(1).competitionParameters(),
                 leagueRequest.competitions().get(1).simulationParameters()
-        ))).thenReturn(Either.left(errorMsg2));
+        )), anyList())).thenReturn(Either.left(errorMsg2));
 
         // act
         var result = service.createFromRequest(leagueRequest);

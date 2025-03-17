@@ -42,7 +42,7 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
     void createLeagueWithTwoCompetitions_shouldCreate() throws Exception {
         // arrange
         loadFootballClubs();
-        var request = getCreateLeagueRequest(4, 6);
+        var request = getCreateLeagueRequest(4, 2);
 
         // act
         var response = mvc.perform(post("/league")
