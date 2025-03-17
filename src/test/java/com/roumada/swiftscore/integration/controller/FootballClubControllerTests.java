@@ -40,7 +40,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @DisplayName("Create football club - with valid values - should save")
     void createFootballClub_validValues_shouldSave() throws Exception {
         // arrange
-        var dto = new CreateFootballClubRequest("FC1", CountryCode.GB, "", 0.5f);
+        var dto = new CreateFootballClubRequest("FC1", CountryCode.GB, "A", 0.5f);
 
         // act
         var response = mvc.perform(post("/footballclub").contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +57,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
     @CsvSource({
             ", 'GB', 'stadiumName', 0.5,          'Name cannot be null'",
             "'name', , 'stadiumName', 0.5,          'Country cannot be null'",
-            "'name', GB, , 0.5,                   'Stadium name cannot be null'",
+            "'name', GB, , 0.5,                   'Stadium name cannot be empty'",
             "'name', GB, 'stadiumName', -0.01,      'Victory chance cannot be lower than 0'",
             "'name', GB, 'stadiumName', 1.001,      'Victory chance cannot be greater than 1'",
     })

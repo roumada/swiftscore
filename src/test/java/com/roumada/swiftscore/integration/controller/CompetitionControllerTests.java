@@ -303,7 +303,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
         // act
         var response = mvc.perform(post("/competition")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequest("",
+                        .content(objectMapper.writeValueAsString(new CreateCompetitionRequest("A",
                                 CountryCode.GB,
                                 startDate,
                                 endDate,
@@ -318,7 +318,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Create competition - with null name - should return error code")
+    @DisplayName("Create competition - with empty name - should return error code")
     void createCompetition_withNullName_shouldReturnErrorCode() throws Exception {
         // arrange
         footballClubRepository.saveAll(FootballClubTestUtils.getFourFootballClubs(false));
@@ -337,7 +337,7 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         JSONArray validationErrors = new JSONObject(response).getJSONArray("requestErrors");
-        assertThat(validationErrors.get(0)).isEqualTo("Name cannot be null");
+        assertThat(validationErrors.get(0)).isEqualTo("Name cannot be empty");
     }
 
     @ParameterizedTest

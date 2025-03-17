@@ -8,6 +8,7 @@ import com.roumada.swiftscore.model.dto.CompetitionParameters;
 import com.roumada.swiftscore.model.dto.StartEndStringDates;
 import com.roumada.swiftscore.validation.annotation.ValidCreateCompetitionRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -18,13 +19,13 @@ import java.util.List;
 @JsonSerialize
 @ValidCreateCompetitionRequest
 public record CreateCompetitionRequest(
-        @NotNull(message = "Name cannot be null")
+        @NotEmpty(message = "Name cannot be empty")
         String name,
         @NotNull(message = "Country code cannot be null")
         CountryCode country,
-        @NotNull(message = "Start date cannot be null")
+        @NotEmpty(message = "Start date cannot be empty")
         String startDate,
-        @NotNull(message = "End date cannot be null")
+        @NotEmpty(message = "End date cannot be empty")
         String endDate,
         @NotNull(message = "Competition parameters cannot be null")
         CompetitionParameters competitionParameters,

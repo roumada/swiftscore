@@ -5,16 +5,17 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.neovisionaries.i18n.CountryCode;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
 public record CreateFootballClubRequest(
-        @NotNull(message = "Name cannot be null")
+        @NotEmpty(message = "Name cannot be empty")
         String name,
         @NotNull(message = "Country cannot be null")
         CountryCode country,
-        @NotNull(message = "Stadium name cannot be null")
+        @NotEmpty(message = "Stadium name cannot be empty")
         String stadiumName,
         @DecimalMin(value = "0.0", message = "Victory chance cannot be lower than 0")
         @DecimalMax(value = "1.0", message = "Victory chance cannot be greater than 1")
