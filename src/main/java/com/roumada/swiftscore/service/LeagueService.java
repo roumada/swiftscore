@@ -25,16 +25,23 @@ public class LeagueService {
     private final LeagueDataLayer leagueDataLayer;
 
     public Either<ErrorResponse, League> createFromRequest(CreateLeagueRequest leagueRequest) {
+        if(participantIdsAreNotUnique(leagueRequest))
+            return Either.left(new ErrorResponse(List.of(Messages.LEAGUE_DUPLICATED_PARTICIPANT_IDS.format())));
+
         var errors = new ArrayList<String>();
         var createdCompetitionIds = new ArrayList<Long>();
         var participatingClubIds = new ArrayList<Long>();
+
 
         for (CreateLeagueCompetitionRequest competitionRequest : leagueRequest.competitions()) {
             participatingClubIds.addAll(competitionRequest.participantIds());
         }
 
         for (CreateLeagueCompetitionRequest competitionRequest : leagueRequest.competitions()) {
-            var generationResult = competitionService.generateAndSave(fromMergedRequests(leagueRequest, competitionRequest), participatingClubIds);
+            var generationResult = competitionService.generateAndSave(
+                    fromMergedRequests(leagueRequest, competitionRequest),
+                    participatingClubIds);
+
             generationResult.fold(
                     errors::add,
                     competition -> {
@@ -63,5 +70,16 @@ public class LeagueService {
 
     public void deleteById(long id) {
         leagueDataLayer.deleteById(id);
+    }
+
+    private boolean participantIdsAreNotUnique(CreateLeagueRequest leagueRequest) {
+        var total = leagueRequest.competitions().stream()
+                .mapToInt(a -> a.participantIds().size())
+                .sum();
+        var distinct = leagueRequest.competitions().stream()
+                .flatMap(a -> a.participantIds().stream())
+                .distinct()
+                .count();
+        return total != distinct;
     }
 }

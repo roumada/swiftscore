@@ -12,6 +12,7 @@ public enum Messages {
             "Participants parameter [%s] lower than amount of club IDs provided ([%s]). Returning clubs with denoted club IDs only."),
 
     LEAGUE_NOT_FOUND("Competition with ID [%s] not found."),
+    LEAGUE_DUPLICATED_PARTICIPANT_IDS("Participant IDs for some of the competition requests are duplicated."),
 
     COMPETITION_SIMULATED("Competition with id [%s] simulated."),
     COMPETITION_SIMULATED_UNTIL_END("Attempting to simulate a competition [%s] times while the competition has only [%s] rounds left. Simulating the entire competition."),
@@ -20,7 +21,6 @@ public enum Messages {
             "New relegation spots amount [%s] exceeds amount of participants in competition [%s] by at least two."),
     COMPETITION_CANNOT_SIMULATE("Cannot simulate competition [%s] further."),
     COMPETITION_CANNOT_GENERATE_CLUB_AMT_MUST_BE_EVEN("The amount of clubs participating must be even.");
-
     private final String message;
 
     Messages(String message) {
