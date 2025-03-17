@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.CompetitionParameters;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonSerialize
 public record CreateLeagueCompetitionRequest(
-        @NotNull(message = "Name cannot be null")
+        @NotEmpty(message = "Name cannot be empty")
         String name,
         @NotNull(message = "Competition parameters cannot be null")
         CompetitionParameters competitionParameters,
