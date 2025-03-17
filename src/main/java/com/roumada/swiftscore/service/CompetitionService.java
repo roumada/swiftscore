@@ -1,6 +1,5 @@
 package com.roumada.swiftscore.service;
 
-import com.roumada.swiftscore.util.Messages;
 import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
@@ -9,14 +8,15 @@ import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteria;
 import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.UpdateCompetitionRequest;
+import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.CompetitionRound;
-import com.roumada.swiftscore.model.match.FootballMatch;
 import com.roumada.swiftscore.persistence.datalayer.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.datalayer.CompetitionRoundDataLayer;
 import com.roumada.swiftscore.persistence.datalayer.FootballClubDataLayer;
 import com.roumada.swiftscore.persistence.datalayer.FootballMatchDataLayer;
 import com.roumada.swiftscore.persistence.sequence.PrimarySequenceService;
+import com.roumada.swiftscore.util.Messages;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -51,13 +52,17 @@ public class CompetitionService {
     }
 
     public Either<String, Competition> generateAndSave(CreateCompetitionRequest dto) {
+        return generateAndSave(dto, Collections.emptyList());
+    }
+
+    public Either<String, Competition> generateAndSave(CreateCompetitionRequest dto, List<Long> excludedClubIds) {
         if (dto.participantsAmount() % 2 == 1) {
             var errorMsg = Messages.COMPETITION_CANNOT_GENERATE_CLUB_AMT_MUST_BE_EVEN.format();
             log.error(errorMsg);
             return Either.left(errorMsg);
         }
 
-        var findClubsResult = findClubs(dto);
+        var findClubsResult = findClubs(dto, excludedClubIds);
         if (findClubsResult.isLeft()) {
             log.error(findClubsResult.getLeft());
             return Either.left(findClubsResult.getLeft());
@@ -87,7 +92,6 @@ public class CompetitionService {
         return Either.right(competition);
     }
 
-
     public Either<String, List<CompetitionRound>> simulate(Competition competition, int times) {
         if (competition.isFullySimulated()) {
             String errorMsg = Messages.COMPETITION_CANNOT_SIMULATE.format(competition.getId());
@@ -116,7 +120,7 @@ public class CompetitionService {
         log.info(Messages.COMPETITION_SIMULATED.format(competition.getId()));
     }
 
-    private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequest dto) {
+    private Either<String, List<FootballClub>> findClubs(CreateCompetitionRequest dto, List<Long> excludedClubIds) {
         List<FootballClub> clubs = new ArrayList<>();
 
         if (dto.participantIds() != null) {
@@ -133,8 +137,12 @@ public class CompetitionService {
             }
         }
 
+        List<Long> excludedTotalIds = new ArrayList<>();
+        excludedTotalIds.addAll(excludedClubIds);
+        excludedTotalIds.addAll((dto.participantIds()));
+
         clubs.addAll(footballClubDataLayer
-                .findByIdNotInAndCountryIn(dto.participantIds(), dto.country(), dto.participants() - dto.participantIds().size()));
+                .findByIdNotInAndCountryIn(excludedTotalIds, dto.country(), dto.participants() - dto.participantIds().size()));
         return clubs.size() == dto.participantsAmount() ?
                 Either.right(clubs) :
                 Either.left(Messages.FOOTBALL_CLUBS_NOT_ENOUGH_CLUBS_FROM_COUNTRY.format());
@@ -211,4 +219,6 @@ public class CompetitionService {
             default -> Page.empty();
         };
     }
+
+
 }

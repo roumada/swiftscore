@@ -252,6 +252,59 @@ class CompetitionServiceTests {
         assertEquals("Couldn't find enough clubs from given country to fill in the league.", optionalComp.getLeft());
     }
 
+    @Test
+    @DisplayName("Generate competition - with excluded club IDs - should generate")
+    void generateCompetition_withExcludedClubIds_shouldGenerate(){
+        var excluded = List.of(1000L, 10001L);
+        when(fcdl.findByIdNotInAndCountryIn(excluded, GB, 4)).thenReturn(FootballClubTestUtils.getFourFootballClubs(false));
+        var dto = new CreateCompetitionRequest("",
+                GB,
+                "2025-01-01",
+                "2025-12-30",
+                new CompetitionParameters(4, null, 0),
+                new SimulationParameters(0));
+
+        // act
+        var optionalComp = service.generateAndSave(dto, excluded);
+
+        // assert
+        assertTrue(optionalComp.isRight());
+        var comp = optionalComp.get();
+        Long compId = comp.getId();
+        assertNotNull(comp.getId());
+        assertEquals(FootballClubTestUtils.getFourFootballClubs(false), comp.getParticipants());
+        for (CompetitionRound cr : comp.getRounds()) {
+            assertNotNull(cr.getId());
+            assertEquals(cr.getCompetitionId(), compId);
+            for (FootballMatch fm : cr.getMatches()) {
+                assertNotNull(fm.getCompetitionId());
+                assertEquals(fm.getCompetitionId(), compId);
+                assertNotNull(fm.getCompetitionRoundId());
+                assertEquals(fm.getCompetitionRoundId(), cr.getId());
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Generate competition - with excluded club IDs, not enough clubs - should return error code")
+    void generateCompetition_withExcludedClubIdsAndNotEnoughClubs_shouldReturnErrorMsg(){
+        var excluded = List.of(1000L, 10001L);
+        when(fcdl.findByIdNotInAndCountryIn(excluded, GB, 4)).thenReturn(FootballClubTestUtils.getTwoFootballClubs());
+        var dto = new CreateCompetitionRequest("",
+                GB,
+                "2025-01-01",
+                "2025-12-30",
+                new CompetitionParameters(4, null, 0),
+                new SimulationParameters(0));
+
+        // act
+        var optionalComp = service.generateAndSave(dto, excluded);
+
+        // assert
+        assertTrue(optionalComp.isLeft());
+        assertEquals("Couldn't find enough clubs from given country to fill in the league.", optionalComp.getLeft());
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {1, 2})
     @DisplayName("Simulate competition - for a competition with four clubs - " +
