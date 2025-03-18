@@ -6,14 +6,19 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.ErrorResponse;
+import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.CompetitionParameters;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
+import com.roumada.swiftscore.model.dto.response.CompetitionResponse;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.league.League;
+import com.roumada.swiftscore.model.organization.league.LeagueSeason;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
+import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.LeagueRepository;
+import com.roumada.swiftscore.util.CompetitionTestUtils;
 import com.roumada.swiftscore.util.LeagueTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,6 +47,8 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
             .build();
     @Autowired
     private LeagueRepository repository;
+    @Autowired
+    private CompetitionRoundRepository competitionRoundRepository;
     @Autowired
     private CompetitionRepository competitionRepository;
     @Autowired
@@ -354,5 +361,25 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
         // assert
         var result = objectMapper.readValue(response, ErrorResponse.class);
         assertThat(result.requestErrors()).contains("League with ID [%s] not found.".formatted(invalidId));
+    }
+
+    @Test
+    @DisplayName("Start new league season - should start new season")
+    void startNewLeagueSeason_shouldStart() throws Exception {
+        // arrange
+        loadCompetitionsWithFcs();
+        List<Competition> comps = getCompetitionsForCountry(GB, 2);
+        comps.get(0).setLastSimulatedRound(comps.get(0).getRounds().size());
+        comps.get(1).setLastSimulatedRound(comps.get(1).getRounds().size());
+        var leagueId = repository.save(LeagueTestUtils.getForCompetitions(comps)).getId();
+
+        // act
+        var response = mvc.perform(post("/league/%s/advance".formatted(leagueId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        var dto = objectMapper.readValue(response, League.class);
     }
 }
