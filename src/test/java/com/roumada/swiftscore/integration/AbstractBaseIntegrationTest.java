@@ -57,12 +57,16 @@ public abstract class AbstractBaseIntegrationTest {
         dataLoader.saveCompetitions();
     }
 
-    protected Competition loadCompetitionWithFcs(){
+    protected Competition loadCompetitionWithFcs() {
         loadFootballClubs();
         return dataLoader.saveCompetition();
     }
 
-    protected List<Long> getFootballClubIdsForCountry(CountryCode countryCode, int size){
+    protected List<Competition> getCompetitionsForCountry(CountryCode countryCode, int size) {
+        return competitionRepository.findByCountry(countryCode, Pageable.ofSize(size)).getContent();
+    }
+
+    protected List<Long> getFootballClubIdsForCountry(CountryCode countryCode, int size) {
         return footballClubRepository.findByCountry(countryCode, Pageable.ofSize(size)).getContent().stream()
                 .map(FootballClub::getId).toList();
     }
