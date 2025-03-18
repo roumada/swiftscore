@@ -10,8 +10,11 @@ import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.CompetitionParameters;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
+import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.league.League;
+import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.LeagueRepository;
+import com.roumada.swiftscore.util.LeagueTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
+import static com.neovisionaries.i18n.CountryCode.GB;
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueCompetitionRequests;
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueRequest;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +42,8 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
             .build();
     @Autowired
     private LeagueRepository repository;
+    @Autowired
+    private CompetitionRepository competitionRepository;
     @Autowired
     private MockMvc mvc;
 
@@ -86,10 +92,10 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
     void createLeagueWithTwoCompetitions_uniqueParticipantIds_shouldCreate() throws Exception {
         // arrange
         loadFootballClubs();
-        var participantIds = getFootballClubIdsForCountry(CountryCode.GB, 4);
+        var participantIds = getFootballClubIdsForCountry(GB, 4);
         var request = new CreateLeagueRequest(
                 "League",
-                CountryCode.GB,
+                GB,
                 "2020-08-01",
                 "2021-06-01",
                 List.of(new CreateLeagueCompetitionRequest(
@@ -121,10 +127,10 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
     void createLeagueWithTwoCompetitions_duplicatedParticipantIds_shouldReturnErrorMessage() throws Exception {
         // arrange
         loadFootballClubs();
-        var participantIds = List.of(getFootballClubIdsForCountry(CountryCode.GB, 1).get(0));
+        var participantIds = List.of(getFootballClubIdsForCountry(GB, 1).get(0));
         var request = new CreateLeagueRequest(
                 "League",
-                CountryCode.GB,
+                GB,
                 "2020-08-01",
                 "2021-06-01",
                 List.of(new CreateLeagueCompetitionRequest(
@@ -196,7 +202,7 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
         loadFootballClubs();
         var request = new CreateLeagueRequest(
                 "name",
-                CountryCode.GB,
+                GB,
                 startDate,
                 endDate,
                 getCreateLeagueCompetitionRequests(4, 6));
@@ -261,5 +267,92 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         assertThat(repository.findById(leagueId)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Simulate competitions within league - simulate once - should simulate properly")
+    void simulateLeague_once_shouldSimulate() throws Exception {
+        // arrange
+        loadCompetitionsWithFcs();
+        var comps = getCompetitionsForCountry(GB, 2);
+        var compIds = comps.stream().map(Competition::getId).toList();
+        long id = repository.save(LeagueTestUtils.getForCompetitions(comps)).getId();
+
+        // act
+        mvc.perform(post("/league/%s/simulate".formatted(id))
+                        .queryParam("times", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        // assert
+        comps = competitionRepository.findAllById(compIds);
+        assertThat(comps).isNotEmpty();
+        for (Competition c : comps) {
+            assertThat(c.getLastSimulatedRound()).isEqualTo(1);
+        }
+    }
+
+    @Test
+    @DisplayName("Simulate competitions within league - simulate enough times to simulate one league until end - should simulate properly")
+    void simulateLeague_simulateOneCompetitionUntilEnd_shouldSimulate() throws Exception {
+        // arrange
+        loadCompetitionsWithFcs();
+        var comps = getCompetitionsForCountry(GB, 2);
+        var compIds = comps.stream().map(Competition::getId).toList();
+        var times = Math.min(comps.get(0).getParticipants().size(), comps.get(1).getParticipants().size()) * 2 - 1;
+        long id = repository.save(LeagueTestUtils.getForCompetitions(comps)).getId();
+
+        // act
+        mvc.perform(post("/league/%s/simulate".formatted(id))
+                        .queryParam("times", String.valueOf(times))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        // assert
+        comps = competitionRepository.findAllById(compIds);
+        assertThat(comps).isNotEmpty();
+        var timesSimulated = comps.stream().map(Competition::getLastSimulatedRound).toList();
+        assertThat(timesSimulated).contains(times).contains(times - 1);
+        assertThat(comps.get(0).isFullySimulated() || comps.get(1).isFullySimulated()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Simulate competitions within league - simulate enough times to simulate oll until end - should simulate properly")
+    void simulateLeague_simulateAllUntilEnd_shouldSimulate() throws Exception {
+        // arrange
+        loadCompetitionsWithFcs();
+        var comps = getCompetitionsForCountry(GB, 2);
+        var compIds = comps.stream().map(Competition::getId).toList();
+        long id = repository.save(LeagueTestUtils.getForCompetitions(comps)).getId();
+
+        // act
+        mvc.perform(post("/league/%s/simulate".formatted(id))
+                        .queryParam("times", String.valueOf(20))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        // assert
+        comps = competitionRepository.findAllById(compIds);
+        assertThat(comps).isNotEmpty();
+        assertThat(comps.get(0).isFullySimulated()).isTrue();
+        assertThat(comps.get(1).isFullySimulated()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Simulate competitions within league - invalid ID - should return error code")
+    void simulateLeague_invalidId_shouldReturnErrorCode() throws Exception {
+        // arrange
+        var invalidId = 999;
+
+        // act
+        var response = mvc.perform(post("/league/%s/simulate".formatted(invalidId))
+                        .queryParam("times", String.valueOf(1))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        var result = objectMapper.readValue(response, ErrorResponse.class);
+        assertThat(result.requestErrors()).contains("League with ID [%s] not found.".formatted(invalidId));
     }
 }

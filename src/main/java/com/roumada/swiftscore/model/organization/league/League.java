@@ -21,4 +21,8 @@ public class League {
         this.name = name;
         this.seasons = seasons;
     }
+
+    public LeagueSeason latestSeason(){
+        return seasons.get(seasons.size() - 1);
+    }
 }

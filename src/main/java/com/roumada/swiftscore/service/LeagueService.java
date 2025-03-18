@@ -4,8 +4,10 @@ import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
+import com.roumada.swiftscore.model.dto.response.LeagueSimulationResponse;
 import com.roumada.swiftscore.model.organization.league.League;
 import com.roumada.swiftscore.model.organization.league.LeagueSeason;
+import com.roumada.swiftscore.persistence.datalayer.CompetitionDataLayer;
 import com.roumada.swiftscore.persistence.datalayer.LeagueDataLayer;
 import com.roumada.swiftscore.util.Messages;
 import io.vavr.control.Either;
@@ -22,6 +24,7 @@ import static com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest.
 public class LeagueService {
 
     private final CompetitionService competitionService;
+    private final CompetitionDataLayer competitionDataLayer;
     private final LeagueDataLayer leagueDataLayer;
 
     public Either<ErrorResponse, League> createFromRequest(CreateLeagueRequest leagueRequest) {
@@ -81,5 +84,22 @@ public class LeagueService {
                 .distinct()
                 .count();
         return total != distinct;
+    }
+
+    public Either<ErrorResponse, LeagueSimulationResponse> simulate(long id, int times) {
+        var result = leagueDataLayer.findById(id);
+        if(result.isEmpty()) return Either.left(new ErrorResponse(List.of(Messages.LEAGUE_NOT_FOUND.format(id))));
+        var league = result.get();
+        var compIds = league.latestSeason().competitionIds();
+        List<Integer> timesSimulated = new ArrayList<>();
+
+        for(Long competitionId : compIds){
+            competitionService.simulate(competitionDataLayer.findCompetitionById(competitionId).get(), times).fold(
+                    error -> timesSimulated.add(0),
+                    rounds -> timesSimulated.add(rounds.size())
+            );
+        }
+
+        return Either.right(new LeagueSimulationResponse(league.getId(), compIds, timesSimulated));
     }
 }

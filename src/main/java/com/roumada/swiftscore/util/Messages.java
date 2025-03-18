@@ -11,7 +11,7 @@ public enum Messages {
     FOOTBALL_CLUBS_PARTICIPANTS_AMT_LOWER_THAN_FCIDS(
             "Participants parameter [%s] lower than amount of club IDs provided ([%s]). Returning clubs with denoted club IDs only."),
 
-    LEAGUE_NOT_FOUND("Competition with ID [%s] not found."),
+    LEAGUE_NOT_FOUND("League with ID [%s] not found."),
     LEAGUE_DUPLICATED_PARTICIPANT_IDS("Participant IDs for some of the competition requests are duplicated."),
 
     COMPETITION_SIMULATED("Competition with id [%s] simulated."),
