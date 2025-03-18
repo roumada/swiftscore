@@ -286,8 +286,8 @@ class CompetitionControllerTests extends AbstractBaseIntegrationTest {
 
     @ParameterizedTest
     @CsvSource({
-            "'2025-01-01', '',  'End date must be present'",
-            "'', 2025-01-01, 'Start date must be present'",
+            "'2025-01-01', '',  'End date cannot be empty'",
+            "'', 2025-01-01, 'Start date cannot be empty'",
             "2025--01-01, '2025-02-02', 'Unparsable data format for one of the dates (must be YYYY-MM-DD)'",
             "'2025-01-01', '2025-01-02', 'Competition needs at least 6 days for a competition with 4 clubs.'",
             "'2025-02-01', '2025-01-01', 'Start date cannot be ahead of end date'",

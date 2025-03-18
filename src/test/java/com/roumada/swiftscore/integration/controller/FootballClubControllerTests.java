@@ -55,7 +55,7 @@ class FootballClubControllerTests extends AbstractBaseIntegrationTest {
 
     @ParameterizedTest
     @CsvSource({
-            ", 'GB', 'stadiumName', 0.5,          'Name cannot be null'",
+            ", 'GB', 'stadiumName', 0.5,          'Name cannot be empty'",
             "'name', , 'stadiumName', 0.5,          'Country cannot be null'",
             "'name', GB, , 0.5,                   'Stadium name cannot be empty'",
             "'name', GB, 'stadiumName', -0.01,      'Victory chance cannot be lower than 0'",

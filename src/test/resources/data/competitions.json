@@ -10,7 +10,7 @@
       "drawTriggerChance": 0.3
     },
     "competitionParameters": {
-      "participants": 4,
+      "participants": 6,
       "relegationSpots": 1
     }
   },
@@ -25,7 +25,7 @@
       "drawTriggerChance": 0.3
     },
     "competitionParameters": {
-      "participants": 4,
+      "participants": 6,
       "relegationSpots": 1
     }
   },
@@ -40,7 +40,7 @@
       "drawTriggerChance": 0.3
     },
     "competitionParameters": {
-      "participants": 4,
+      "participants": 6,
       "relegationSpots": 1
     }
   },
