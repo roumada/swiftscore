@@ -1,6 +1,9 @@
 package com.roumada.swiftscore.service;
 
 import com.roumada.swiftscore.model.ErrorResponse;
+import com.roumada.swiftscore.model.FootballClub;
+import com.roumada.swiftscore.model.dto.request.CreateLeagueCompetitionRequest;
+import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
 import com.roumada.swiftscore.model.dto.response.CompetitionStandingsResponse;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.league.LeagueSeason;
@@ -13,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest.fromMergedRequests;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -22,6 +27,35 @@ public class LeagueSeasonService {
     private final StatisticsService statisticsService;
     private final FootballClubService footballClubService;
     private final CompetitionService competitionService;
+
+    public Either<ErrorResponse, LeagueSeason> generateNew(CreateLeagueRequest request) {
+        var errors = new ArrayList<String>();
+        var createdCompetitionIds = new ArrayList<Long>();
+        var participatingClubIds = new ArrayList<Long>();
+
+        for (CreateLeagueCompetitionRequest competitionRequest : request.competitions()) {
+            participatingClubIds.addAll(competitionRequest.participantIds());
+        }
+
+        for (CreateLeagueCompetitionRequest competitionRequest : request.competitions()) {
+            var generationResult = competitionService.generateAndSave(
+                    fromMergedRequests(request, competitionRequest),
+                    participatingClubIds);
+
+            generationResult.fold(
+                    errors::add,
+                    competition -> {
+                        createdCompetitionIds.add(competition.getId());
+                        participatingClubIds.addAll(competition.getParticipants().stream().map(FootballClub::getId).toList());
+                        return competition;
+                    }
+            );
+        }
+
+        return !errors.isEmpty() ?
+                Either.left(new ErrorResponse(errors)) :
+                Either.right(new LeagueSeason(request.determineSeason(), createdCompetitionIds));
+    }
 
     public Either<ErrorResponse, LeagueSeason> generateNext(LeagueSeason leagueSeason) {
         List<Competition> competitions = competitionDataLayer.findAllById(leagueSeason.competitionIds());
@@ -35,7 +69,7 @@ public class LeagueSeasonService {
         var participants = footballClubService.findAllById(getClubIdsForFirstCompetitionForNextSeason(standings.subList(0, 2)));
         comp.setParticipants(participants);
         var result = competitionService.generateFromConcluded(comp);
-        if(result.isLeft()){
+        if (result.isLeft()) {
             return Either.left(result.getLeft());
         } else {
             newCompetitionIds.add(result.get());
@@ -48,7 +82,7 @@ public class LeagueSeasonService {
                         getClubIdsForMiddleCompetitionsForNextSeason(standings.subList(i - 1, i + 2)));
                 comp.setParticipants(participants);
                 result = competitionService.generateFromConcluded(comp);
-                if(result.isLeft()){
+                if (result.isLeft()) {
                     return Either.left(result.getLeft());
                 } else {
                     newCompetitionIds.add(result.get());
@@ -61,7 +95,7 @@ public class LeagueSeasonService {
                 getClubIdsForLastCompetitionForNextSeason(standings.subList(competitions.size() - 2, competitions.size())));
         comp.setParticipants(participants);
         result = competitionService.generateFromConcluded(comp);
-        if(result.isLeft()){
+        if (result.isLeft()) {
             return Either.left(result.getLeft());
         } else {
             newCompetitionIds.add(result.get());
