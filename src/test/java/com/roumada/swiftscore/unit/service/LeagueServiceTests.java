@@ -1,12 +1,14 @@
 package com.roumada.swiftscore.unit.service;
 
 import com.neovisionaries.i18n.CountryCode;
-import com.roumada.swiftscore.model.dto.request.CreateCompetitionRequest;
+import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.league.League;
+import com.roumada.swiftscore.model.organization.league.LeagueSeason;
 import com.roumada.swiftscore.persistence.datalayer.LeagueDataLayer;
 import com.roumada.swiftscore.service.CompetitionService;
+import com.roumada.swiftscore.service.LeagueSeasonService;
 import com.roumada.swiftscore.service.LeagueService;
 import io.vavr.control.Either;
 import org.junit.jupiter.api.DisplayName;
@@ -17,12 +19,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueCompetitionRequests;
 import static com.roumada.swiftscore.util.LeagueTestUtils.getEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +33,8 @@ class LeagueServiceTests {
 
     @Mock
     LeagueDataLayer dataLayer;
+    @Mock
+    LeagueSeasonService leagueSeasonService;
     @Mock
     CompetitionService competitionService;
     @InjectMocks
@@ -56,23 +61,7 @@ class LeagueServiceTests {
                 getCreateLeagueCompetitionRequests(4, 6)
         );
 
-        when(competitionService.generateAndSave(eq(new CreateCompetitionRequest(
-                        leagueRequest.competitions().get(0).name(),
-                        leagueRequest.countryCode(),
-                        leagueRequest.startDate(),
-                        leagueRequest.endDate(),
-                        leagueRequest.competitions().get(0).competitionParameters(),
-                        leagueRequest.competitions().get(0).simulationParameters())),
-                anyList())).thenReturn(Either.right(c1));
-        when(competitionService.generateAndSave(
-                eq(new CreateCompetitionRequest(
-                        leagueRequest.competitions().get(1).name(),
-                        leagueRequest.countryCode(),
-                        leagueRequest.startDate(),
-                        leagueRequest.endDate(),
-                        leagueRequest.competitions().get(1).competitionParameters(),
-                        leagueRequest.competitions().get(1).simulationParameters())),
-                anyList())).thenReturn(Either.right(c2));
+        when(leagueSeasonService.generateNew(any())).thenReturn(Either.right(new LeagueSeason("2020", List.of(c1id, c2id))));
         when(dataLayer.save(any())).thenAnswer(invocation -> {
             League league = invocation.getArgument(0);
             league.setId(leagueId);
@@ -103,22 +92,7 @@ class LeagueServiceTests {
                 "2020-06-01",
                 getCreateLeagueCompetitionRequests(4, 6)
         );
-        when(competitionService.generateAndSave(eq(new CreateCompetitionRequest(
-                leagueRequest.competitions().get(0).name(),
-                leagueRequest.countryCode(),
-                leagueRequest.startDate(),
-                leagueRequest.endDate(),
-                leagueRequest.competitions().get(0).competitionParameters(),
-                leagueRequest.competitions().get(0).simulationParameters()
-        )), anyList())).thenReturn(Either.left(errorMsg1));
-        when(competitionService.generateAndSave(eq(new CreateCompetitionRequest(
-                leagueRequest.competitions().get(1).name(),
-                leagueRequest.countryCode(),
-                leagueRequest.startDate(),
-                leagueRequest.endDate(),
-                leagueRequest.competitions().get(1).competitionParameters(),
-                leagueRequest.competitions().get(1).simulationParameters()
-        )), anyList())).thenReturn(Either.left(errorMsg2));
+        when(leagueSeasonService.generateNew(any())).thenReturn(Either.left(new ErrorResponse(List.of(errorMsg1, errorMsg2))));
 
         // act
         var result = service.createFromRequest(leagueRequest);

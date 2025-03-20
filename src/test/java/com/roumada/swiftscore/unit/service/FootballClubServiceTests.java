@@ -1,7 +1,6 @@
 package com.roumada.swiftscore.unit.service;
 
 import com.neovisionaries.i18n.CountryCode;
-import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.dto.criteria.SearchFootballClubSearchCriteria;
 import com.roumada.swiftscore.model.dto.request.CreateFootballClubRequest;
@@ -10,8 +9,10 @@ import com.roumada.swiftscore.service.FootballClubService;
 import com.roumada.swiftscore.util.FootballClubTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
@@ -21,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-class FootballClubServiceTests extends AbstractBaseIntegrationTest {
+@ExtendWith(MockitoExtension.class)
+class FootballClubServiceTests {
 
     @Mock
     FootballClubDataLayer dataLayer;

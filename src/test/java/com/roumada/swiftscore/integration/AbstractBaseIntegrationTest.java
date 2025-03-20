@@ -66,9 +66,12 @@ public abstract class AbstractBaseIntegrationTest {
         return competitionRepository.findByCountry(countryCode, Pageable.ofSize(size)).getContent();
     }
 
+    protected List<FootballClub> getFootballClubsForCountry(CountryCode countryCode, int size) {
+        return footballClubRepository.findByCountry(countryCode, Pageable.ofSize(size)).getContent();
+    }
+
     protected List<Long> getFootballClubIdsForCountry(CountryCode countryCode, int size) {
-        return footballClubRepository.findByCountry(countryCode, Pageable.ofSize(size)).getContent().stream()
-                .map(FootballClub::getId).toList();
+        return getFootballClubsForCountry(countryCode, size).stream().map(FootballClub::getId).toList();
     }
 
     @AfterEach

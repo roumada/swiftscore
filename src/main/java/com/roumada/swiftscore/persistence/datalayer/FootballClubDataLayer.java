@@ -81,4 +81,8 @@ public class FootballClubDataLayer {
     public Page<FootballClub> findByCountry(CountryCode country, Pageable pageable) {
         return repository.findByCountry(country, pageable);
     }
+
+    public List<FootballClub> findAllById(List<Long> ids) {
+        return repository.findAllById(ids);
+    }
 }

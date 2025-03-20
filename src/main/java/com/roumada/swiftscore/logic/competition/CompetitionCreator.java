@@ -40,11 +40,40 @@ public class CompetitionCreator {
                 .build());
     }
 
+    public static Either<String, Competition> createFromConcluded(Competition competition) {
+        var generationResult = CompetitionRoundsCreator.create(competition.getParticipants());
+        if (generationResult.isLeft()) {
+            return Either.left(generationResult.getLeft());
+        }
+
+        var rounds = generationResult.get();
+        CompetitionDatesProvider provider = createProvider(competition);
+        setDatesForMatchesInRounds(provider, rounds);
+        return Either.right(Competition.builder()
+                .name(competition.getName())
+                .country(competition.getCountry())
+                .startDate(competition.getStartDate())
+                .endDate(competition.getEndDate())
+                .simulationParameters(competition.getSimulationParameters())
+                .relegationSpots(competition.getRelegationSpots())
+                .participants(competition.getParticipants())
+                .rounds(rounds)
+                .build());
+    }
+
     private static CompetitionDatesProvider createProvider(CreateCompetitionRequest dto) {
         var provider = new CompetitionDatesProvider(
                 LocalDate.parse(dto.startDate()),
                 LocalDate.parse(dto.endDate()),
                 dto.participantsAmount());
+        log.info("Created date provider with start date [{}] and step [{}]", provider.getStart(), provider.getStep());
+        return provider;
+    }
+
+    private static CompetitionDatesProvider createProvider(Competition competition) {
+        var provider = new CompetitionDatesProvider(competition.getStartDate(),
+                competition.getEndDate(),
+                competition.getParticipants().size());
         log.info("Created date provider with start date [{}] and step [{}]", provider.getStart(), provider.getStep());
         return provider;
     }

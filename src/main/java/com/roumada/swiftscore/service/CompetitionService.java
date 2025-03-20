@@ -3,6 +3,7 @@ package com.roumada.swiftscore.service;
 import com.roumada.swiftscore.logic.CompetitionRoundSimulator;
 import com.roumada.swiftscore.logic.competition.CompetitionCreator;
 import com.roumada.swiftscore.logic.match.simulator.SimpleVarianceMatchSimulator;
+import com.roumada.swiftscore.model.ErrorResponse;
 import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.criteria.SearchCompetitionCriteria;
@@ -90,6 +91,31 @@ public class CompetitionService {
 
         competitionDataLayer.save(competition);
         return Either.right(competition);
+    }
+
+    public Either<ErrorResponse, Long> generateFromConcluded(Competition comp) {
+        var creationResult = CompetitionCreator.createFromConcluded(comp);
+        if (creationResult.isLeft()) {
+            return Either.left(new ErrorResponse(List.of(creationResult.getLeft())));
+        }
+
+        Long compId = sequenceService.getNextValue();
+        Competition competition = creationResult.get();
+        competition.setId(compId);
+
+        for (CompetitionRound round : competition.getRounds()) {
+            Long roundId = sequenceService.getNextValue();
+            for (FootballMatch match : round.getMatches()) {
+                match.setCompetitionId(compId);
+                match.setCompetitionRoundId(roundId);
+                footballMatchDataLayer.save(match);
+            }
+            round.setCompetitionId(compId);
+            round.setId(roundId);
+            competitionRoundDataLayer.save(round);
+        }
+
+        return Either.right(competitionDataLayer.save(competition).getId());
     }
 
     public Either<String, List<CompetitionRound>> simulate(Competition competition, int times) {
@@ -219,6 +245,7 @@ public class CompetitionService {
             default -> Page.empty();
         };
     }
+
 
 
 }

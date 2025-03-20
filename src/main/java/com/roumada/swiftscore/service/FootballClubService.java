@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +28,10 @@ public class FootballClubService {
             log.warn(errorMsg);
             return Either.left(errorMsg);
         } else return Either.right(findResult.get());
+    }
+
+    public List<FootballClub> findAllById(List<Long> ids){
+        return dataLayer.findAllById(ids);
     }
 
     public FootballClub save(CreateFootballClubRequest dto) {

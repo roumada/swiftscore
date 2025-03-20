@@ -17,13 +17,13 @@ public class StartEndStringDatesValidator {
         boolean isDateMissing = false;
         if (StringUtils.isEmpty(startDate)) {
             context
-                    .buildConstraintViolationWithTemplate("Start date must be present")
+                    .buildConstraintViolationWithTemplate("Start date cannot be empty")
                     .addConstraintViolation();
             isDateMissing = true;
         }
         if (StringUtils.isEmpty(endDate)) {
             context
-                    .buildConstraintViolationWithTemplate("End date must be present")
+                    .buildConstraintViolationWithTemplate("End date cannot be empty")
                     .addConstraintViolation();
             isDateMissing = true;
         }
