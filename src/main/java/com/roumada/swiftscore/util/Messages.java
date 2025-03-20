@@ -12,6 +12,7 @@ public enum Messages {
             "Participants parameter [%s] lower than amount of club IDs provided ([%s]). Returning clubs with denoted club IDs only."),
 
     LEAGUE_NOT_FOUND("League with ID [%s] not found."),
+    LEAGUE_CANNOT_BE_ADVANCED("League with ID [%s] cannot be yet advanced."),
     LEAGUE_DUPLICATED_PARTICIPANT_IDS("Participant IDs for some of the competition requests are duplicated."),
 
     COMPETITION_SIMULATED("Competition with id [%s] simulated."),

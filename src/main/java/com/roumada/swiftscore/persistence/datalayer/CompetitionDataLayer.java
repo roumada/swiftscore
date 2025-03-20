@@ -40,6 +40,10 @@ public class CompetitionDataLayer {
         return competitionRepository.findAll(pageable);
     }
 
+    public List<Competition> findAllById(List<Long> ids) {
+        return competitionRepository.findAllById(ids);
+    }
+
     public void delete(long id) {
         competitionRepository.deleteById(id);
         log.info("Competition with ID [{}] deleted.", id);

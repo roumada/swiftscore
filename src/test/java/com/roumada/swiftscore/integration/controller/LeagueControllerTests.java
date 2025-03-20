@@ -6,19 +6,15 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.neovisionaries.i18n.CountryCode;
 import com.roumada.swiftscore.integration.AbstractBaseIntegrationTest;
 import com.roumada.swiftscore.model.ErrorResponse;
-import com.roumada.swiftscore.model.FootballClub;
 import com.roumada.swiftscore.model.SimulationParameters;
 import com.roumada.swiftscore.model.dto.CompetitionParameters;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueCompetitionRequest;
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
-import com.roumada.swiftscore.model.dto.response.CompetitionResponse;
 import com.roumada.swiftscore.model.organization.Competition;
 import com.roumada.swiftscore.model.organization.league.League;
-import com.roumada.swiftscore.model.organization.league.LeagueSeason;
 import com.roumada.swiftscore.persistence.repository.CompetitionRepository;
 import com.roumada.swiftscore.persistence.repository.CompetitionRoundRepository;
 import com.roumada.swiftscore.persistence.repository.LeagueRepository;
-import com.roumada.swiftscore.util.CompetitionTestUtils;
 import com.roumada.swiftscore.util.LeagueTestUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Collections;
 import java.util.List;
 
+import static com.neovisionaries.i18n.CountryCode.ES;
 import static com.neovisionaries.i18n.CountryCode.GB;
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueCompetitionRequests;
 import static com.roumada.swiftscore.util.LeagueTestUtils.getCreateLeagueRequest;
@@ -194,8 +191,8 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
 
     @ParameterizedTest
     @CsvSource({
-            "'2025-01-01', '',  'End date must be present'",
-            "'', 2025-01-01, 'Start date must be present'",
+            "'2025-01-01', '',  'End date cannot be empty'",
+            "'', 2025-01-01, 'Start date cannot be empty'",
             "2025--01-01, '2025-02-02', 'Unparsable data format for one of the dates (must be YYYY-MM-DD)'",
             "'2025-01-01', '2025-01-02', 'Competition needs at least 6 days for a competition with 4 clubs.'",
             "'2025-02-01', '2025-01-01', 'Start date cannot be ahead of end date'",
@@ -258,7 +255,7 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
 
         // assert
         var result = objectMapper.readValue(response, ErrorResponse.class);
-        assertThat(result.requestErrors()).contains("Competition with ID [%s] not found.".formatted(invalidId));
+        assertThat(result.requestErrors()).contains("League with ID [%s] not found.".formatted(invalidId));
     }
 
     @Test
@@ -368,18 +365,54 @@ class LeagueControllerTests extends AbstractBaseIntegrationTest {
     void startNewLeagueSeason_shouldStart() throws Exception {
         // arrange
         loadCompetitionsWithFcs();
-        List<Competition> comps = getCompetitionsForCountry(GB, 2);
-        comps.get(0).setLastSimulatedRound(comps.get(0).getRounds().size());
-        comps.get(1).setLastSimulatedRound(comps.get(1).getRounds().size());
-        var leagueId = repository.save(LeagueTestUtils.getForCompetitions(comps)).getId();
+        // NOTE: loading one competition from different countries to ensure club ID uniqueness
+        var gbComp = getCompetitionsForCountry(GB, 1).get(0);
+        var esComp = getCompetitionsForCountry(ES, 1).get(0);
+        gbComp.setLastSimulatedRound(gbComp.getRounds().size());
+        gbComp.setRelegationSpots(1);
+        esComp.setLastSimulatedRound(esComp.getRounds().size());
+        esComp.setRelegationSpots(0);
+        competitionRepository.save(gbComp);
+        competitionRepository.save(esComp);
+        var leagueId = repository.save(LeagueTestUtils.getForCompetitions(List.of(gbComp, esComp))).getId();
 
         // act
-        var response = mvc.perform(post("/league/%s/advance".formatted(leagueId))
+         var response = mvc.perform(post("/league/%s/advance".formatted(leagueId))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         // assert
         var dto = objectMapper.readValue(response, League.class);
+        assertThat(dto.getId()).isNotNull();
+        assertThat(dto.getSeasons()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Start new league season - one of the leagues is not yet concluded - should return error code")
+    void startNewLeagueSeason_oneLeagueNotConcluded_shouldReturnErrorCode() throws Exception {
+        // arrange
+        loadCompetitionsWithFcs();
+        // NOTE: loading one competition from different countries to ensure club ID uniqueness
+        var gbComp = getCompetitionsForCountry(GB, 1).get(0);
+        var esComp = getCompetitionsForCountry(ES, 1).get(0);
+        gbComp.setLastSimulatedRound(gbComp.getRounds().size());
+        gbComp.setRelegationSpots(1);
+        esComp.setLastSimulatedRound(1);
+        esComp.setRelegationSpots(0);
+        competitionRepository.save(gbComp);
+        competitionRepository.save(esComp);
+        var leagueId = repository.save(LeagueTestUtils.getForCompetitions(List.of(gbComp, esComp))).getId();
+
+        // act
+        var response = mvc.perform(post("/league/%s/advance".formatted(leagueId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andReturn().getResponse().getContentAsString();
+
+        // assert
+        var dto = objectMapper.readValue(response, ErrorResponse.class);
+        assertThat(dto.requestErrors()).hasSize(1);
+        assertThat(dto.requestErrors().get(0)).isEqualTo("League with ID [%s] cannot be yet advanced.".formatted(leagueId));
     }
 }

@@ -1,6 +1,7 @@
 package com.roumada.swiftscore.controller;
 
 import com.roumada.swiftscore.model.dto.request.CreateLeagueRequest;
+import com.roumada.swiftscore.model.dto.response.LeagueSimulationResponse;
 import com.roumada.swiftscore.model.organization.league.League;
 import com.roumada.swiftscore.service.LeagueService;
 import com.roumada.swiftscore.util.LoggingMessageTemplates;
@@ -87,9 +88,9 @@ public class LeagueController {
 
     @Operation(summary = "Simulate competitions within league with ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "League returned",
+            @ApiResponse(responseCode = "200", description = "Information about simulated competitions within league",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = League.class))}),
+                            schema = @Schema(implementation = LeagueSimulationResponse.class))}),
             @ApiResponse(responseCode = "400", description = "League not found")})
     @PostMapping("/{id}/simulate")
     public ResponseEntity<Object> simulate(@PathVariable long id,
@@ -100,6 +101,21 @@ public class LeagueController {
                                            HttpServletRequest request){
         log.info(LoggingMessageTemplates.getForEndpoint(request));
         return service.simulate(id, times).fold(
+                error -> ResponseEntity.badRequest().body(error),
+                ResponseEntity::ok);
+    }
+
+    @Operation(summary = "Advances league to next season")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "League with new league season",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = League.class))}),
+            @ApiResponse(responseCode = "400", description = "League not found")})
+    @PostMapping("/{id}/advance")
+    public ResponseEntity<Object> advance(@PathVariable long id,
+                                           HttpServletRequest request){
+        log.info(LoggingMessageTemplates.getForEndpoint(request));
+        return service.advance(id).fold(
                 error -> ResponseEntity.badRequest().body(error),
                 ResponseEntity::ok);
     }
